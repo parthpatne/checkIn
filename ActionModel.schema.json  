@@ -1,0 +1,212 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "properties": {
+        "properties": {
+            "type": "object",
+            "description": "Set of Properties/Metadata each ActionInstance can have",
+            "properties": {
+                "canAddMore": {
+                    "type": "boolean",
+                    "description": "Inidicates each ActionInstance can have more than the provided set of Properties",
+                    "default": false
+                },
+                "values": {
+                    "type": "array",
+                    "description": "If CanAddMore flag is FALSE, only these set of Properties will be allowed in each ActionInstance",
+                    "items": {
+                        "$ref": "#/definitions/property"
+                    },
+                    "minItems": 1
+                }
+            }
+        },
+        "dataSets": {
+            "type": "object",
+            "description": "Set of DataSets/Tables each ActionInstance can have",
+            "properties": {
+                "canAddMore": {
+                    "type": "boolean",
+                    "description": "Inidicates each ActionInstance can have more than the provided set of DataSets",
+                    "default": false
+                },
+                "values": {
+                    "type": "array",
+                    "description": "If CanAddMore flag is FALSE, only these set of DataSets will be allowed in each ActionInstance",
+                    "items": {
+                        "$ref": "#/definitions/dataSet"
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                }
+            }
+        }
+    },
+    "definitions": {
+        "property": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "$ref": "#/definitions/nonEmptyString",
+                    "description": "Name of the property"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "Type of the property",
+                    "enum": [
+                        "Text",
+                        "Numeric",
+                        "DateTime",
+                        "StringSet"
+                    ]
+                },
+                "values": {
+                    "type": "array",
+                    "description": "The set of allowed values for the property in each ActionInstance",
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1
+                },
+                "isOptional": {
+                    "type": "boolean",
+                    "description": "Indicates if the property is mandatory or not in each ActionInstance",
+                    "default": false
+                }
+            },
+            "required": [
+                "name",
+                "type"
+            ]
+        },
+        "dataSet": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "$ref": "#/definitions/idString",
+                    "description": "Id of the DataSet"
+                },
+                "itemsVisibility": {
+                    "type": "array",
+                    "description": "The set of allowed values for ItemsVisibility setting in each ActionInstance. This controls who all can see the DataItems/Rows for an ActionInstance.",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "All",
+                            "Sender"
+                        ]
+                    },
+                    "minItems": 1
+                },
+                "itemsEditable": {
+                    "type": "boolean",
+                    "description": "If present, ItemsEditable setting in each ActionInstance needs to conform to this. This controls if DataItems/Rows are editable by a user.",
+                    "default": true
+                },
+                "canUserAddMultipleItems": {
+                    "type": "boolean",
+                    "description": "If present, CanUserAddMultipleItems setting in each ActionInstance needs to conform to this. This controls if multiple DataItems/Rows are allowed from a single user.",
+                    "default": false
+                },
+                "dataFields": {
+                    "type": "object",
+                    "description": "Set of DataFields/Columns for the DataSet",
+                    "properties": {
+                        "canAddMore": {
+                            "type": "boolean",
+                            "description": "Inidicates each ActionInstance can have more than the provided set of DataFields",
+                            "default": false
+                        },
+                        "values": {
+                            "type": "array",
+                            "description": "If CanAddMore flag is FALSE, only these set of DataFields will be allowed in each ActionInstance",
+                            "items": {
+                                "$ref": "#/definitions/dataField"
+                            },
+                            "minItems": 1
+                        }
+                    }
+                }
+            }
+        },
+        "dataField": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "$ref": "#/definitions/idString",
+                    "description": "Id of the DataField"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "Type of the DataField",
+                    "enum": [
+                        "SingleOption",
+                        "MultiOption",
+                        "Text",
+                        "Numeric",
+                        "DateTime"
+                    ]
+                },
+                "allowNullValue": {
+                    "type": "boolean",
+                    "description": "If present, AllowNullValue setting in each ActionInstance needs to conform to this. This controls if null values for this field is allowed in each DataItem/Row.",
+                    "default": false
+                },
+                "options": {
+                    "type": "object",
+                    "description": "Set of Options that the DataField can have in each ActionInstance. This is only applicable to SingleOption/MultiOption type DataFields.",
+                    "properties": {
+                        "canAddMore": {
+                            "type": "boolean",
+                            "description": "Inidicates each ActionInstance can have more than the provided set of Options",
+                            "default": false
+                        },
+                        "values": {
+                            "type": "array",
+                            "description": "If CanAddMore flag is FALSE, only these set of Options will be allowed in each ActionInstance",
+                            "items": {
+                                "$ref": "#/definitions/dataFieldOption"
+                            },
+                            "minItems": 1
+                        }
+                    }
+                },
+                "isOptional": {
+                    "type": "boolean",
+                    "description": "Indicates if the DataField is mandatory or not in each ActionInstance",
+                    "default": false
+                }
+            },
+            "required": [
+                "id",
+                "type"
+            ]
+        },
+        "dataFieldOption": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "$ref": "#/definitions/idString",
+                    "description": "Id of the Option"
+                },
+                "isOptional": {
+                    "type": "boolean",
+                    "description": "Indicates if the Option is mandatory or not in each ActionInstance",
+                    "default": false
+                }
+            },
+            "required": [
+                "id"
+            ]
+        },
+        "nonEmptyString": {
+            "type": "string",
+            "description": "Empty or whitespaces won't be allowed",
+            "pattern": "^(\\s*\\S.*)$"
+        },
+        "idString": {
+            "type": "string",
+            "description": "Only alpha-numeric and underscore are allowed",
+            "pattern": "^([a-zA-Z0-9_]+)$"
+        }
+    }
+}
