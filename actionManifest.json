@@ -1,7 +1,7 @@
 {
-    "id": "com.microsoft.test.parth",
-    "name": "NPM Test Action Package",
-    "description": "Test Action Package",
+    "id": "com.microsoft.sample.checkIn",
+    "name": "Check In ",
+    "description": "Check In for Employees",
     "provider": {
         "name": "Microsoft",
         "websiteUrl": "https://www.microsoft.com/",
