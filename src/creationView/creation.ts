@@ -1,4 +1,8 @@
 import * as ActionSDK from 'actionSDK2';
+import questionSet from '../../assets/json/questionSet.json'; 
+
+var keys = Object.keys(questionSet);
+console.log(keys);
 
 ActionSDK.APIs.actionViewDidLoad(true /*success*/);
 
@@ -10,7 +14,41 @@ var questionCount = 0;
 let questions: string[] = new Array();
 
 createBody();
+
+function fetchQuetionSetForTemplate(val:number){
+  
+  var templateQuestions = Object.values(questionSet)[val];
+  clear();
+  document.getElementById("surveyTitle").setAttribute("value",Object.keys(questionSet)[val]);
+  templateQuestions.forEach(question => {
+    bodyDiv.appendChild(addQuestion(question));
+  });
+}
+
+function clear(){
+  bodyDiv.innerHTML = "";
+  questionCount = 0;
+}
+
 function createBody() {
+
+  var templateTitle = document.createElement("h3");
+  var templateTitleText = document.createTextNode("Choose Check-in Template");
+  templateTitle.appendChild(templateTitleText);
+  root.appendChild(templateTitle);
+
+  var select = document.createElement("select");
+
+  keys.forEach(element => {
+    select.options.add( new Option(element) );
+  });
+  
+  select.addEventListener("change", function () {
+
+    fetchQuetionSetForTemplate(select.selectedIndex);
+  });
+  root.appendChild(select);
+
 
   root.appendChild(createInputElement("Survey title", "surveyTitle"));
   root.appendChild(bodyDiv);
@@ -44,14 +82,6 @@ function createBody() {
 
 function createQuestionArray() {
 
-  /*
-    -Read question and choices value
-    -Read All Question values
-    -create HashMap for all question 
-        like: 0: "test~1~0~SingleOption~test~test"
-  */
-
-
   for (var i = 0; i < questionCount; i++) {
     var val: string = (<HTMLInputElement>document.getElementById(i.toString())).value + "~1~0~SingleOption~" +
       (<HTMLInputElement>document.getElementById(i + "0")).value + "~" + (<HTMLInputElement>document.getElementById(i + "1")).value;
@@ -74,26 +104,6 @@ function sendActioninstance(surveyTitle: string, questions: string[]) {
 }
 
 function CreateViewData(actionInstance: ActionSDK.ActionInstance, title: string) {
-  // let questions: string[] = new Array();
-  // let columns: ActionSDK.ActionInstanceColumn[] = questions;
-  // columns.forEach(column => {
-  //     let question: string;
-  //     question = column.title.replace("~", "\\~");
-  //     if (column.isOptional) {
-  //         question = question + "~1";
-  //     } else {
-  //         question = question + "~0";
-  //     }
-  //     // Adding question display type
-  //     let customProperties = JSON.parse(column.customProperties);
-  //     question = question.concat(`~${customProperties["dt"]}`);
-  //     question = question.concat(`~${column.type.toString()}`);
-  //     column.options.forEach(option => {
-  //         question = question + `~${option.title.replace("~", "\\~")}`;
-  //     });
-  //     if (questions != null)
-  //         questions.push(question);
-  // });
 
   let surveyData = {
     ti: title,
@@ -190,40 +200,52 @@ function createInputElement(ph: string, id: string) {
 
 
 
-function addQuestion() {
+function addQuestion(question?:JSON) {
 
 
   var qDiv = document.createElement("div");
   var linebreak = document.createElement('br');
-  qDiv.appendChild(linebreak);
   var questionHeading = document.createElement('h7'); // Heading of Form
   var inputelement = document.createElement('input'); // Create Input Field for Name
   var choiceCount = 0;
 
   questionHeading.innerHTML = "Question " + questionCount;
-  qDiv.appendChild(questionHeading);
+  
 
   inputelement.setAttribute("type", "text");
   inputelement.setAttribute("value", "");
   inputelement.setAttribute("id", questionCount.toString());
   inputelement.placeholder = "Enter Question";
+  var linebreak = document.createElement('br');
+  
+  qDiv.appendChild(linebreak);
+  qDiv.appendChild(questionHeading);
   qDiv.appendChild(inputelement);
 
-  qDiv.appendChild(addChoice("choice 1", questionCount + "" + choiceCount++));
-  qDiv.appendChild(addChoice("choice 2", questionCount + "" + choiceCount++));
+  if(question != null){
+    inputelement.value = question["title"];
 
-  var linebreak = document.createElement('br');
+    question["options"].forEach(option => {
+      qDiv.appendChild(addChoice("choice 1", questionCount + "" + choiceCount++,option.title));
+    });
+  }
+  else{
+    qDiv.appendChild(addChoice("choice 1", questionCount + "" + choiceCount++));
+    qDiv.appendChild(addChoice("choice 2", questionCount + "" + choiceCount++));
+  }
+  
   qDiv.appendChild(linebreak);
+
   questionCount++;
   return qDiv;
 }
 
 
-function addChoice(ph: string, cc: string) {
+function addChoice(ph: string, id: string,val:string="") {
   var inputelement = document.createElement('input'); // Create Input Field for Name
   inputelement.setAttribute("type", "text");
-  inputelement.setAttribute("value", "");
-  inputelement.setAttribute("id", cc);
+  inputelement.setAttribute("value", val);
+  inputelement.setAttribute("id", id);
   inputelement.placeholder = ph;
   return inputelement;
 }

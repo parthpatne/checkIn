@@ -3,6 +3,8 @@
     "outDir": "./output/",
     "sourceMap": true,
     "noImplicitAny": false,
-    "target": "es5"
+    "target": "es5",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
   }
 }
