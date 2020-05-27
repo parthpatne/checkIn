@@ -62,23 +62,61 @@ function createQuestionView(){
           questionHeading.innerHTML = count + "."+ column.title;
           qDiv.appendChild(questionHeading);      
 
-          //add radio button
-          column.options.forEach((option:ActionSDK.ActionInstanceColumnOption) => {
-           var radioOption = getRadioButton(option.title,column.id,option.id);
-           qDiv.appendChild(radioOption);
-           
-          });
+
+          if(column.type == "SingleOption" ){
+             //add radio button
+            column.options.forEach((option:ActionSDK.ActionInstanceColumnOption) => {
+              var radioOption = getRadioButton(option.title,column.id,option.id);
+              qDiv.appendChild(radioOption);
+            
+             });
+          }
+          else  if(column.type == "Text" ){
+
+            var radioOption = addInputElement("Enter Number",column.id,"text");
+            qDiv.appendChild(radioOption);
+
+          }
+          else  if(column.type == "Numeric" ){
+               //add radio button
+
+              var radioOption = addInputElement("Enter Number",column.id,"number");
+              qDiv.appendChild(radioOption);
+            
+          }
+         
           root.appendChild(qDiv);
           count++;
   });
 
 }
 
+
+function addInputElement(ph: string, id: string,type:string) {
+  var inputelement = document.createElement('input'); 
+  inputelement.setAttribute("columnId", id);
+  inputelement.setAttribute("type", type);
+  inputelement.setAttribute("id", id);
+
+  inputelement.style.width = "93%";
+  inputelement.style.margin = "10px 0 10px 3%";
+  inputelement.placeholder = ph;
+  inputelement.style.border = "none";
+  inputelement.style.background = "white";
+  inputelement.style.borderRadius = "3px";
+
+  inputelement.addEventListener("change", function () {
+    radiobuttonclick(this.value,this.getAttribute("columnId"));
+    });
+  return inputelement;
+}
+
+
 function getRadioButton( text,name,id) {
 
     var oDiv = document.createElement("div");
     oDiv.id = id;
-	oDiv.setAttribute("columnId", name);
+	  oDiv.setAttribute("columnId", name);
 	
 		oDiv.addEventListener("click", function () {
 		radiobuttonclick(this.id,this.getAttribute("columnId"));
@@ -116,3 +154,4 @@ function initialize(){
     });
 
 }
+
