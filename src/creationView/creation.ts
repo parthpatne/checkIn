@@ -68,7 +68,6 @@ function createBody() {
   root.appendChild(footerDiv);
 
   var linebreak = document.createElement('br');
-
   var questionTypeList = document.createElement("select");
 
   questionTypeList.options.add( new Option("MCQ","1") );
@@ -339,7 +338,7 @@ function addNumberQuestion(question?:JSON) {
   img.style.height = "20px";
   img.style.float = "right";
   img.addEventListener("click",function(){
-        deleteQuestion(this);
+        deleteQuestion(this,qId);
   });
 
   inputelement.setAttribute("type", "text");
@@ -388,7 +387,7 @@ function addTextQuestion(question?:JSON) {
   img.style.height = "20px";
   img.style.float = "right";
   img.addEventListener("click",function(){
-        deleteQuestion(this);
+        deleteQuestion(this,qId);
   });
 
   inputelement.setAttribute("type", "text");
