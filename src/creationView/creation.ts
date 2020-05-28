@@ -1,5 +1,5 @@
 import * as ActionSDK from 'actionSDK2';
-import questionTemplate from '../../output/json/questionSet.json'; 
+import questionTemplate from '../../assets/json/questionSet.json'; 
 import { Question } from './Question';
 // 1) Code CleanUp
 // 2) Add Run end to end:
@@ -29,7 +29,6 @@ function fetchQuetionSetForTemplate(val:number){
   templateQuestions.forEach(question => {
     bodyDiv.appendChild(lineBreak());
     bodyDiv.appendChild(addQuestion("1",question));
-    questionCount++;
   });
 }
 
@@ -243,7 +242,7 @@ function addMcqQuestion(question?:JSON) {
   questionHeading.innerHTML = (questionCount+1)+".";
 
   var img = document.createElement('img');
-  img.setAttribute('src','../../output/images/delete.svg');
+  img.setAttribute('src','images/delete.svg');
   img.style.height = "20px";
   img.style.float = "right";
   img.addEventListener("click",function(){
@@ -258,7 +257,7 @@ function addMcqQuestion(question?:JSON) {
   inputelement.setAttribute("id", qId);
 
   inputelement.placeholder = "Enter Question";
-  inputelement.style.width = "92%";
+  inputelement.style.width = "88%";
   inputelement.style.margin = "0 0 0 1%";
   inputelement.style.borderRadius = "3px";
   inputelement.style.border = "none";
@@ -315,7 +314,6 @@ function addMcqQuestion(question?:JSON) {
   qDiv.appendChild(addChoiceButton);
   qDiv.appendChild(linebreak);
 
-  questionCount++;
   return qDiv;
 }
 
@@ -334,7 +332,7 @@ function addNumberQuestion(question?:JSON) {
     inputelement.value = question["title"];
   }
   var img = document.createElement('img');
-  img.setAttribute('src','../../output/images/delete.svg');
+  img.setAttribute('src','images/delete.svg');
   img.style.height = "20px";
   img.style.float = "right";
   img.addEventListener("click",function(){
@@ -346,7 +344,7 @@ function addNumberQuestion(question?:JSON) {
   inputelement.setAttribute("id", questionCount.toString());
   inputelement.placeholder = "Enter Question";
 
-  inputelement.style.width = "94%";
+  inputelement.style.width = "88%";
   inputelement.style.margin = "0 0 0 1%";
   inputelement.style.border = "none";
   inputelement.style.borderRadius = "3px";
@@ -383,7 +381,7 @@ function addTextQuestion(question?:JSON) {
   }
 
   var img = document.createElement('img');
-  img.setAttribute('src','../../output/images/delete.svg');
+  img.setAttribute('src','images/delete.svg');
   img.style.height = "20px";
   img.style.float = "right";
   img.addEventListener("click",function(){
@@ -393,7 +391,7 @@ function addTextQuestion(question?:JSON) {
   inputelement.setAttribute("type", "text");
   inputelement.setAttribute("value", "");
   inputelement.setAttribute("id", questionCount.toString());
-  inputelement.style.width = "94%";
+  inputelement.style.width = "88%";
   inputelement.style.margin = "0 0 0 1%";
   inputelement.style.border = "none";
   inputelement.style.borderRadius = "3px";
@@ -434,7 +432,7 @@ function addQuestion(type:string,question?:JSON) {
   newQues.style.padding = "10px";
   newQues.style.width = "100%"
   newQues.style.border = "none";
-
+  questionCount++;
   return newQues;
 }
 
@@ -447,7 +445,7 @@ function addInputElement(ph: string, id: string,val:string="",disableInput:boole
   if(disableInput){
     inputelement.setAttribute("disabled","disabled");
   }
-  inputelement.style.width = "93%";
+  inputelement.style.width = "88%";
   inputelement.style.margin = "10px 0 10px 3%";
   inputelement.placeholder = ph;
   inputelement.style.border = "none";
@@ -466,7 +464,7 @@ function addChoice(ph: string, id: string,val:string="",disableInput:boolean=fal
   if(disableInput){
     inputelement.setAttribute("disabled","disabled");
   }
-  inputelement.style.width = "95%";
+  inputelement.style.width = "90%";
   inputelement.placeholder = ph;
   inputelement.style.border = "none";
   inputelement.style.borderRadius = "3px";
