@@ -9,6 +9,7 @@
         "termsOfUseUrl": "https://www.microsoft.com/app-tos"
     },
     "icon": "images/appIcon.png",
+    "actionModel": "actionModel.json",
     "version": "1.0.0",
     "views": {
         "CardView": {
@@ -33,4 +34,5 @@
             "en-us": "strings/strings.json"
         }
     }
+    ,"whitelistedUrlDomains":[]
 }

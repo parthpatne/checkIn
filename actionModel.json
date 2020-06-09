@@ -1,0 +1,16 @@
+{
+    "properties": {
+        "canAddMore": true
+    },
+    "dataSets": {
+        "canAddMore": false,
+        "values": [
+            {
+                "id": "TestDataSet",
+                "dataFields": {
+                    "canAddMore": true
+                }
+            }
+        ]
+    }
+}

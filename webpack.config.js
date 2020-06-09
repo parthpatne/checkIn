@@ -54,6 +54,9 @@ module.exports = {
       {
         from: 'actionManifest.json'
       },
+      {
+        from: 'actionModel.json'
+      },
       ]),
    ],
    mode: 'development'
