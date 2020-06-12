@@ -1,4 +1,3 @@
-
 import * as actionSDK from 'action-sdk-sunny';
 
 var root = document.getElementById("root");
@@ -8,102 +7,20 @@ let actionInstance = null;
 OnPageLoad();
 
 function createBody(){
-    var title = document.createElement('h3');
-    title.innerHTML = actionInstance.title;
-    root.appendChild(title);
-    createQuestionView();
-
-    var submit = document.createElement("BUTTON");   // Create a <button> element
-    submit.innerHTML = "Submit";
-    submit.style.float = "right";
-    submit.addEventListener("click", function () {
-
-     submitForm();
-    });
-
-    root.appendChild(submit);
-}
-
-
-function createQuestionView(){
-
-  var count = 1;
-  actionInstance.dataSets[0].dataFields.forEach((column) => {
-    
-          var qDiv = document.createElement("div");
-
-          var linebreak = document.createElement('br');
-          qDiv.appendChild(linebreak);  
-
-          var questionHeading = document.createElement('h4'); // Heading of For
-          questionHeading.innerHTML = count + "."+ column.title;
-          qDiv.appendChild(questionHeading);      
-
-
-          if(column.type == "SingleOption" ){
-             //add radio button
-            column.options.forEach((option) => {
-              var radioOption = getRadioButton(option.title,column.id,option.id);
-              qDiv.appendChild(radioOption);
-            
-             });
-          }
-          else  if(column.type == "Text" ){
-            var radioOption = addInputElement("Enter Number",column.id,"text");
-            qDiv.appendChild(radioOption);
-
-          }
-          else  if(column.type == "Numeric" ){
-              var radioOption = addInputElement("Enter Number",column.id,"number");
-              qDiv.appendChild(radioOption);
-            
-          }
-         
-          root.appendChild(qDiv);
-          count++;
+  var title = document.createElement('h3');
+  var submit = document.createElement("BUTTON");
+  title.innerHTML = actionInstance.title;
+  submit.innerHTML = "Submit";
+  submit.style.float = "right";
+  submit.addEventListener("click", function () {
+   submitForm();
   });
+  root.appendChild(title);
+  createQuestionView();
+  root.appendChild(submit);
 }
 
-
-function addInputElement(ph: string, id: string,type:string) {
-  var inputelement = document.createElement('input'); 
-  inputelement.setAttribute("columnId", id);
-  inputelement.setAttribute("type", type);
-  inputelement.setAttribute("id", id);
-  inputelement.style.width = "93%";
-  inputelement.style.margin = "10px 0 10px 3%";
-  inputelement.placeholder = ph;
-  inputelement.style.border = "none";
-  inputelement.style.background = "white";
-  inputelement.style.borderRadius = "3px";
-  inputelement.addEventListener("change", function () {
-    radiobuttonclick(this.value,this.getAttribute("columnId"));
-    });
-  return inputelement;
-}
-
-
-function getRadioButton( text,name,id) {
-    var oDiv = document.createElement("div");
-    oDiv.id = id;
-	  oDiv.setAttribute("columnId", name);
-		oDiv.addEventListener("click", function () {
-		radiobuttonclick(this.id,this.getAttribute("columnId"));
-		});
-    var radiobox = document.createElement('input');
-    radiobox.type = 'radio';
-    radiobox.name = name;
-    radiobox.id = id;
-    radiobox.attributes
-    oDiv.appendChild(radiobox);
-    oDiv.appendChild(document.createTextNode(text));    
-    var newline = document.createElement('br');
-    oDiv.appendChild(newline);
-
-    return oDiv;  
-} 
-
-function radiobuttonclick(optionId,colomnId){
+function radiobuttonClick(optionId,colomnId){
   row[colomnId]=optionId;
 }
 
@@ -147,7 +64,6 @@ function addDataItems(actionId) {
       })
 }
 
-
 function OnPageLoad() {
   actionSDK.executeApi(new actionSDK.GetContext.Request())
       .then(function ( response: actionSDK.GetContext.Response) {
@@ -158,7 +74,6 @@ function OnPageLoad() {
           console.error("GetContext - Error: " + JSON.stringify(error));
       });
 }
-
 
 function getActionInstance(actionId) {
       actionSDK.executeApi(new actionSDK.GetAction.Request(actionId))
@@ -171,3 +86,68 @@ function getActionInstance(actionId) {
           console.log("Error: " + JSON.stringify(error));
       });
 }
+
+// *********************************************** HTML ELEMENT***********************************************
+
+function createQuestionView(){
+  var count = 1;
+  actionInstance.dataSets[0].dataFields.forEach((column) => {
+      var qDiv = document.createElement("div");
+      var linebreak = document.createElement('br');
+      qDiv.appendChild(linebreak);  
+      var questionHeading = document.createElement('h4'); // Heading of For
+      questionHeading.innerHTML = count + "."+ column.title;
+      qDiv.appendChild(questionHeading);      
+      if(column.type == "SingleOption" ){
+         //add radio button
+        column.options.forEach((option) => {
+          var radioOption = getRadioButton(option.title,column.id,option.id);
+          qDiv.appendChild(radioOption);
+        
+         });
+      }
+      else  if(column.type == "Text" ){
+        var radioOption = addInputElement("Enter Text",column.id,"text");
+        qDiv.appendChild(radioOption);
+       }
+        else  if(column.type == "Numeric" ){
+            var radioOption = addInputElement("Enter Number",column.id,"number");
+            qDiv.appendChild(radioOption);     
+      }
+      root.appendChild(qDiv);
+      count++;
+  });
+}
+
+function addInputElement(ph: string, id: string,type:string) {
+  var inputelement = document.createElement('input'); 
+  inputelement.setAttribute("columnId", id);
+  inputelement.setAttribute("type", type);
+  inputelement.setAttribute("id", id);
+  inputelement.placeholder = ph;
+  inputelement.className = 'responseInputElement';
+  inputelement.addEventListener("change", function () {
+    radiobuttonClick(this.value,this.getAttribute("columnId"));
+    });
+  return inputelement;
+}
+
+function getRadioButton( text,name,id) {
+    var oDiv = document.createElement("div");
+    oDiv.id = id;
+	  oDiv.setAttribute("columnId", name);
+		oDiv.addEventListener("click", function () {
+      radiobuttonClick(this.id,this.getAttribute("columnId"));
+		});
+    var radiobox = document.createElement('input');
+    radiobox.type = 'radio';
+    radiobox.name = name;
+    radiobox.id = id;
+    radiobox.attributes
+    oDiv.appendChild(radiobox);
+    oDiv.appendChild(document.createTextNode(text));    
+    var newline = document.createElement('br');
+    oDiv.appendChild(newline);
+
+    return oDiv;  
+} 

@@ -8,12 +8,10 @@ let actionSummary  = null;
 OnPageLoad();
 
 function createBody(){
-
     var title = document.createElement('h3');
     title.innerHTML = actionInstance.title;
     root.appendChild(title);
     createQuestionView();
-
 }
 
 function createQuestionView(){
@@ -23,16 +21,14 @@ function createQuestionView(){
     
           var qDiv = document.createElement("div");
           var linebreak = document.createElement('br');
-          qDiv.appendChild(linebreak);  
-
           var questionHeading = document.createElement('h4'); 
+
+          qDiv.appendChild(linebreak);  
           questionHeading.innerHTML = count + "."+ column.title;
           qDiv.appendChild(questionHeading);      
-
           column.options.forEach((option) => {
            var optionView = getAggregateOptionView(option.title,option.id,column.id);
            qDiv.appendChild(optionView);
-           
           });
           root.appendChild(qDiv);
           count++;
@@ -43,8 +39,8 @@ function createQuestionView(){
 function getAggregateOptionView( title,optionId,columnId) {
 
     var oDiv = document.createElement("div");
-    
     var optionTitle = document.createElement('h6'); 
+    
     optionTitle.innerHTML = title;
     oDiv.appendChild(optionTitle);  
 
@@ -52,7 +48,6 @@ function getAggregateOptionView( title,optionId,columnId) {
     mDiv.className = "meter";
     var spanTag1 = document.createElement('span');
 
-    // var wid = JSON.parse(actionSummary.aggregates[columnId])[optionId]/actionSummary.rowCount*100;
     var wid = JSON.parse(actionSummary.defaultAggregates[columnId])[optionId]/actionSummary.itemCount*100;
     spanTag1.style.width =  isNaN(wid) ? "0%": wid + "%";
 
