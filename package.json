@@ -21,6 +21,7 @@
   "dependencies": {
     "@microsoft/teams-js": "^1.6.0",
     "actionsdk2": "^1.4.0",
+    "action-sdk-sunny": "^1.0.18",
     "lodash": "^4.17.15",
     "yarn": "^1.22.4"
   }

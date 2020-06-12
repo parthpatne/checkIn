@@ -1,35 +1,26 @@
-import * as ActionSDK from 'actionSDK2';
 import questionTemplate from '../../assets/json/questionSet.json'; 
 import { Question } from './Question';
-// 1) Code CleanUp
-// 2) Add Run end to end:
-
+import * as actionSDK from 'action-sdk-sunny';
 
 var keys = Object.keys(questionTemplate);
 var questionMap = new Map();
 var mcqChoicesMap = new Map();
-console.log(keys);
-
-ActionSDK.APIs.actionViewDidLoad(true /*success*/);
-
-// Fetching HTML Elements in Variables by ID.
 var root = document.getElementById("root");
 var bodyDiv = document.createElement("div");
 var footerDiv = document.createElement("div");
 var questionCount = 0;
-let questions: string[] = new Array();
-
-createBody();
+let currentSelectedTemplate = 0;
 
 function fetchQuetionSetForTemplate(val:number){
-  
-  var templateQuestions = Object.values(questionTemplate)[val];
-  clear();
-  document.getElementById("surveyTitle").setAttribute("value",Object.keys(questionTemplate)[val]);
-  templateQuestions.forEach(question => {
-    bodyDiv.appendChild(lineBreak());
-    bodyDiv.appendChild(addQuestion("1",question));
-  });
+    var templateQuestions = Object.values(questionTemplate)[val];
+    clear();
+    document.getElementById("surveyTitle").setAttribute("value",Object.keys(questionTemplate)[val]);
+    if(val == 0){
+      document.getElementById("surveyTitle").setAttribute("value","");
+    }
+    templateQuestions.forEach(question => {
+      addQuestion("1",question);
+    });
 }
 
 function clear(){
@@ -37,7 +28,8 @@ function clear(){
   questionCount = 0;
 }
 
-function createBody() {
+OnPageLoad();
+function OnPageLoad() {
 
   var select = document.createElement("select");
   select.style.border = "none";
@@ -51,7 +43,13 @@ function createBody() {
   
   select.addEventListener("change", function () {
 
-    fetchQuetionSetForTemplate(select.selectedIndex);
+    if (confirm("All your changes will be lost when template is changed. Are you sure you want to change the template?")) {
+      fetchQuetionSetForTemplate(select.selectedIndex);
+      currentSelectedTemplate = select.selectedIndex;
+    } 
+    else{
+      select.selectedIndex = currentSelectedTemplate;
+    }
   });
   root.appendChild(select);
 
@@ -72,19 +70,42 @@ function createBody() {
   questionTypeList.options.add( new Option("MCQ","1") );
   questionTypeList.options.add( new Option("TEXT","2") );
   questionTypeList.options.add( new Option("NUMBER","3") );
+  questionTypeList.selectedIndex = -1;
 
-  // questionTypeList.style.width="18px";
+
+  questionTypeList.style.width="15px";
   questionTypeList.style.height="21px";
+  questionTypeList.style.background = "#6264a7";
+  questionTypeList.style.color = "white";
+  questionTypeList.style.border = "none";
+  questionTypeList.style.outline= "none";
+  questionTypeList.style.boxShadow = "none";
+  
   
   var addQuestionButton = document.createElement("BUTTON");   // Create a <button> element
   addQuestionButton.innerHTML = "Add Question";
   addQuestionButton.style.float = "left"; 
+  addQuestionButton.style.background = "#6264a7";
+  addQuestionButton.style.color = "white";
+  addQuestionButton.style.border = "none";
+  addQuestionButton.style.height = "21px";
+  addQuestionButton.style.marginRight= "1px";
+  addQuestionButton.style.outline= "none";
+  addQuestionButton.style.boxShadow = "none";
 
    
 
   var submit = document.createElement("BUTTON");   // Create a <button> element
   submit.innerHTML = "Create Form";
   submit.style.float = "right";
+  submit.style.background = "#6264a7";
+  submit.style.color = "white";
+  submit.style.border = "none";
+  submit.style.height = "21px";
+  submit.style.outline= "none";
+  submit.style.boxShadow = "none";
+  submit.setAttribute("id","submitForm");
+
 
   footerDiv.appendChild(linebreak);
   footerDiv.appendChild(addQuestionButton);
@@ -92,126 +113,19 @@ function createBody() {
   footerDiv.appendChild(submit);
 
   addQuestionButton.addEventListener("click", function () {
-    var linebreak = document.createElement('br');
-    bodyDiv.appendChild(linebreak);
-    bodyDiv.appendChild(addQuestion(questionTypeList.value));
+   addQuestion("1");
+  });
+
+  questionTypeList.addEventListener("change", function () {
+    addQuestion(questionTypeList.value);
+    questionTypeList.selectedIndex = -1;
   });
 
 
   submit.addEventListener("click", function () {
 
-    submitForm();
+    submitFormNew();
   });
-}
-
-function submitForm() {
-  var surveyTitle = (<HTMLInputElement>document.getElementById("surveyTitle")).value;
-  createQuestionArray();
-  sendActioninstance(surveyTitle, questions);
-}
-
-function createQuestionArray() {
-//parth: need to update this for text and Number and Multi Options
-
-  questionMap.forEach(question => {
-
-    var val : string = (<HTMLInputElement>document.getElementById(question.id)).value+"~";
-    question.isOptional?val+"1":val+"0";
-    val = val +"~"+question.dt+question.type;
-    
-    if( mcqChoicesMap.get(question.id)){
-      mcqChoicesMap.get(question.id).forEach(choiceId => {
-        val = val+"~"+(<HTMLInputElement>document.getElementById(choiceId)).value
-      });
-    }
-
-    questions.push(val);
-  });
-
-}
-
-function sendActioninstance(surveyTitle: string, questions: string[]) {
-
-  let actionInstance = getActionInstance(surveyTitle, questions);
-
-  ActionSDK.APIs.getCurrentContext()
-    .then((context: ActionSDK.ActionContext) => {
-      ActionSDK.ActionUtils.prepareActionInstance(actionInstance, context);
-      let data = CreateViewData(actionInstance, surveyTitle);
-      ActionSDK.APIs.createActionInstance(actionInstance, data);
-    });
-
-}
-
-function getActionInstance(title: string, questions: string[]) {
-
-  let columnArray: ActionSDK.ActionInstanceColumn[] = [];
-
-  questionMap.forEach(ques => {
-  
-    var title = (<HTMLInputElement>document.getElementById(ques.id)).value;
-   
-    let col: ActionSDK.ActionInstanceColumn = {
-      id: ques.id,
-      type: ques.type,
-      title: title,
-      isOptional: ques.isOptional,
-      options: []
-    }
-
-    col.isInvisible = false;
-    col.isExcludedFromReporting = true;
-
-    if( mcqChoicesMap.get(ques.id)){
-      mcqChoicesMap.get(ques.id).forEach(choiceId => {
-        let option: ActionSDK.ActionInstanceColumnOption = {
-          id: choiceId,
-          title: (<HTMLInputElement>document.getElementById(choiceId)).value
-        }
-        col.options.push(option);
-      });
-    }
-
-    columnArray.push(col);
-  });
-
-  let actionInstance: ActionSDK.ActionInstance = {
-    title: title,
-    expiry: ActionSDK.Utils.getDefaultExpiry(7).getTime(),
-    columns: columnArray,
-    properties: []
-  };
-
-  actionInstance.rowsVisibility = ActionSDK.Visibility.All;
-
-  actionInstance.notificationSettings = [];
-  var notificationSettingsMode: ActionSDK.NotificationSettingMode;
-  notificationSettingsMode = ActionSDK.NotificationSettingMode.None;
-
-  actionInstance.notificationSettings.push({
-    mode: notificationSettingsMode,
-    time: 330
-  });
-
-  actionInstance.canUserAddMultipleRows = false;
-
-  actionInstance.isAnonymous = false;
-
-  return actionInstance;
-}
-
-function CreateViewData(actionInstance: ActionSDK.ActionInstance, title: string) {
-
-  let surveyData = {
-    ti: title,
-    et: ActionSDK.Utils.getDefaultExpiry(7).getTime(),
-    ia: actionInstance.isAnonymous ? 1 : 0,
-    cl: questions,
-    ns: `${actionInstance.notificationSettings[0].mode}~${actionInstance.notificationSettings[0].time}`,
-    rv: 1,
-    mr: 0
-  };
-  return surveyData;
 }
 
 function createInputElement(ph: string, id: string) {
@@ -231,18 +145,17 @@ function deleteQuestion(img,qId){
 function addMcqQuestion(question?:JSON) {
   var qDiv = document.createElement("div");
   var cDiv = document.createElement("ul");
-  var questionHeading = document.createElement('label'); // Heading of Form
-  var inputelement = document.createElement('input'); // Create Input Field for Name
   var qId = questionCount.toString();
+  var questionHeading = document.createElement('label'); // Heading of Form
+
+  var inputelement = document.createElement('input'); // Create Input Field for Name
   var choices = [];
   mcqChoicesMap.set(qId,choices);
   var ques = new Question(qId,"SingleOption",0,true); 
-   questionMap.set(qId,ques);
-
-  questionHeading.innerHTML = (questionCount+1)+".";
+  questionMap.set(qId,ques);
 
   var img = document.createElement('img');
-  img.setAttribute('src','images/delete.svg');
+  img.setAttribute('src','../images/delete.svg');
   img.style.height = "20px";
   img.style.float = "right";
   img.addEventListener("click",function(){
@@ -269,28 +182,27 @@ function addMcqQuestion(question?:JSON) {
   qDiv.appendChild(linebreak);
   qDiv.appendChild(questionHeading);
   qDiv.appendChild(img);
-  // qDiv.appendChild(img);
   qDiv.appendChild(inputelement);
 
   if(question != null){
     inputelement.value = question["title"];
 
     question["options"].forEach(option => {
-      choices.push(qId + "" + choiceCount);
+      choices.push(qId + "c" + choiceCount);
       mcqChoicesMap.set(qId,choices);
 
-      var choice = addChoice("Add Choice", qId + "" + choiceCount++,option.title);
+      var choice = addChoice("Add Choice", qId + "c" + choiceCount++,option.title);
       cDiv.appendChild(choice);
 
     });
   }
   else{
-    choices.push(qId + "" + choiceCount);
-    var choice = addChoice("Add Choice", qId + "" + choiceCount++);
+    choices.push(qId + "c" + choiceCount);
+    var choice = addChoice("Add Choice", qId + "c" + choiceCount++);
     cDiv.appendChild(choice);
 
-    choices.push(qId + "" + choiceCount);
-    choice = addChoice("Add Choice", qId + "" + choiceCount++);
+    choices.push(qId + "c" + choiceCount);
+    choice = addChoice("Add Choice", qId + "c" + choiceCount++);
     cDiv.appendChild(choice);
 
     mcqChoicesMap.set(qId,choices);
@@ -298,9 +210,15 @@ function addMcqQuestion(question?:JSON) {
   
 
   var addChoiceButton = document.createElement("BUTTON");   // Create a <button> element
-  addChoiceButton.innerHTML = "Add Choice";
+  addChoiceButton.innerHTML = "+ Add Choice";
   addChoiceButton.style.marginLeft = "25px"
   addChoiceButton.style.float = "left"; 
+  addChoiceButton.style.background = "rgb(220, 220, 220)";
+  addChoiceButton.style.color = "#6264a7";
+  addChoiceButton.style.border = "none";
+  addChoiceButton.style.height = "21px";
+  addChoiceButton.style.outline= "none";
+  addChoiceButton.style.boxShadow = "none";
 
   addChoiceButton.addEventListener("click", function () {
 
@@ -326,13 +244,11 @@ function addNumberQuestion(question?:JSON) {
   var ques = new Question(qId,"Numeric",-1,true); 
    questionMap.set(qId,ques);
 
-  questionHeading.innerHTML = (questionCount+1) +". ";
-
   if(question != null){
     inputelement.value = question["title"];
   }
   var img = document.createElement('img');
-  img.setAttribute('src','images/delete.svg');
+  img.setAttribute('src','../images/delete.svg');
   img.style.height = "20px";
   img.style.float = "right";
   img.addEventListener("click",function(){
@@ -357,10 +273,7 @@ function addNumberQuestion(question?:JSON) {
   qDiv.appendChild(questionHeading);
   qDiv.appendChild(img);
   qDiv.appendChild(inputelement);
-  
-
   qDiv.appendChild(addInputElement("Enter Number", questionCount+"0","",true));
-
   qDiv.appendChild(linebreak);
 
   questionCount++;
@@ -375,13 +288,12 @@ function addTextQuestion(question?:JSON) {
   var ques = new Question(qId,"Text",-1,true); 
    questionMap.set(qId,ques);
 
-  questionHeading.innerHTML = (questionCount+1)+".  ";
    if(question != null){
     inputelement.value = question["title"];
   }
 
   var img = document.createElement('img');
-  img.setAttribute('src','images/delete.svg');
+  img.setAttribute('src','../images/delete.svg');
   img.style.height = "20px";
   img.style.float = "right";
   img.addEventListener("click",function(){
@@ -415,6 +327,7 @@ function lineBreak(){
   return document.createElement('br');
 }
 
+
 function addQuestion(type:string,question?:JSON) {
 
   var newQues;
@@ -432,7 +345,11 @@ function addQuestion(type:string,question?:JSON) {
   newQues.style.padding = "10px";
   newQues.style.width = "100%"
   newQues.style.border = "none";
+  newQues.style.margin = "10px 0 10px 0"
   questionCount++;
+  bodyDiv.appendChild(newQues);
+  window.scrollTo(0,document.body.scrollHeight);
+
   return newQues;
 }
 
@@ -471,3 +388,81 @@ function addChoice(ph: string, id: string,val:string="",disableInput:boolean=fal
   li.appendChild(inputelement);
   return li;
 }
+
+function getQuestionSet() {
+  let columnArray = [];
+  questionMap.forEach(ques => {
+
+       var title = (<HTMLInputElement>document.getElementById(ques.id)).value;
+       let val =  {
+            id: ques.id,
+            title: title,
+            type: ques.type,
+            allowNullValue: false,
+            options: []
+       }
+
+       if( mcqChoicesMap.get(ques.id)){
+         mcqChoicesMap.get(ques.id).forEach(choiceId => {
+           let option = {
+
+             id: choiceId,
+             title: (<HTMLInputElement>document.getElementById(choiceId)).value
+           }
+           val.options.push(option);
+         });
+       }
+      columnArray.push(val);
+  });
+
+  return columnArray;
+}
+
+function createAction(actionPackageId) {
+
+  var questionsSet = getQuestionSet();
+  var action = {
+      id: generateGUID(),
+      actionPackageId: actionPackageId,
+      version: 1,
+      title: (<HTMLInputElement>document.getElementById("surveyTitle")).value,
+      expiryTime: new Date().getTime() + (7 * 24 * 60 * 60 * 1000),
+      properties: [],
+      dataSets: [
+          {
+              id: "TestDataSet",
+              itemsVisibility: actionSDK.Visibility.All,
+              itemsEditable: false,
+              canUserAddMultipleItems: true,
+              dataFields: questionsSet
+          }
+      ]
+  };
+  var request = new actionSDK.CreateAction.Request(action);
+  actionSDK.executeApi(request)
+  .then(function ( response: actionSDK.GetContext.Response) {
+    console.info("CreateAction - Response: " + JSON.stringify(response));
+      })
+      .catch(function (error) {
+          console.error("CreateAction - Error: " + JSON.stringify(error));
+      });
+}
+
+function generateGUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+  });
+}
+
+function submitFormNew() {
+  actionSDK.executeApi(new actionSDK.GetContext.Request())
+  .then(function ( response: actionSDK.GetContext.Response) {
+      console.info("GetContext - Response: " + JSON.stringify(response));
+      createAction(response.context.actionPackageId);
+  })
+.catch(function (error) {
+    console.error("GetContext - Error: " + JSON.stringify(error));
+  });
+}
+

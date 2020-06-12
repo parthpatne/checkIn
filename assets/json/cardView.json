@@ -1,38 +1,19 @@
 {
     "view": {
-        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
         "type": "AdaptiveCard",
         "version": "1.0",
         "body": [
             {
-                "type": "ColumnSet",
-                "columns": [
-                    {
-                        "type": "Column",
-                        "width": "stretch",
-                        "verticalContentAlignment": "center",
-                        "items": [
-                            {
-                                "type": "TextBlock",
-                                "text": "**{userProfiles[instance.creatorId].displayName}** created a Test Action Package",
-                                "size": "small",
-                                "wrap": true
-                            },
-                            {
-                                "type": "TextBlock",
-                                "text": "Due by {{DATE({instance.expiry}, SHORT)}} {{TIME({instance.expiry})}}",
-                                "size": "small",
-                                "wrap": true,
-                                "isSubtle": true,
-                                "spacing": "none"
-                            }
-                        ]
-                    }
-                ]
+                "id": "Sender",
+                "type": "TextBlock",
+                "text": "Sender: ${creator[0].displayName}",
+                "size": "small",
+                "wrap": true
             },
             {
+                "id": "Title",
                 "type": "TextBlock",
-                "text": "{instance.title}",
+                "text": "Title: ${instance.title}",
                 "size": "large",
                 "maxLines": 3,
                 "wrap": true,
@@ -40,41 +21,13 @@
                 "spacing": "small"
             },
             {
-                "$when": "{instance.rowsVisibility == 'All'}",
-                "type": "TextBlock",
-                "text": "Results visible to everyone",
-                "maxLines": 2,
-                "wrap": true,
-                "isSubtle": true,
-                "size": "small",
-                "spacing": "none"
-            },
-            {
-                "$when": "{instance.rowsVisibility == 'Sender'}",
-                "type": "TextBlock",
-                "text": "Results visible to sender only",
-                "size": "small",
-                "maxLines": 2,
-                "wrap": true,
-                "isSubtle": true,
-                "spacing": "none"
-            },
-            {
+                "id": "Questions",
                 "type": "Container",
                 "style": "emphasis",
                 "items": [
                     {
-                        "$when": "{instance.columns.length == 1}",
                         "type": "TextBlock",
-                        "text": "1 question",
-                        "size": "medium",
-                        "wrap": true,
-                        "spacing": "medium"
-                    },
-                    {
-                        "$when": "{instance.columns.length > 1}",
-                        "type": "TextBlock",
-                        "text": "{instance.columns.length} questions",
+                        "text": "Questions: ${count(instance.columns)}",
                         "size": "medium",
                         "wrap": true,
                         "spacing": "medium"
@@ -82,19 +35,9 @@
                 ]
             },
             {
-                "$when": "{summary.rowCreatorCount == 0}",
+                "id": "Summary",
                 "type": "TextBlock",
-                "text": "Be the first one to respond",
-                "size": "small",
-                "weight": "bolder",
-                "maxLines": 2,
-                "wrap": true,
-                "spacing": "small"
-            },
-            {
-                "$when": "{summary.rowCreatorCount > 0}",
-                "type": "TextBlock",
-                "text": "{summary.rowCreatorCount} people responded",
+                "text": "Responses: ${summary.rowCount}, Responders: ${summary.rowCreatorCount}",
                 "size": "small",
                 "weight": "bolder",
                 "maxLines": 2,
@@ -104,6 +47,8 @@
         ],
         "actions": [
             {
+                "id": "RespondButton",
+                "$when": "${equals(instance.Status, 'Active')}",
                 "title": "Respond",
                 "command": "LaunchActionView",
                 "parameters": {
@@ -111,7 +56,8 @@
                 }
             },
             {
-                "title": "View Results",
+                "id": "ResultButton",
+                "title": "View Result",
                 "command": "LaunchActionView",
                 "parameters": {
                     "viewName": "DetailView"
@@ -129,7 +75,7 @@
                 "isShortSummary": true
             }
         },
-        "userProfiles": {
+        "creator": {
             "command": "GetUserProfiles",
             "parameters": {
                 "userIds": [

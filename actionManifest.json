@@ -1,6 +1,6 @@
 {
-    "id": "com.microsoft.sample.checkIn",
-    "name": "Check In ",
+    "id": "com.microsoft.sample.checkIn.newSdk",
+    "name": "CheckIn (parth)",
     "description": "Check In for Employees",
     "provider": {
         "name": "Microsoft",
@@ -10,22 +10,22 @@
     },
     "icon": "images/appIcon.png",
     "actionModel": "actionModel.json",
-    "version": "1.0.0",
+    "version": "1.0.6",
     "views": {
         "CardView": {
             "sourceLocation": "json/cardView.json"
         },
         "LaunchView": {
             "sourceLocation": "html/createView.html",
-            "header": "Test Create View"
+            "header": "Survey For Employee Sentiment"
         },
         "UpdateView": {
             "sourceLocation": "html/updateView.html",
-            "header": "Test Update View"
+            "header": "Response:"
         },
         "DetailView": {
             "sourceLocation": "html/detailView.html",
-            "header": "Test Detail View"
+            "header": "Summary"
         }
     },
     "localizationInfo": {

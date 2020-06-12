@@ -1,12 +1,11 @@
 
-import * as ActionSDK from 'actionSDK2';
-ActionSDK.APIs.actionViewDidLoad(true /*success*/);
+import * as actionSDK from 'action-sdk-sunny';
 
 var root = document.getElementById("root");
-let actionInstance:  ActionSDK.ActionInstance = null;
-let actionSummary : ActionSDK.ActionInstanceSummary = null;
+let actionInstance = null;
+let actionSummary  = null;
 
-initialize();
+OnPageLoad();
 
 function createBody(){
 
@@ -17,22 +16,20 @@ function createBody(){
 
 }
 
-
 function createQuestionView(){
 
   var count = 1;
-  actionInstance.columns.forEach((column: ActionSDK.ActionInstanceColumn) => {
+  actionInstance.dataSets[0].dataFields.forEach((column) => {
     
           var qDiv = document.createElement("div");
-
           var linebreak = document.createElement('br');
           qDiv.appendChild(linebreak);  
 
-          var questionHeading = document.createElement('h4'); // Heading of For
+          var questionHeading = document.createElement('h4'); 
           questionHeading.innerHTML = count + "."+ column.title;
           qDiv.appendChild(questionHeading);      
 
-          column.options.forEach((option:ActionSDK.ActionInstanceColumnOption) => {
+          column.options.forEach((option) => {
            var optionView = getAggregateOptionView(option.title,option.id,column.id);
            qDiv.appendChild(optionView);
            
@@ -47,7 +44,7 @@ function getAggregateOptionView( title,optionId,columnId) {
 
     var oDiv = document.createElement("div");
     
-    var optionTitle = document.createElement('h6'); // Heading of For
+    var optionTitle = document.createElement('h6'); 
     optionTitle.innerHTML = title;
     oDiv.appendChild(optionTitle);  
 
@@ -55,7 +52,8 @@ function getAggregateOptionView( title,optionId,columnId) {
     mDiv.className = "meter";
     var spanTag1 = document.createElement('span');
 
-    var wid = JSON.parse(actionSummary.aggregates[columnId])[optionId]/actionSummary.rowCount*100;
+    // var wid = JSON.parse(actionSummary.aggregates[columnId])[optionId]/actionSummary.rowCount*100;
+    var wid = JSON.parse(actionSummary.defaultAggregates[columnId])[optionId]/actionSummary.itemCount*100;
     spanTag1.style.width =  isNaN(wid) ? "0%": wid + "%";
 
     mDiv.appendChild(spanTag1);  
@@ -67,23 +65,31 @@ function getAggregateOptionView( title,optionId,columnId) {
     return oDiv;  
 } 
 
-function initialize(){
-
-    ActionSDK.APIs.getCurrentContext()
-    .then((context: ActionSDK.ActionContext) => {   
-      ActionSDK.APIs.getActionInstance(context.actionInstanceId)
-      .then((ai: ActionSDK.ActionInstance) => {
-      actionInstance = ai;
-      ActionSDK.APIs.getActionInstanceSummary(actionInstance.id, false /* isShortSummary */)
-            .then((aggregatedSummary: ActionSDK.ActionInstanceSummary) => {
-              actionSummary = aggregatedSummary;
-                createBody();
-            })
-            .catch((error: ActionSDK.ActionError) => {
-                
-            });
-      })      
-    });
-
+function OnPageLoad() {
+  actionSDK.executeApi(new actionSDK.GetContext.Request())
+  .then(function ( response: actionSDK.GetContext.Response) {
+          console.info("GetContext - Response: " + JSON.stringify(response));
+          getDataItems(response.context.actionId);
+      })
+      .catch(function (error) {
+          console.error("GetContext - Error: " + JSON.stringify(error));
+      });
 }
 
+function getDataItems(actionId) {
+  var getActionRequest = new actionSDK.GetAction.Request(actionId);
+  var getSummaryRequest = new actionSDK.GetActionDataItemsSummary.Request(actionId,true);
+  var getDataItemsRequest = new actionSDK.GetActionDataItems.Request(actionId);
+  // var closeViewRequest = new actionSDK.CloseView.Request();
+  var batchRequest = new actionSDK.BaseApi.BatchRequest([getActionRequest, getSummaryRequest, getDataItemsRequest]);
+  actionSDK.executeBatchApi(batchRequest)
+      .then(function (batchResponse: actionSDK.BaseApi.BatchResponse) {
+          console.info("BatchResponse: " + JSON.stringify(batchResponse));
+          actionInstance = (<actionSDK.GetAction.Response>batchResponse.responses[0]).action;
+          actionSummary = (<actionSDK.GetActionDataItemsSummary.Response>batchResponse.responses[1]).summary;
+          createBody();
+      })
+      .catch(function (error) {
+          console.log("Error: " + JSON.stringify(error));
+      });
+}
