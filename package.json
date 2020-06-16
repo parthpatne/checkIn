@@ -5,8 +5,10 @@
     "scripts": {
         "build": "webpack --env.mode=prod --env.watch=false",
         "zip": "cd ./output && bestzip ./ActionPackage.zip *",
-        "upload": "upload-action-package -z ./output/ActionPackage.zip -t ./output/",
-        "deploy": "npm run build && npm run zip && npm run upload"
+        "upload-with-teams": "upload-action-package -z ./output/ActionPackage.zip -t ./output/",
+        "upload-without-teams": "upload-action-package -z ./output/ActionPackage.zip",
+        "deploy-with-teams": "npm run build && npm run zip && npm run upload-with-teams",
+        "deploy-without-teams": "npm run build && npm run zip && npm run upload-without-teams"
     },
     "license": "ISC",
     "devDependencies": {
