@@ -3,7 +3,7 @@
     "description": "Survey for employee sentiment",
     "version": "1.0.0",
     "scripts": {
-        "build": "webpack --env.mode=prod --env.watch=false",
+        "build": "webpack --env.mode=dev --env.watch=false",
         "zip": "cd ./output && bestzip ./ActionPackage.zip *",
         "upload-with-teams": "upload-action-package -z ./output/ActionPackage.zip -t ./output/",
         "upload-without-teams": "upload-action-package -z ./output/ActionPackage.zip",
@@ -25,6 +25,7 @@
     },
     "dependencies": {
         "action-sdk-sunny": "^1.0.18",
-        "lodash": "^4.17.15"
+        "lodash": "^4.17.15",
+        "uuid": "^8.0.0"
     }
 }
