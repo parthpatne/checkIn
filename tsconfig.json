@@ -1,10 +1,18 @@
 {
-  "compilerOptions": {
-    "outDir": "./output/",
-    "sourceMap": true,
-    "noImplicitAny": false,
-    "target": "es5",
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-  }
+    "compilerOptions": {
+        "outDir": "./output",
+        "target": "es5",
+        "sourceMap": true,
+        "noImplicitAny": false,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "esnext"
+        ]
+    },
+    "include": [
+        "./src/**/*.ts"
+    ]
 }

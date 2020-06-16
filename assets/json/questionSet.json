@@ -1,126 +1,127 @@
-{  "None":[],
+{
+    "None": [],
     "LockDownFeedback": [
-            {
-                "id": "0",
-                "title": "How is work life balance",
-                "isOptional": true,
-                "type": "MultiOption",
-                "options": [ 
-                    {
-                        "id": "00",
-                        "title": "Hell like"
-                    },
-                    {
-                        "id": "01",
-                        "title": "Thk Thak"
-                    },
-                    {
-                        "id": "02",
-                        "title": "Maze Mai"
-                    }
-                ]
-            },
-            {
-                "id": "1",
-                "title": "Ghar ka kam kitna hai",
-                "isOptional": true,
-                "type": "MultiOption",
-                "options": [ 
-                    {
-                        "id": "10",
-                        "title": "Break Fast"
-                    },
-                    {
-                        "id": "11",
-                        "title": "Lunch"
-                    },
-                    {
-                        "id": "12",
-                        "title": "Dinner"
-                    }
-                ]
-            },
-            {
-                "id": "2",
-                "title": "Extra Kam",
-                "isOptional": true,
-                "type": "MultiOption",
-                "options": [ 
-                    {
-                        "id": "20",
-                        "title": "Sbji & Groceries"
-                    },
-                    {
-                        "id": "21",
-                        "title": "Dairy Iteams"
-                    },
-                    {
-                        "id": "21",
-                        "title": "Bartan dhona"
-                    }
-                ]
-            }
-        ],
-        "AssetRequirement": [
-            {
-                "id": "0",
-                "title": "Do you required any assets",
-                "isOptional": true,
-                "type": "MultiOption",
-                "options": [ 
-                    {
-                        "id": "00",
-                        "title": "Yes"
-                    },
-                    {
-                        "id": "01",
-                        "title": "No"
-                    },
-                    {
-                        "id": "02",
-                        "title": "Can't Say"
-                    }
-                ]
-            },
-            {
-                "id": "1",
-                "title": "Need Chair",
-                "isOptional": true,
-                "type": "MultiOption",
-                "options": [ 
-                    {
-                        "id": "10",
-                        "title": "Yes Chair"
-                    },
-                    {
-                        "id": "11",
-                        "title": "No Chair"
-                    },
-                    {
-                        "id": "12",
-                        "title": "De do Chair"
-                    }
-                ]
-            },
-            {
-                "id": "2",
-                "title": "Table Required?",
-                "isOptional": true,
-                "type": "MultiOption",
-                "options": [ 
-                    {
-                        "id": "20",
-                        "title": "yes table"
-                    },
-                    {
-                        "id": "21",
-                        "title": "No table"
-                    },
-                    {
-                        "id": "21",
-                        "title": "De do table"
-                    }
-                ]
-            }
-        ]
+        {
+            "id": "0",
+            "title": "How is work life balance",
+            "isOptional": true,
+            "type": "MultiOption",
+            "options": [
+                {
+                    "id": "00",
+                    "title": "Hell like"
+                },
+                {
+                    "id": "01",
+                    "title": "Thk Thak"
+                },
+                {
+                    "id": "02",
+                    "title": "Maze Mai"
+                }
+            ]
+        },
+        {
+            "id": "1",
+            "title": "Ghar ka kam kitna hai",
+            "isOptional": true,
+            "type": "MultiOption",
+            "options": [
+                {
+                    "id": "10",
+                    "title": "Break Fast"
+                },
+                {
+                    "id": "11",
+                    "title": "Lunch"
+                },
+                {
+                    "id": "12",
+                    "title": "Dinner"
+                }
+            ]
+        },
+        {
+            "id": "2",
+            "title": "Extra Kam",
+            "isOptional": true,
+            "type": "MultiOption",
+            "options": [
+                {
+                    "id": "20",
+                    "title": "Sbji & Groceries"
+                },
+                {
+                    "id": "21",
+                    "title": "Dairy Iteams"
+                },
+                {
+                    "id": "21",
+                    "title": "Bartan dhona"
+                }
+            ]
+        }
+    ],
+    "AssetRequirement": [
+        {
+            "id": "0",
+            "title": "Do you required any assets",
+            "isOptional": true,
+            "type": "MultiOption",
+            "options": [
+                {
+                    "id": "00",
+                    "title": "Yes"
+                },
+                {
+                    "id": "01",
+                    "title": "No"
+                },
+                {
+                    "id": "02",
+                    "title": "Can't Say"
+                }
+            ]
+        },
+        {
+            "id": "1",
+            "title": "Need Chair",
+            "isOptional": true,
+            "type": "MultiOption",
+            "options": [
+                {
+                    "id": "10",
+                    "title": "Yes Chair"
+                },
+                {
+                    "id": "11",
+                    "title": "No Chair"
+                },
+                {
+                    "id": "12",
+                    "title": "De do Chair"
+                }
+            ]
+        },
+        {
+            "id": "2",
+            "title": "Table Required?",
+            "isOptional": true,
+            "type": "MultiOption",
+            "options": [
+                {
+                    "id": "20",
+                    "title": "yes table"
+                },
+                {
+                    "id": "21",
+                    "title": "No table"
+                },
+                {
+                    "id": "21",
+                    "title": "De do table"
+                }
+            ]
+        }
+    ]
 }

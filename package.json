@@ -1,28 +1,26 @@
 {
-  "name": "TestActionPackage",
-  "description": "",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "build": "webpack"
-  },
-  "license": "ISC",
-  "devDependencies": {
-    "clean-webpack-plugin": "^3.0.0",
-    "copy-webpack-plugin": "^5.1.1",
-    "file-loader": "^6.0.0",
-    "html-loader": "^1.1.0",
-    "ts-loader": "^7.0.0",
-    "typescript": "^3.8.3",
-    "webpack": "^4.42.1",
-    "webpack-cli": "^3.3.11"
-  },
-  "types": "./node_modules/actionsdk2/ActionContext.d.ts",
-  "dependencies": {
-    "@microsoft/teams-js": "^1.6.0",
-    "actionsdk2": "^1.4.0",
-    "action-sdk-sunny": "^1.0.18",
-    "lodash": "^4.17.15",
-    "yarn": "^1.22.4"
-  }
+    "name": "check-in",
+    "description": "Survey for employee sentiment",
+    "version": "1.0.0",
+    "scripts": {
+        "build": "webpack --env.mode=prod --env.watch=false",
+        "build-dev": "webpack --env.mode=dev --env.watch=false",
+        "start": "webpack --env.mode=dev --env.watch=true"
+    },
+    "license": "ISC",
+    "devDependencies": {
+        "clean-webpack-plugin": "^3.0.0",
+        "copy-webpack-plugin": "^5.1.1",
+        "file-loader": "^6.0.0",
+        "html-loader": "^1.1.0",
+        "ts-loader": "^7.0.0",
+        "typescript": "^3.8.3",
+        "webpack": "^4.42.1",
+        "webpack-cli": "^3.3.11"
+    },
+    "dependencies": {
+        "action-package-deploy": "^1.0.6",
+        "action-sdk-sunny": "^1.0.18",
+        "lodash": "^4.17.15"
+    }
 }
