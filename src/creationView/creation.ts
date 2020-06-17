@@ -1,6 +1,8 @@
-import questionTemplate from '../../assets/json/questionSet.json';
-import { Question } from './Question';
 import * as actionSDK from 'action-sdk-sunny';
+import questionTemplate from '../../assets/json/questionSet.json';
+import { Utils } from "../common/Utils";
+import { UxUtils } from '../common/UxUtils';
+import { Question } from './Question';
 
 var keys = Object.keys(questionTemplate);
 var questionMap = new Map();
@@ -71,7 +73,7 @@ function createAction(actionPackageId) {
 
     var questionsSet = getQuestionSet();
     var action = {
-        id: generateGUID(),
+        id: Utils.generateGUID(),
         actionPackageId: actionPackageId,
         version: 1,
         title: (<HTMLInputElement>document.getElementById("surveyTitle")).value,
@@ -97,14 +99,6 @@ function createAction(actionPackageId) {
         });
 }
 
-//need to create util file for this
-function generateGUID() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
-}
-
 function submitForm() {
     actionSDK.executeApi(new actionSDK.GetContext.Request())
         .then(function (response: actionSDK.GetContext.Response) {
@@ -118,7 +112,6 @@ function submitForm() {
 
 
 function OnPageLoad() {
-
     var selectTemplate = document.createElement("select");
     var surveytitle = createInputElement("Survey title", "surveyTitle");
     var linebreak = document.createElement('br');
@@ -132,13 +125,14 @@ function OnPageLoad() {
     });
 
     selectTemplate.addEventListener("change", function () {
-        if (confirm("All your changes will be lost when template is changed. Are you sure you want to change the template?")) {
-            fetchQuetionSetForTemplate(selectTemplate.selectedIndex);
-            currentSelectedTemplate = selectTemplate.selectedIndex;
-        }
-        else {
-            selectTemplate.selectedIndex = currentSelectedTemplate;
-        }
+        UxUtils.showAlertDailog("Template Change", "All your changes will be lost when template is changed. Are you sure you want to change the template?",
+            "OK", () => {
+                fetchQuetionSetForTemplate(selectTemplate.selectedIndex);
+                currentSelectedTemplate = selectTemplate.selectedIndex;
+            },
+            "Cancel", () => {
+                selectTemplate.selectedIndex = currentSelectedTemplate;
+            });
     });
 
     surveytitle.className = 'surveyTitle';
@@ -206,9 +200,8 @@ function addQuestionTitleInputElement(type: string) {
 }
 
 function getQuestionDeletebutton(qId: String) {
-
     var deleteQuestionButton = document.createElement('img');
-    deleteQuestionButton.setAttribute('src', '../images/delete.svg');
+    deleteQuestionButton.setAttribute('src', 'images/delete.svg');
     deleteQuestionButton.style.height = "20px";
     deleteQuestionButton.style.float = "right";
     deleteQuestionButton.addEventListener("click", function () {
@@ -217,6 +210,7 @@ function getQuestionDeletebutton(qId: String) {
 
     return deleteQuestionButton;
 }
+
 function addMcqQuestion(question?: JSON) {
     var qDiv = document.createElement("div");
     var cDiv = document.createElement("ul");
@@ -244,18 +238,18 @@ function addMcqQuestion(question?: JSON) {
             choices.push(qId + "c" + choiceCount);
             mcqChoicesMap.set(qId, choices);
 
-            var choice = addChoice("Add Choice", qId + "c" + choiceCount++, option.title);
+            var choice = addChoice("Add Choice", qId, qId + "c" + choiceCount++, option.title);
             cDiv.appendChild(choice);
 
         });
     }
     else {
         choices.push(qId + "c" + choiceCount);
-        var choice = addChoice("Add Choice", qId + "c" + choiceCount++);
+        var choice = addChoice("Add Choice", qId, qId + "c" + choiceCount++);
         cDiv.appendChild(choice);
 
         choices.push(qId + "c" + choiceCount);
-        choice = addChoice("Add Choice", qId + "c" + choiceCount++);
+        choice = addChoice("Add Choice", qId, qId + "c" + choiceCount++);
         cDiv.appendChild(choice);
 
         mcqChoicesMap.set(qId, choices);
@@ -267,7 +261,7 @@ function addMcqQuestion(question?: JSON) {
     addChoiceButton.addEventListener("click", function () {
 
         choices.push(qId + "" + choiceCount);
-        var choice = addChoice("Add Choice", qId + "" + choiceCount++);
+        var choice = addChoice("Add Choice", qId, qId + "" + choiceCount++);
         cDiv.appendChild(choice);
         mcqChoicesMap.set(qId, choices);
     });
@@ -367,19 +361,48 @@ function addInputElement(ph: string, id: string, val: string = "", disableInput:
     return inputelement;
 }
 
-function addChoice(ph: string, id: string, val: string = "", disableInput: boolean = false) {
+function addChoice(ph: string, questionId: string, choiceId: string, val: string = "", disableInput: boolean = false) {
     var li = document.createElement('li');
-    var inputelement = document.createElement('input');
+    UxUtils.setId(li, choiceId);
 
+    var inputelement = document.createElement('input');
     inputelement.setAttribute("type", "text");
     inputelement.setAttribute("value", val);
-    inputelement.setAttribute("id", id);
     inputelement.placeholder = ph;
     inputelement.className = 'addChoiceInput';
 
     if (disableInput) {
         inputelement.setAttribute("disabled", "disabled");
     }
-    li.appendChild(inputelement);
+
+    var deleteButton = getChoiceDeletebutton(questionId, choiceId);
+    var inputAndDelete = UxUtils.getHorizontalDiv([inputelement, deleteButton]);
+
+    li.appendChild(inputAndDelete);
     return li;
+}
+
+function getChoiceDeletebutton(questionId: string, choiceId: string) {
+    var deleteChoiceButton = document.createElement('img');
+    deleteChoiceButton.setAttribute('src', 'images/delete.svg');
+    deleteChoiceButton.style.height = "20px";
+    deleteChoiceButton.style.float = "right";
+    deleteChoiceButton.addEventListener("click", function () {
+        deleteChoice(questionId, choiceId);
+    });
+    return deleteChoiceButton;
+}
+
+function deleteChoice(questionId, choiceId) {
+    if (mcqChoicesMap.get(questionId).length == 2) {
+        UxUtils.showAlertDailog("Choice Delete Error", "At least two choices is mandatory", "OK", null, null, null);
+        return;
+    }
+    var choiceElement = document.getElementById(choiceId);
+    choiceElement.parentNode.removeChild(choiceElement);
+    var choiceIds = mcqChoicesMap.get(questionId) as string[];
+    var choiceIndex = choiceIds.indexOf(choiceId);
+    if (choiceIndex >= 0) {
+        delete choiceIds[choiceIndex];
+    }
 }

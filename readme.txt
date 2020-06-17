@@ -1,5 +1,6 @@
 Steps:
 
-1) Git clone 
-2) NPM install
-3) NPM run build
+1) git clone 
+2) npm install
+3) npm run deploy-with-teams (To upload the package for the first time)
+4) npm run deploy-without-teams (To update the package)
