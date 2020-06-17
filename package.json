@@ -5,14 +5,14 @@
     "scripts": {
         "build": "webpack --env.mode=dev --env.watch=false",
         "zip": "cd ./output && bestzip ./ActionPackage.zip *",
-        "upload-with-teams": "upload-action-package -z ./output/ActionPackage.zip -t ./output/",
-        "upload-without-teams": "upload-action-package -z ./output/ActionPackage.zip",
+        "upload-with-teams": "upload-action-package -z ./output/ActionPackage.zip -t ./output/ -e http://localhost:8859",
+        "upload-without-teams": "upload-action-package -z ./output/ActionPackage.zip -e http://localhost:8859",
         "deploy-with-teams": "npm run build && npm run zip && npm run upload-with-teams",
         "deploy-without-teams": "npm run build && npm run zip && npm run upload-without-teams"
     },
     "license": "ISC",
     "devDependencies": {
-        "action-package-deploy": "^1.0.6",
+        "action-package-deploy": "^1.0.7",
         "bestzip": "^2.1.5",
         "clean-webpack-plugin": "^3.0.0",
         "copy-webpack-plugin": "^5.1.1",
