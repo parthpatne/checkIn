@@ -233,119 +233,137 @@ float:right
 }
 
 progress[value]::-webkit-progress-bar {
-    background-color: #eee;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
-    height: 10px;
-    -moz-border-radius: 25px;
-    -webkit-border-radius: 25px;
-    border-radius: 25px;
-    border: 0;
-    /*width: 100%;*/
-  }
-  progress[value]::-webkit-progress-value {
-    background-color: rgb(207, 207, 15);
-    height: 10px;
-    -moz-border-radius: 25px;
-    -webkit-border-radius: 25px;
-    border-radius: 25px;
-    overflow: hidden;
-    /*width: 100%;*/
-    border:0;
-  }
-  progress::-moz-progress-bar {
-    border: 0;
-    height: 10px;
-    border-radius: 25px;
-    width: 100%;
-  }
-  .percentage {
-    float: right;
-    color: white;
-    margin: 5px 5px 0 0;
-    font-size: 12px;
-  }
-  .button_as_link{
-    border: none;
-    background: none;
-    outline: none;
-    height: 13px;
-    font-size: 13px;
-    font-weight: "bold"; 
-    color:black;
-  }
-  .button_as_string{
-    border: none;
-    background: none;
-    outline: none;
-  }
-  .tabs{
-    /*border: 1px solid #cccccc;*/
-    display:flex;
-    flex-direction: row;
-    width:100%;
-  }
-  .tabs__horizonal{
-    width: 100%;
-    background: #cccccc;
-  }
-  .tabs__button{
-    display: block;
-    padding: 10px;
-    /*background: rgb(161, 161, 245);*/
-    border:  none;
-    width: 100%;
-    outline: none;
-    cursor: pointer;
-  }
-  .tabs__button:active{
-    border-bottom: 1px solid #3b3c77;
-    background: #6283ee;
-    width: 100%;
-  }
-  .tabs__button--active{
-    /*background: #6283ee;*/
-    width: 100%;
-    border-bottom: #3b3c77;
-  }
-  /*.tabs__button:not(:last-of-type){
-    border-bottom: 1px solid #3b3c77;
-  }*/
-  .tabs__content{
-    padding: 15px;
-    font-size: 0.8rem;
+  background-color: #eee;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+  height: 10px;
+  -moz-border-radius: 25px;
+  -webkit-border-radius: 25px;
+  border-radius: 25px;
+  border: 0;
+  /*width: 100%;*/
+}
+progress[value]::-webkit-progress-value {
+  background-color: rgb(207, 207, 15);
+  height: 10px;
+  -moz-border-radius: 25px;
+  -webkit-border-radius: 25px;
+  border-radius: 25px;
+  overflow: hidden;
+  /*width: 100%;*/
+  border:0;
+}
+progress::-moz-progress-bar {
+  border: 0;
+  height: 10px;
+  border-radius: 25px;
+  width: 100%;
+}
+.percentage {
+  float: right;
+  color: white;
+  margin: 5px 5px 0 0;
+  font-size: 12px;
+}
+.button_as_link{
+  border: none;
+  background: none;
+  outline: none;
+  height: 13px;
+  font-size: 13px;
+  font-weight: "bold"; 
+  color:#6264a7;
+}
+.button_as_string{
+  border: none;
+  background: none;
+  outline: none;
+}
+.tabs{
+  display:flex;
+  flex-direction: row;
+  width:100%;
+}
+.tabs__horizonal{
+  width: 100%;
+  background: #cccccc;
+}
+.tabs__button{
+  display: block;
+  padding: 10px;
+  border:  none;
+  width: 100%;
+  outline: none;
+  cursor: pointer;
+}
+.tabs__button:active{
+  background: #6264a7;
+  width: 100%;
+}
+.tabs__button--active{
+  width: 100%;
+  background: #6264a7;
+}
+.tabs__content{
+  padding: 15px;
+  font-size: 0.8rem;
+  display: none;
+  height: 300px;
+  overflow-y:auto;
+  border-bottom: 1px solid dimgrey;
+  border-top: 1px solid dimgrey;
+}
+.tabs__content--active{
+  display: block;
+  height: 300px;
+}
+.vertical-divider {
+  width: 1px;
+  height: 20px;
+  background-color: dimgray;
+}
+h4 {
+  font-weight: bold;
+  font-size: medium;
+}
+.Page{
+  display: none;
+}
+.MainPage{
+  display: block;
+}
+.ResponseViewPage{
+  display: none;
+}
+.ResponsePerUserViewPage{
     display: none;
-    /*border: 1px solid #cccccc;*/
-    height: 300px;
-    /*overflow-y:scroll;*/
-    border-bottom: 1px solid dimgrey;
-    border-top: 1px solid dimgrey;
-  }
-  .tabs__content--active{
-    display: block;
-  }
-  .vertical-divider {
-    width: 1px;
-    height: 20px;
-    background-color: dimgray;
-  }
-  h4 {
+}
+.goback{
+  height: "30px";
+  bottom: "30px";
+  position: fixed;
+  background-color: #6264a7;
+}
+.responseperquestion{
+    font-family: monospace;
+    border-bottom: dotted;
+    margin-bottom: 15px;
+    margin-left : 15px;
+}
+.responseperquestion:last-of-type{
+    margin-bottom:0;
+    border-bottom: none;
+    margin-left : 15px;
+ }
+.TitleDiv{
     font-weight: bold;
-    font-size: medium;
-  }
-  .Page{
-    display: none;
-    height:450px;
-  }
-  .MainPage{
-    display: block;
-    height:450px; 
-  }
-  .ResponseView{
-    display: none;
-    height:450px;
-  }
-  .goback{
-    height: "30px";
-    bottom: "0";
-    position: fixed;
-  }
+    border-bottom: 1px solid dimgrey;
+    margin-bottom: 15px;
+    margin-top: 10px;
+}
+.responseRow{   
+  height: 350px;
+  overflow-y: auto;
+  top: 20px;
+  border-bottom: 1px solid dimgrey;
+  border-top: 1px solid dimgrey;
+}

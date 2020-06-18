@@ -11,6 +11,7 @@ let actionDataItemsLength = 0;
 let actionNonResponderslength = 0;
 let ResponderDate = [];
 let actionNonResponders = [];
+let linebreak = document.createElement("br");
 let isEmptyOrNull = (value: string) => {
     if (!value || value.trim().length === 0)
         return true;
@@ -35,7 +36,10 @@ async function createBody() {
     root.appendChild(title);
     await getUserprofile();
     root.appendChild(await mainPage());
-    getResponderList();
+    getResNonResTabs();
+    getResponderListPagePerQuestion();
+    getPageResponsePerUser();
+
 }
 
 async function mainPage() {
@@ -57,20 +61,21 @@ async function getUserprofile() {
     let memberIds: string[] = [];
     if (actionDataItemsLength > 0) {
         for (var i = 0; i < actionDataItemsLength; i++) {
-            console.log("Console log: " + actionDataItems[i].creatorId);
+            console.log("Console log: actionDataItems[i].creatorId: " + actionDataItems[i].creatorId);
+            console.log("Console log: actionDataItem[i]: " + actionDataItems[i]);
             memberIds.push(actionDataItems[i].creatorId);
             let requestResponders = new actionSDK.GetSubscriptionMembers.Request(actionContext.subscription, [actionDataItems[i].creatorId]);
             let responseResponders = await actionSDK.executeApi(requestResponders) as actionSDK.GetSubscriptionMembers.Response;
             var perUserProfile = responseResponders.members;
             console.log("Console log: actionDataItems[i]: " + actionDataItems[i].dataItems);
-            ResponderDate.push({ label: perUserProfile[0].displayName, value: new Date(actionDataItems[i].updateTime).toDateString() });
+            ResponderDate.push({ label: perUserProfile[0].displayName, value: new Date(actionDataItems[i].updateTime).toDateString(), value2: perUserProfile[0].id });
         }
         let requestResponders = new actionSDK.GetSubscriptionMembers.Request(actionContext.subscription, memberIds);
         let responseResponders = await actionSDK.executeApi(requestResponders) as actionSDK.GetSubscriptionMembers.Response;
         console.log("Console log: responseResponders.members.length " + responseResponders.members.length);
         actionUserProfiles = responseResponders.members;
-        console.log("Console log:actionUserProfiles[0] " + actionUserProfiles[0]);
-        console.log("Console log:actionUserProfiles.length" + actionUserProfiles.length);
+        console.log("Console log: actionUserProfiles[0]: " + actionUserProfiles[0]);
+        console.log("Console log: actionUserProfiles.length: " + actionUserProfiles.length);
     }
     let requestNonResponders = new actionSDK.GetActionSubscriptionNonParticipants.Request(actionContext.actionId, actionContext.subscription.id);
     let responseNonResponders = await actionSDK.executeApi(requestNonResponders) as actionSDK.GetActionSubscriptionNonParticipants.Response;
@@ -82,8 +87,8 @@ async function getUserprofile() {
         }
     }
     actionNonResponderslength = actionNonResponders.length;
-    console.log("actionNonResponders: " + actionNonResponders);
-    console.log("actionNonResponderslength: " + actionNonResponderslength);
+    console.log("Console log: actionNonResponders: " + actionNonResponders);
+    console.log("Console log: actionNonResponderslength: " + actionNonResponderslength);
 }
 
 async function getTopSummaryView() {
@@ -107,19 +112,34 @@ async function getTopSummaryView() {
     myProgress.setAttribute("value", participationPercentage.toString());
     myProgress.setAttribute("max", "100");
     progressbar.appendChild(myProgress);
-    let buttonlink = document.createElement("div");
+
+    let buttonlink = document.createElement("span");
+    let leftspan = document.createElement("span");
+    leftspan.style.float = "left";
     let parText = document.createElement("button");
     parText.className = "button_as_link"
     parText.textContent = actionSummary.itemCreatorCount + " of " + memberCount + " have responded";
     parText.addEventListener('click', function () {
-        getResNonResTabs();
         setTabs();
         setPages("1", "2");
     });
-    buttonlink.appendChild(parText);
+
+    leftspan.appendChild(parText);
+    let rightspan = document.createElement("span");
+    rightspan.style.float = "right";
+    let sendRemider = document.createElement("button");
+    sendRemider.className = "button_as_link"
+    sendRemider.textContent = "Send Reminder";
+    sendRemider.addEventListener('click', function () {
+        alert("Reminder Sent");
+    });
+    rightspan.appendChild(sendRemider);
+    buttonlink.appendChild(leftspan);
+    buttonlink.appendChild(rightspan);
+
     barDiv.appendChild(percentagebar);
     barDiv.appendChild(progressbar);
-    barDiv.appendChild(parText);
+    barDiv.appendChild(buttonlink);
     return barDiv;
 }
 
@@ -177,6 +197,10 @@ function getAggregateOptionView(title, optionId, column) {
     mDiv.appendChild(spanTag1);
 
     oDiv.appendChild(mDiv);
+    oDiv.addEventListener('click', function () {
+        getResponsesperQuestion(column, true, optionId);
+        setPages("1", "3");
+    });
     return oDiv;
 }
 
@@ -196,9 +220,9 @@ function getAggregateNumericView(column) {
     let average = questionSummary.hasOwnProperty("a") ? questionSummary["a"] : 0;
     let responsesCount = (sum === 0) ? responseCount : (Math.round(sum / average));
     let sumText = document.createElement("text");
-    sumText.innerText = sum + " Sum  |  ";
+    sumText.innerText = "  |  " + sum + "  Sum  |  ";
     let averageText = document.createElement("text");
-    averageText.innerText = average + " average  |  ";
+    averageText.innerText = average + " average";
 
     console.log("Console log: Sum :" + sum);
     console.log("Console log: Average :" + average)
@@ -209,10 +233,10 @@ function getAggregateNumericView(column) {
     responseDiv.className = "stats-indicator summary-item";
     let responseRowSpan = document.createElement("span");
     let responseText = document.createElement("button");
-    responseText.innerText = responsesCount + " Response  |  ";
+    responseText.innerText = responsesCount + " Response";
     responseText.className = "button_as_link";
     responseText.addEventListener('click', function () {
-        getResponses(column);
+        getResponsesperQuestion(column, false);
         setPages("1", "3");
     });
     responseRowSpan.appendChild(responseText);
@@ -238,7 +262,7 @@ function getAggregateTextView(column) {
     responseText.innerText = responseCount + " Response";
     responseText.className = "button_as_link";
     responseText.addEventListener('click', function () {
-        getResponses(column);
+        getResponsesperQuestion(column, false);
         setPages("1", "3");
     });
     oDiv.appendChild(responseText);
@@ -281,8 +305,7 @@ async function getResNonResTabs() {
     goback.addEventListener('click', function () {
         setPages("2", "1");
     });
-    //console.log("page2.style.display: " + page2.style.display);
-    page2.style.display = "block";
+    page2.style.display = "none";
 
     root.appendChild(page2);
 }
@@ -314,42 +337,38 @@ function getResponderTabs() {
     var tabContentDiv1 = document.createElement("div");
     tabContentDiv1.className = "tabs__content tabs__content--active";
     tabContentDiv1.setAttribute("data-tab", "1");
-    var headDiv1 = document.createElement("H3");
-    headDiv1.innerText = "Responders";
-    tabContentDiv1.appendChild(headDiv1);
     var ResponderDiv = document.createElement("div");
     console.log("Console log: getResponderTabs");
-    /*for (var itr = 0; itr < actionDataItemsLength; itr++) {
-        let requestResponders = new actionSDK.GetSubscriptionMembers.Request(actionContext.subscription, [actionDataItems[itr].creatorId]);
-        let responseResponders = await actionSDK.executeApi(requestResponders) as actionSDK.GetSubscriptionMembers.Response;
-        var perUserProfile = responseResponders.members;
-        console.log("Console log: actionDataItems[itr]: " + actionDataItems[itr].dataItems);
-        var perResponder = document.createElement("span");
-        var name = document.createElement("span");
-        name.style.float = "left";
-        var datetime = document.createElement("span");
-        datetime.style.float = "right";
-        name.innerText = perUserProfile[0].displayName;
-        datetime.innerText = new Date(actionDataItems[itr].updateTime).toDateString();
-        //perUserDataitem[perUserProfile[0].displayName] = actionDataItems[itr];
-        perResponder.appendChild(name);
-        perResponder.appendChild(datetime);
-        ResponderDiv.appendChild(perResponder);
-    }*/
     console.log("ResponderDate.length: " + ResponderDate.length);
+    let table = document.createElement('TABLE');
+    let tableBody = document.createElement('TBODY');
+    table.appendChild(tableBody);
     for (var itr = 0; itr < ResponderDate.length; itr++) {
         console.log("ResponderDate[itr].label: " + ResponderDate[itr].label);
-        var perResponder = document.createElement("span");
-        var name = document.createElement("span");
-        name.style.float = "left";
-        var datetime = document.createElement("span");
-        datetime.style.float = "right";
-        name.innerText = ResponderDate[itr].label;
-        datetime.innerText = ResponderDate[itr].value;
-        perResponder.appendChild(name);
-        perResponder.appendChild(datetime);
-        ResponderDiv.appendChild(perResponder);
+        let tr = document.createElement('TR');
+        tr.id = ResponderDate[itr].value2;
+        tableBody.appendChild(tr);
+        let td1 = document.createElement('TD');
+        td1.appendChild(document.createTextNode(ResponderDate[itr].label));
+        tr.appendChild(td1);
+        let td2 = document.createElement('TD');
+        td2.appendChild(document.createTextNode(""));
+        td2.style.width = "20%";
+        tr.appendChild(td2);
+        let td3 = document.createElement('TD');
+        td3.appendChild(document.createTextNode(ResponderDate[itr].value));
+        tr.appendChild(td3);
     }
+    tableBody.onclick = function (event) {
+        let target = (<HTMLElement>event.target);
+        if (target.tagName == 'TD') {
+            let index = (<HTMLTableRowElement>target.parentElement).rowIndex;
+            let id = (<HTMLTableRowElement>target.parentElement).id;
+            getResponsePerUser(id, index);
+            setPages("2", "4");
+        }
+    };
+    ResponderDiv.appendChild(table);
     tabContentDiv1.appendChild(ResponderDiv);
     return tabContentDiv1;
 }
@@ -358,9 +377,6 @@ function getNonRespondersTabs() {
     var tabContentDiv2 = document.createElement("div");
     tabContentDiv2.className = "tabs__content";
     tabContentDiv2.setAttribute("data-tab", "2");
-    var headDiv2 = document.createElement("H3");
-    headDiv2.innerText = "NonResponders";
-    tabContentDiv2.appendChild(headDiv2);
     var NonResponderDiv = document.createElement("div");
     console.log("Console log: getNonResponderTabs");
     console.log("actionNonResponderslength: " + actionNonResponders.length);
@@ -375,36 +391,101 @@ function getNonRespondersTabs() {
     return tabContentDiv2;
 }
 
-function getResponderList() {
+function getResponderListPagePerQuestion() {
     var responseView = document.createElement("div");
-    responseView.className = "ResponseView";
+    responseView.className = "ResponseViewPage";
     responseView.id = "3";
     console.log("responseView.style.display: " + responseView.style.display);
     responseView.style.display = "none";
     root.appendChild(responseView);
 }
 
-function getResponses(column) {
+function getResponsesperQuestion(column, options, optionId = "") {
     var rowDiv = document.createElement("div");
+    rowDiv.className = "responseRow";
     var pageId = document.getElementById("3");
     while (pageId.firstChild) {
         pageId.removeChild(pageId.firstChild);
     }
+    let questionTitle = document.createElement("div");
+    questionTitle.className = "TitleDiv";
+    questionTitle.innerText = column.title;
+    rowDiv.appendChild(questionTitle);
     if (pageId) {
-        for (var i in [0, 1, 2]) {
-            var perRow = document.createElement("div");
-            perRow.innerText = Math.random().toString();
-            rowDiv.appendChild(perRow);
+        for (var itr = 0; itr < ResponderDate.length; itr++) {
+            var rowData = document.createElement("div");
+            var perRowuser = document.createElement("div");
+            if (options) {
+                if (optionId.localeCompare(actionDataItems[itr].fieldValues[column.id]) == 0) {
+                    perRowuser.innerText = " - " + ResponderDate[itr].label;
+                    rowData.appendChild(perRowuser);
+                }
+            }
+            else {
+                perRowuser.innerText = " - " + ResponderDate[itr].label;
+                var perRowResponse = document.createElement("div");
+                perRowResponse.className = "responseperquestion"
+                perRowResponse.innerText = "Response: " + actionDataItems[itr].fieldValues[column.id];
+                rowData.appendChild(perRowuser);
+                rowData.appendChild(perRowResponse);
+            }
+            rowDiv.appendChild(rowData);
+            rowDiv.appendChild(linebreak);
             console.log("Console log: For loop in getContentForPage");
         }
     }
     var goback = document.createElement("button");
     goback.innerText = "Back";
-    rowDiv.appendChild(goback);
     goback.addEventListener('click', function () {
         setPages("3", "1");
     });
     pageId.appendChild(rowDiv);
+    pageId.appendChild(goback);
+}
+
+function getPageResponsePerUser() {
+    var ResponsePerUserView = document.createElement("div");
+    ResponsePerUserView.className = "ResponsePerUserViewPage";
+    ResponsePerUserView.id = "4";
+    ResponsePerUserView.style.display = "none";
+    root.appendChild(ResponsePerUserView);
+}
+
+function getResponsePerUser(id, index) {
+    var rowDiv = document.createElement("div");
+    rowDiv.className = "responseRow";
+    var pageId = document.getElementById("4");
+    while (pageId.firstChild) {
+        pageId.removeChild(pageId.firstChild);
+    }
+    console.log("console log: id: " + id);
+    console.log("console log: index: " + index);
+    if (pageId) {
+        var dataPerUser = actionDataItems[index].fieldValues;
+        let questionitr = 0;
+        for (var idx in dataPerUser) {
+            console.log("console log: actionDataItems[index].fieldValues[idx]: " + actionDataItems[index].fieldValues[idx]);
+            console.log("console log: actionInstance.dataSets[0].dataFields[questionitr].title:" + actionInstance.dataSets[0].dataFields[questionitr].title);
+            var rowData = document.createElement("div");
+            var ques = document.createElement("div");
+            ques.innerText = "Question: " + actionInstance.dataSets[0].dataFields[questionitr].title
+            var ans = document.createElement("div");
+            ans.className = "responseperquestion";
+            ans.innerText = "Response: " + actionDataItems[index].fieldValues[idx];
+            rowData.appendChild(ques);
+            rowData.appendChild(ans);
+            questionitr++;
+            rowDiv.appendChild(rowData);
+            rowDiv.appendChild(linebreak);
+        }
+    }
+    var goback = document.createElement("button");
+    goback.innerText = "Back";
+    goback.addEventListener('click', function () {
+        setPages("4", "2");
+    });
+    pageId.appendChild(rowDiv);
+    pageId.appendChild(goback);
 }
 
 function OnPageLoad() {
