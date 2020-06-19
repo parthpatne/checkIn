@@ -10,7 +10,7 @@ OnPageLoad();
 function createBody() {
     var title = document.createElement('h3');
     var submit = document.createElement("BUTTON");
-    title.innerHTML = actionInstance.title;
+    title.innerHTML = actionInstance.displayName;
     submit.innerHTML = "Submit";
     submit.style.float = "right";
     submit.addEventListener("click", function () {
@@ -29,26 +29,26 @@ function submitForm() {
     actionSDK.executeApi(new actionSDK.GetContext.Request())
         .then(function (response: actionSDK.GetContext.Response) {
             console.info("GetContext - Response: " + JSON.stringify(response));
-            addDataItems(response.context.actionId);
+            addDataRows(response.context.actionId);
         })
         .catch(function (error) {
             console.error("GetContext - Error: " + JSON.stringify(error));
         });
 }
 
-function getDataItem(actionId) {
+function getDataRow(actionId) {
     return {
         id: Utils.generateGUID(),
         actionId: actionId,
-        dataSetId: "TestDataSet",
-        fieldValues: row
+        dataTableId: "TestDataSet",
+        columnValues: row
     };
 }
 
-function addDataItems(actionId) {
-    var addDataItemRequest1 = new actionSDK.AddActionDataItem.Request(getDataItem(actionId));
+function addDataRows(actionId) {
+    var addDataRowRequest = new actionSDK.AddActionDataRow.Request(getDataRow(actionId));
     var closeViewRequest = new actionSDK.CloseView.Request();
-    var batchRequest = new actionSDK.BaseApi.BatchRequest([addDataItemRequest1, closeViewRequest]);
+    var batchRequest = new actionSDK.BaseApi.BatchRequest([addDataRowRequest, closeViewRequest]);
     actionSDK.executeBatchApi(batchRequest)
         .then(function (batchResponse) {
             console.info("BatchResponse: " + JSON.stringify(batchResponse));
@@ -85,27 +85,27 @@ function getActionInstance(actionId) {
 
 function createQuestionView() {
     var count = 1;
-    actionInstance.dataSets[0].dataFields.forEach((column) => {
+    actionInstance.dataTables[0].dataColumns.forEach((column) => {
         var qDiv = document.createElement("div");
         var linebreak = document.createElement('br');
         qDiv.appendChild(linebreak);
         var questionHeading = document.createElement('h4'); // Heading of For
-        questionHeading.innerHTML = count + "." + column.title;
+        questionHeading.innerHTML = count + "." + column.displayName;
         qDiv.appendChild(questionHeading);
-        if (column.type == "SingleOption") {
+        if (column.valueType == "SingleOption") {
             //add radio button
             column.options.forEach((option) => {
-                var radioOption = getRadioButton(option.title, column.id, option.id);
+                var radioOption = getRadioButton(option.displayName, column.name, option.name);
                 qDiv.appendChild(radioOption);
 
             });
         }
-        else if (column.type == "Text") {
-            var radioOption = addInputElement("Enter Text", column.id, "text");
+        else if (column.valueType == "Text") {
+            var radioOption = addInputElement("Enter Text", column.name, "text");
             qDiv.appendChild(radioOption);
         }
-        else if (column.type == "Numeric") {
-            var radioOption = addInputElement("Enter Number", column.id, "number");
+        else if (column.valueType == "Numeric") {
+            var radioOption = addInputElement("Enter Number", column.name, "number");
             qDiv.appendChild(radioOption);
         }
         root.appendChild(qDiv);

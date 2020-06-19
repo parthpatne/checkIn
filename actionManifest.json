@@ -1,6 +1,6 @@
 {
-    "id": "com.microsoft.sample.checkIn.pg",
-    "name": "App 47 Pragya",
+    "id": "com.microsoft.sample.checkIn.sunny",
+    "name": "CheckIn (sunny)",
     "description": "Survey for employee sentiment",
     "provider": {
         "name": "Microsoft",
@@ -10,7 +10,7 @@
     },
     "icon": "images/appIcon.png",
     "actionModel": "actionModel.json",
-    "version": "1.4.8",
+    "version": "1.0.9",
     "views": {
         "CardView": {
             "sourceLocation": "json/cardView.json"

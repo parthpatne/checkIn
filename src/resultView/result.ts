@@ -5,9 +5,9 @@ var root = document.getElementById("root");
 let actionInstance = null;
 let actionSummary = null;
 let actionContext = null;
-let actionDataItems = null;
+let actionDataRows = null;
 let actionUserProfiles = null;
-let actionDataItemsLength = 0;
+let actionDataRowsLength = 0;
 let actionNonResponderslength = 0;
 let ResponderDate = [];
 let actionNonResponders = [];
@@ -32,7 +32,7 @@ OnPageLoad();
 
 async function createBody() {
     var title = document.createElement('h3');
-    title.innerHTML = actionInstance.title;
+    title.innerHTML = actionInstance.displayName;
     root.appendChild(title);
     await getUserprofile();
     root.appendChild(await mainPage());
@@ -59,16 +59,16 @@ async function mainPage() {
 async function getUserprofile() {
     console.log("Console log: getUserrProfile");
     let memberIds: string[] = [];
-    if (actionDataItemsLength > 0) {
-        for (var i = 0; i < actionDataItemsLength; i++) {
-            console.log("Console log: actionDataItems[i].creatorId: " + actionDataItems[i].creatorId);
-            console.log("Console log: actionDataItem[i]: " + actionDataItems[i]);
-            memberIds.push(actionDataItems[i].creatorId);
-            let requestResponders = new actionSDK.GetSubscriptionMembers.Request(actionContext.subscription, [actionDataItems[i].creatorId]);
+    if (actionDataRowsLength > 0) {
+        for (var i = 0; i < actionDataRowsLength; i++) {
+            console.log("Console log: actionDataRows[i].creatorId: " + actionDataRows[i].creatorId);
+            console.log("Console log: actionDataRows[i]: " + actionDataRows[i]);
+            memberIds.push(actionDataRows[i].creatorId);
+            let requestResponders = new actionSDK.GetSubscriptionMembers.Request(actionContext.subscription, [actionDataRows[i].creatorId]);
             let responseResponders = await actionSDK.executeApi(requestResponders) as actionSDK.GetSubscriptionMembers.Response;
             var perUserProfile = responseResponders.members;
-            console.log("Console log: actionDataItems[i]: " + actionDataItems[i].dataItems);
-            ResponderDate.push({ label: perUserProfile[0].displayName, value: new Date(actionDataItems[i].updateTime).toDateString(), value2: perUserProfile[0].id });
+            console.log("Console log: actionDataRows[i]: " + JSON.stringify(actionDataRows[i]));
+            ResponderDate.push({ label: perUserProfile[0].displayName, value: new Date(actionDataRows[i].updateTime).toDateString(), value2: perUserProfile[0].id });
         }
         let requestResponders = new actionSDK.GetSubscriptionMembers.Request(actionContext.subscription, memberIds);
         let responseResponders = await actionSDK.executeApi(requestResponders) as actionSDK.GetSubscriptionMembers.Response;
@@ -98,7 +98,7 @@ async function getTopSummaryView() {
     let getSubscriptionCount = new actionSDK.GetSubscriptionMemberCount.Request(actionContext.subscription);
     let response = await actionSDK.executeApi(getSubscriptionCount) as actionSDK.GetSubscriptionMemberCount.Response;
     let memberCount = response.memberCount;
-    participationPercentage = Math.round((actionSummary.itemCreatorCount / memberCount) * 100);
+    participationPercentage = Math.round((actionSummary.rowCreatorCount / memberCount) * 100);
     console.log("Console log: " + participationPercentage + "% ");
     console.log("Console log: member count: " + memberCount);
     let percentagebar = document.createElement("div");
@@ -118,7 +118,7 @@ async function getTopSummaryView() {
     leftspan.style.float = "left";
     let parText = document.createElement("button");
     parText.className = "button_as_link"
-    parText.textContent = actionSummary.itemCreatorCount + " of " + memberCount + " have responded";
+    parText.textContent = actionSummary.rowCreatorCount + " of " + memberCount + " have responded";
     parText.addEventListener('click', function () {
         setTabs();
         setPages("1", "2");
@@ -146,25 +146,25 @@ async function getTopSummaryView() {
 function createQuestionView() {
     var totalQuestion = document.createElement("div");
     var count = 1;
-    actionInstance.dataSets[0].dataFields.forEach((column) => {
+    actionInstance.dataTables[0].dataColumns.forEach((column) => {
 
         var qDiv = document.createElement("div");
         var linebreak = document.createElement('br');
         var questionHeading = document.createElement('h4');
 
         qDiv.appendChild(linebreak);
-        questionHeading.innerHTML = count + "." + column.title;
+        questionHeading.innerHTML = count + "." + column.displayName;
         qDiv.appendChild(questionHeading);
         let optionView = null;
-        switch (column.type) {
-            case actionSDK.ActionDataFieldType.SingleOption:
-            case actionSDK.ActionDataFieldType.MultiOption:
-                column.options.forEach((option: actionSDK.ActionDataFieldOption) => {
-                    optionView = getAggregateOptionView(option.title, option.id, column);
+        switch (column.valueType) {
+            case actionSDK.ActionDataColumnValueType.SingleOption:
+            case actionSDK.ActionDataColumnValueType.MultiOption:
+                column.options.forEach((option: actionSDK.ActionDataColumnOption) => {
+                    optionView = getAggregateOptionView(option.displayName, option.name, column);
                     qDiv.appendChild(optionView);
                 });
                 break;
-            case actionSDK.ActionDataFieldType.Numeric:
+            case actionSDK.ActionDataColumnValueType.Numeric:
                 optionView = getAggregateNumericView(column);
                 qDiv.appendChild(optionView);
                 break;
@@ -190,8 +190,8 @@ function getAggregateOptionView(title, optionId, column) {
     mDiv.className = "meter";
     var spanTag1 = document.createElement('span');
 
-    let percentage = (actionSummary.defaultAggregates).hasOwnProperty(column.id) ? JSON.parse(actionSummary.defaultAggregates[column.id])[optionId] : 0;
-    let wid = percentage / actionSummary.itemCount * 100;
+    let percentage = (actionSummary.defaultAggregates).hasOwnProperty(column.name) ? JSON.parse(actionSummary.defaultAggregates[column.name])[optionId] : 0;
+    let wid = percentage / actionSummary.rowCount * 100;
     spanTag1.style.width = isNaN(wid) ? "0%" : wid + "%";
 
     mDiv.appendChild(spanTag1);
@@ -206,7 +206,7 @@ function getAggregateOptionView(title, optionId, column) {
 
 function getAggregateNumericView(column) {
     let oDiv = document.createElement("div");
-    let questionSummary = (actionSummary.defaultAggregates).hasOwnProperty(column.id) ? JSON.parse(actionSummary.defaultAggregates[column.id]) : {};
+    let questionSummary = (actionSummary.defaultAggregates).hasOwnProperty(column.name) ? JSON.parse(actionSummary.defaultAggregates[column.name]) : {};
     //let questionSummary = (actionSummary.aggregates).hasOwnProperty(column.id) ?  JSON.parse(actionSummary.aggregates[column.id]) : {};
     let responseCount = 0;
     for (let i = 0; i < questionSummary.length; i++) {
@@ -215,7 +215,7 @@ function getAggregateNumericView(column) {
         }
     }
     console.log("Console log: Aggregate Numeric View : " + questionSummary);
-    console.log("Console log: Question number: " + column.id);
+    console.log("Console log: Question number: " + column.name);
     let sum = questionSummary.hasOwnProperty("s") ? questionSummary["s"] : 0;
     let average = questionSummary.hasOwnProperty("a") ? questionSummary["a"] : 0;
     let responsesCount = (sum === 0) ? responseCount : (Math.round(sum / average));
@@ -251,7 +251,7 @@ function getAggregateNumericView(column) {
 function getAggregateTextView(column) {
     let oDiv = document.createElement("div");
     //let questionSummary =  (actionSummary.aggregates).hasOwnProperty(column.id) ? JSON.parse(actionSummary.aggregates[column.id]) : [];
-    let questionSummary = (actionSummary.defaultAggregates).hasOwnProperty(column.id) ? JSON.parse(actionSummary.defaultAggregates[column.id]) : [];
+    let questionSummary = (actionSummary.defaultAggregates).hasOwnProperty(column.name) ? JSON.parse(actionSummary.defaultAggregates[column.name]) : [];
     let responseCount = 0;
     for (let i = 0; i < questionSummary.length; i++) {
         if (!isEmptyOrNull(questionSummary[i])) {
@@ -409,14 +409,14 @@ function getResponsesperQuestion(column, options, optionId = "") {
     }
     let questionTitle = document.createElement("div");
     questionTitle.className = "TitleDiv";
-    questionTitle.innerText = column.title;
+    questionTitle.innerText = column.displayName;
     rowDiv.appendChild(questionTitle);
     if (pageId) {
         for (var itr = 0; itr < ResponderDate.length; itr++) {
             var rowData = document.createElement("div");
             var perRowuser = document.createElement("div");
             if (options) {
-                if (optionId.localeCompare(actionDataItems[itr].fieldValues[column.id]) == 0) {
+                if (optionId.localeCompare(actionDataRows[itr].columnValues[column.name]) == 0) {
                     perRowuser.innerText = " - " + ResponderDate[itr].label;
                     rowData.appendChild(perRowuser);
                 }
@@ -425,7 +425,7 @@ function getResponsesperQuestion(column, options, optionId = "") {
                 perRowuser.innerText = " - " + ResponderDate[itr].label;
                 var perRowResponse = document.createElement("div");
                 perRowResponse.className = "responseperquestion"
-                perRowResponse.innerText = "Response: " + actionDataItems[itr].fieldValues[column.id];
+                perRowResponse.innerText = "Response: " + actionDataRows[itr].columnValues[column.name];
                 rowData.appendChild(perRowuser);
                 rowData.appendChild(perRowResponse);
             }
@@ -461,17 +461,17 @@ function getResponsePerUser(id, index) {
     console.log("console log: id: " + id);
     console.log("console log: index: " + index);
     if (pageId) {
-        var dataPerUser = actionDataItems[index].fieldValues;
+        var dataPerUser = actionDataRows[index].columnValues;
         let questionitr = 0;
         for (var idx in dataPerUser) {
-            console.log("console log: actionDataItems[index].fieldValues[idx]: " + actionDataItems[index].fieldValues[idx]);
-            console.log("console log: actionInstance.dataSets[0].dataFields[questionitr].title:" + actionInstance.dataSets[0].dataFields[questionitr].title);
+            console.log("console log: actionDataItems[index].columnValues[idx]: " + actionDataRows[index].columnValues[idx]);
+            console.log("console log: actionInstance.dataTables[0].dataColumns[questionitr].displayName:" + actionInstance.dataTables[0].dataColumns[questionitr].displayName);
             var rowData = document.createElement("div");
             var ques = document.createElement("div");
-            ques.innerText = "Question: " + actionInstance.dataSets[0].dataFields[questionitr].title
+            ques.innerText = "Question: " + actionInstance.dataTables[0].dataColumns[questionitr].displayName
             var ans = document.createElement("div");
             ans.className = "responseperquestion";
-            ans.innerText = "Response: " + actionDataItems[index].fieldValues[idx];
+            ans.innerText = "Response: " + actionDataRows[index].columnValues[idx];
             rowData.appendChild(ques);
             rowData.appendChild(ans);
             questionitr++;
@@ -493,26 +493,26 @@ function OnPageLoad() {
         .then(function (response: actionSDK.GetContext.Response) {
             console.info("GetContext - Response: " + JSON.stringify(response));
             actionContext = response.context;
-            getDataItems(response.context.actionId);
+            getDataRows(response.context.actionId);
         })
         .catch(function (error) {
             console.error("GetContext - Error: " + JSON.stringify(error));
         });
 }
 
-function getDataItems(actionId) {
+function getDataRows(actionId) {
     var getActionRequest = new actionSDK.GetAction.Request(actionId);
-    var getSummaryRequest = new actionSDK.GetActionDataItemsSummary.Request(actionId, true);
-    var getDataItemsRequest = new actionSDK.GetActionDataItems.Request(actionId);
+    var getSummaryRequest = new actionSDK.GetActionDataRowsSummary.Request(actionId, true);
+    var getDataRowsRequest = new actionSDK.GetActionDataRows.Request(actionId);
     // var closeViewRequest = new actionSDK.CloseView.Request();
-    var batchRequest = new actionSDK.BaseApi.BatchRequest([getActionRequest, getSummaryRequest, getDataItemsRequest]);
+    var batchRequest = new actionSDK.BaseApi.BatchRequest([getActionRequest, getSummaryRequest, getDataRowsRequest]);
     actionSDK.executeBatchApi(batchRequest)
         .then(function (batchResponse: actionSDK.BaseApi.BatchResponse) {
             console.info("BatchResponse: " + JSON.stringify(batchResponse));
             actionInstance = (<actionSDK.GetAction.Response>batchResponse.responses[0]).action;
-            actionSummary = (<actionSDK.GetActionDataItemsSummary.Response>batchResponse.responses[1]).summary;
-            actionDataItems = (<actionSDK.GetActionDataItems.Response>batchResponse.responses[2]).dataItems;
-            actionDataItemsLength = actionDataItems == null ? 0 : actionDataItems.length;
+            actionSummary = (<actionSDK.GetActionDataRowsSummary.Response>batchResponse.responses[1]).summary;
+            actionDataRows = (<actionSDK.GetActionDataRows.Response>batchResponse.responses[2]).dataRows;
+            actionDataRowsLength = actionDataRows == null ? 0 : actionDataRows.length;
             createBody();
         })
         .catch(function (error) {

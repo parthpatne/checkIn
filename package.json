@@ -24,7 +24,7 @@
         "webpack-cli": "^3.3.11"
     },
     "dependencies": {
-        "action-sdk-sunny": "^1.0.18",
+        "action-sdk-sunny": "1.0.21",
         "lodash": "^4.17.15",
         "uuid": "^8.0.0"
     }

@@ -46,9 +46,9 @@ function getQuestionSet() {
 
         var title = (<HTMLInputElement>document.getElementById(ques.id)).value;
         let val = {
-            id: ques.id,
-            title: title,
-            type: ques.type,
+            name: ques.id,
+            displayName: title,
+            valueType: ques.type,
             allowNullValue: false,
             options: []
         }
@@ -57,8 +57,8 @@ function getQuestionSet() {
             mcqChoicesMap.get(ques.id).forEach(choiceId => {
                 let option = {
 
-                    id: choiceId,
-                    title: (<HTMLInputElement>document.getElementById(choiceId)).value
+                    name: choiceId,
+                    displayName: (<HTMLInputElement>document.getElementById(choiceId)).value
                 }
                 val.options.push(option);
             });
@@ -76,16 +76,16 @@ function createAction(actionPackageId) {
         id: Utils.generateGUID(),
         actionPackageId: actionPackageId,
         version: 1,
-        title: (<HTMLInputElement>document.getElementById("surveyTitle")).value,
+        displayName: (<HTMLInputElement>document.getElementById("surveyTitle")).value,
         expiryTime: new Date().getTime() + (7 * 24 * 60 * 60 * 1000),
         properties: [],
-        dataSets: [
+        dataTables: [
             {
-                id: "TestDataSet",
-                itemsVisibility: actionSDK.Visibility.All,
-                itemsEditable: false,
-                canUserAddMultipleItems: true,
-                dataFields: questionsSet
+                name: "TestDataSet",
+                rowsVisibility: actionSDK.Visibility.All,
+                rowsEditable: false,
+                canUserAddMultipleRows: true,
+                dataColumns: questionsSet
             }
         ]
     };

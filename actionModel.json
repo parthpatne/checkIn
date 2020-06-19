@@ -2,12 +2,12 @@
     "properties": {
         "canAddMore": true
     },
-    "dataSets": {
+    "dataTables": {
         "canAddMore": false,
         "values": [
             {
-                "id": "TestDataSet",
-                "dataFields": {
+                "name": "TestDataTable",
+                "dataColumns": {
                     "canAddMore": true
                 }
             }
