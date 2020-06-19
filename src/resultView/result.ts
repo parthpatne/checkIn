@@ -61,34 +61,25 @@ async function getUserprofile() {
     let memberIds: string[] = [];
     if (actionDataRowsLength > 0) {
         for (var i = 0; i < actionDataRowsLength; i++) {
-            console.log("Console log: actionDataRows[i].creatorId: " + actionDataRows[i].creatorId);
-            console.log("Console log: actionDataRows[i]: " + actionDataRows[i]);
             memberIds.push(actionDataRows[i].creatorId);
             let requestResponders = new actionSDK.GetSubscriptionMembers.Request(actionContext.subscription, [actionDataRows[i].creatorId]);
             let responseResponders = await actionSDK.executeApi(requestResponders) as actionSDK.GetSubscriptionMembers.Response;
             var perUserProfile = responseResponders.members;
-            console.log("Console log: actionDataRows[i]: " + JSON.stringify(actionDataRows[i]));
             ResponderDate.push({ label: perUserProfile[0].displayName, value: new Date(actionDataRows[i].updateTime).toDateString(), value2: perUserProfile[0].id });
         }
         let requestResponders = new actionSDK.GetSubscriptionMembers.Request(actionContext.subscription, memberIds);
         let responseResponders = await actionSDK.executeApi(requestResponders) as actionSDK.GetSubscriptionMembers.Response;
-        console.log("Console log: responseResponders.members.length " + responseResponders.members.length);
         actionUserProfiles = responseResponders.members;
-        console.log("Console log: actionUserProfiles[0]: " + actionUserProfiles[0]);
-        console.log("Console log: actionUserProfiles.length: " + actionUserProfiles.length);
     }
     let requestNonResponders = new actionSDK.GetActionSubscriptionNonParticipants.Request(actionContext.actionId, actionContext.subscription.id);
     let responseNonResponders = await actionSDK.executeApi(requestNonResponders) as actionSDK.GetActionSubscriptionNonParticipants.Response;
     var tempresponse = responseNonResponders.nonParticipants;
     if (tempresponse != null) {
         for (var i = 0; i < tempresponse.length; i++) {
-            console.log("Hey Here");
             actionNonResponders.push({ label: tempresponse[i].displayName, value: tempresponse[i].id });
         }
     }
     actionNonResponderslength = actionNonResponders.length;
-    console.log("Console log: actionNonResponders: " + actionNonResponders);
-    console.log("Console log: actionNonResponderslength: " + actionNonResponderslength);
 }
 
 async function getTopSummaryView() {
@@ -99,8 +90,6 @@ async function getTopSummaryView() {
     let response = await actionSDK.executeApi(getSubscriptionCount) as actionSDK.GetSubscriptionMemberCount.Response;
     let memberCount = response.memberCount;
     participationPercentage = Math.round((actionSummary.rowCreatorCount / memberCount) * 100);
-    console.log("Console log: " + participationPercentage + "% ");
-    console.log("Console log: member count: " + memberCount);
     let percentagebar = document.createElement("div");
     let headingpercentage = document.createElement("text");
     headingpercentage.innerText = "Participation " + participationPercentage + " %";
@@ -117,7 +106,9 @@ async function getTopSummaryView() {
     let leftspan = document.createElement("span");
     leftspan.style.float = "left";
     let parText = document.createElement("button");
-    parText.className = "button_as_link"
+    parText.className = "button_as_string"
+    parText.style.fontSize = "10px";
+    parText.style.fontWeight = "bold";
     parText.textContent = actionSummary.rowCreatorCount + " of " + memberCount + " have responded";
     parText.addEventListener('click', function () {
         setTabs();
@@ -125,17 +116,17 @@ async function getTopSummaryView() {
     });
 
     leftspan.appendChild(parText);
-    let rightspan = document.createElement("span");
+    /*let rightspan = document.createElement("span");
     rightspan.style.float = "right";
     let sendRemider = document.createElement("button");
-    sendRemider.className = "button_as_link"
+    sendRemider.className = "button_as_string"
     sendRemider.textContent = "Send Reminder";
     sendRemider.addEventListener('click', function () {
         alert("Reminder Sent");
     });
-    rightspan.appendChild(sendRemider);
+    rightspan.appendChild(sendRemider);*/
     buttonlink.appendChild(leftspan);
-    buttonlink.appendChild(rightspan);
+    //buttonlink.appendChild(rightspan);
 
     barDiv.appendChild(percentagebar);
     barDiv.appendChild(progressbar);
@@ -181,13 +172,14 @@ function createQuestionView() {
 function getAggregateOptionView(title, optionId, column) {
 
     var oDiv = document.createElement("div");
-    var optionTitle = document.createElement('h6');
+    var optionTitle = document.createElement('text');
+    optionTitle.className = "textDisplay";
 
     optionTitle.innerHTML = title;
     oDiv.appendChild(optionTitle);
 
     var mDiv = document.createElement("div");
-    mDiv.className = "meter";
+    mDiv.className = "meter clickable";
     var spanTag1 = document.createElement('span');
 
     let percentage = (actionSummary.defaultAggregates).hasOwnProperty(column.name) ? JSON.parse(actionSummary.defaultAggregates[column.name])[optionId] : 0;
@@ -195,7 +187,6 @@ function getAggregateOptionView(title, optionId, column) {
     spanTag1.style.width = isNaN(wid) ? "0%" : wid + "%";
 
     mDiv.appendChild(spanTag1);
-
     oDiv.appendChild(mDiv);
     oDiv.addEventListener('click', function () {
         getResponsesperQuestion(column, true, optionId);
@@ -214,27 +205,28 @@ function getAggregateNumericView(column) {
             responseCount++;
         }
     }
-    console.log("Console log: Aggregate Numeric View : " + questionSummary);
-    console.log("Console log: Question number: " + column.name);
     let sum = questionSummary.hasOwnProperty("s") ? questionSummary["s"] : 0;
     let average = questionSummary.hasOwnProperty("a") ? questionSummary["a"] : 0;
     let responsesCount = (sum === 0) ? responseCount : (Math.round(sum / average));
+
+    let responseRowSpan = document.createElement("span");
     let sumText = document.createElement("text");
-    sumText.innerText = "  |  " + sum + "  Sum  |  ";
+    sumText.className = "textDisplay";
+    sumText.style.position = "absolute"
+    sumText.style.textAlign = "center";
+    sumText.style.width = "50%";
+    sumText.innerText = sum + "  Sum";
     let averageText = document.createElement("text");
+    averageText.className = "textDisplay";
     averageText.innerText = average + " average";
-
-    console.log("Console log: Sum :" + sum);
-    console.log("Console log: Average :" + average)
-    console.log("Console log: ResponseCount: " + responsesCount);
-
+    averageText.style.float = "right";
     let responseDiv = document.createElement("div");
     responseDiv.style.gap = "gap.medium";
     responseDiv.className = "stats-indicator summary-item";
-    let responseRowSpan = document.createElement("span");
     let responseText = document.createElement("button");
+    responseText.style.float = "left";
     responseText.innerText = responsesCount + " Response";
-    responseText.className = "button_as_link";
+    responseText.className = "button_as_string";
     responseText.addEventListener('click', function () {
         getResponsesperQuestion(column, false);
         setPages("1", "3");
@@ -260,7 +252,7 @@ function getAggregateTextView(column) {
     }
     let responseText = document.createElement("button");
     responseText.innerText = responseCount + " Response";
-    responseText.className = "button_as_link";
+    responseText.className = "button_as_string";
     responseText.addEventListener('click', function () {
         getResponsesperQuestion(column, false);
         setPages("1", "3");
@@ -300,6 +292,7 @@ async function getResNonResTabs() {
 
     var goback = document.createElement("button");
     goback.innerText = "Back";
+    goback.className = "button_as_string";
     page2.appendChild(goback);
 
     goback.addEventListener('click', function () {
@@ -338,15 +331,13 @@ function getResponderTabs() {
     tabContentDiv1.className = "tabs__content tabs__content--active";
     tabContentDiv1.setAttribute("data-tab", "1");
     var ResponderDiv = document.createElement("div");
-    console.log("Console log: getResponderTabs");
-    console.log("ResponderDate.length: " + ResponderDate.length);
     let table = document.createElement('TABLE');
     let tableBody = document.createElement('TBODY');
     table.appendChild(tableBody);
     for (var itr = 0; itr < ResponderDate.length; itr++) {
-        console.log("ResponderDate[itr].label: " + ResponderDate[itr].label);
         let tr = document.createElement('TR');
         tr.id = ResponderDate[itr].value2;
+        tr.className = "textDisplay clickable"
         tableBody.appendChild(tr);
         let td1 = document.createElement('TD');
         td1.appendChild(document.createTextNode(ResponderDate[itr].label));
@@ -383,6 +374,7 @@ function getNonRespondersTabs() {
     for (var itr = 0; itr < actionNonResponders.length; itr++) {
         console.log("Console log: row in Nonresponder: " + actionNonResponders[itr].label);
         var perResponder = document.createElement("div");
+        perResponder.className = "textDisplay";
         perResponder.className = "nonResRow";
         perResponder.innerText = actionNonResponders[itr].label;
         NonResponderDiv.appendChild(perResponder);
@@ -415,6 +407,7 @@ function getResponsesperQuestion(column, options, optionId = "") {
         for (var itr = 0; itr < ResponderDate.length; itr++) {
             var rowData = document.createElement("div");
             var perRowuser = document.createElement("div");
+            perRowuser.className = "textDisplay";
             if (options) {
                 if (optionId.localeCompare(actionDataRows[itr].columnValues[column.name]) == 0) {
                     perRowuser.innerText = " - " + ResponderDate[itr].label;
@@ -431,11 +424,11 @@ function getResponsesperQuestion(column, options, optionId = "") {
             }
             rowDiv.appendChild(rowData);
             rowDiv.appendChild(linebreak);
-            console.log("Console log: For loop in getContentForPage");
         }
     }
     var goback = document.createElement("button");
     goback.innerText = "Back";
+    goback.className = "button_as_string";
     goback.addEventListener('click', function () {
         setPages("3", "1");
     });
@@ -458,16 +451,13 @@ function getResponsePerUser(id, index) {
     while (pageId.firstChild) {
         pageId.removeChild(pageId.firstChild);
     }
-    console.log("console log: id: " + id);
-    console.log("console log: index: " + index);
     if (pageId) {
         var dataPerUser = actionDataRows[index].columnValues;
         let questionitr = 0;
         for (var idx in dataPerUser) {
-            console.log("console log: actionDataItems[index].columnValues[idx]: " + actionDataRows[index].columnValues[idx]);
-            console.log("console log: actionInstance.dataTables[0].dataColumns[questionitr].displayName:" + actionInstance.dataTables[0].dataColumns[questionitr].displayName);
             var rowData = document.createElement("div");
             var ques = document.createElement("div");
+            ques.className = "textDisplay";
             ques.innerText = "Question: " + actionInstance.dataTables[0].dataColumns[questionitr].displayName
             var ans = document.createElement("div");
             ans.className = "responseperquestion";
@@ -492,6 +482,7 @@ function getResponsePerUser(id, index) {
     }
     var goback = document.createElement("button");
     goback.innerText = "Back";
+    goback.className = "button_as_string";
     goback.addEventListener('click', function () {
         setPages("4", "2");
     });
