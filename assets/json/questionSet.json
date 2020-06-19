@@ -1,125 +1,173 @@
 {
     "None": [],
-    "LockDownFeedback": [
+    "Performance": [
         {
             "id": "0",
-            "title": "How is work life balance",
+            "title": "I know what constitutes good performance in my role",
             "isOptional": true,
             "type": "MultiOption",
             "options": [
                 {
                     "id": "00",
-                    "title": "Hell like"
+                    "title": "Strongly Agree"
                 },
                 {
                     "id": "01",
-                    "title": "Thk Thak"
+                    "title": "Agree"
                 },
                 {
                     "id": "02",
-                    "title": "Maze Mai"
+                    "title": "Neither Agree Nor Disagree"
+                },
+                {
+                    "id": "03",
+                    "title": "Disagree"
+                },
+                {
+                    "id": "04",
+                    "title": "Strongly Disagree"
                 }
             ]
         },
         {
             "id": "1",
-            "title": "Ghar ka kam kitna hai",
+            "title": "I feel motivated to do my best work",
             "isOptional": true,
             "type": "MultiOption",
             "options": [
                 {
                     "id": "10",
-                    "title": "Break Fast"
+                    "title": "Strongly Agree"
                 },
                 {
                     "id": "11",
-                    "title": "Lunch"
+                    "title": "Agree"
                 },
                 {
                     "id": "12",
-                    "title": "Dinner"
+                    "title": "Neither Agree Nor Disagree"
+                },
+                {
+                    "id": "13",
+                    "title": "Disagree"
+                },
+                {
+                    "id": "14",
+                    "title": "Strongly Disagree"
                 }
             ]
         },
         {
             "id": "2",
-            "title": "Extra Kam",
+            "title": "I am comfortable sharing concerns and obstacles with my manager when they arise",
             "isOptional": true,
             "type": "MultiOption",
             "options": [
                 {
                     "id": "20",
-                    "title": "Sbji & Groceries"
+                    "title": "Strongly Agree"
                 },
                 {
                     "id": "21",
-                    "title": "Dairy Iteams"
+                    "title": "Agree"
                 },
                 {
-                    "id": "21",
-                    "title": "Bartan dhona"
+                    "id": "22",
+                    "title": "Neither Agree Nor Disagree"
+                },
+                {
+                    "id": "23",
+                    "title": "Disagree"
+                },
+                {
+                    "id": "24",
+                    "title": "Strongly Disagree"
                 }
             ]
         }
     ],
-    "AssetRequirement": [
+    "Goals": [
         {
             "id": "0",
-            "title": "Do you required any assets",
+            "title": "I am equipped to reach my goals",
             "isOptional": true,
             "type": "MultiOption",
             "options": [
                 {
                     "id": "00",
-                    "title": "Yes"
+                    "title": "Strongly Agree"
                 },
                 {
                     "id": "01",
-                    "title": "No"
+                    "title": "Agree"
                 },
                 {
                     "id": "02",
-                    "title": "Can't Say"
+                    "title": "Neither Agree Nor Disagree"
+                },
+                {
+                    "id": "03",
+                    "title": "Disagree"
+                },
+                {
+                    "id": "04",
+                    "title": "Strongly Disagree"
                 }
             ]
         },
         {
             "id": "1",
-            "title": "Need Chair",
+            "title": "I feel stretched by my goals",
             "isOptional": true,
             "type": "MultiOption",
             "options": [
                 {
                     "id": "10",
-                    "title": "Yes Chair"
+                    "title": "Strongly Agree"
                 },
                 {
                     "id": "11",
-                    "title": "No Chair"
+                    "title": "Agree"
                 },
                 {
                     "id": "12",
-                    "title": "De do Chair"
+                    "title": "Neither Agree Nor Disagree"
+                },
+                {
+                    "id": "13",
+                    "title": "Disagree"
+                },
+                {
+                    "id": "14",
+                    "title": "Strongly Disagree"
                 }
             ]
         },
         {
             "id": "2",
-            "title": "Table Required?",
+            "title": "My goals will have a meaningful impact on the organisation",
             "isOptional": true,
             "type": "MultiOption",
             "options": [
                 {
                     "id": "20",
-                    "title": "yes table"
+                    "title": "Strongly Agree"
                 },
                 {
                     "id": "21",
-                    "title": "No table"
+                    "title": "Agree"
                 },
                 {
-                    "id": "21",
-                    "title": "De do table"
+                    "id": "22",
+                    "title": "Neither Agree Nor Disagree"
+                },
+                {
+                    "id": "23",
+                    "title": "Disagree"
+                },
+                {
+                    "id": "24",
+                    "title": "Strongly Disagree"
                 }
             ]
         }

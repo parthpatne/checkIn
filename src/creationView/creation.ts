@@ -56,9 +56,8 @@ function getQuestionSet() {
         if (mcqChoicesMap.get(ques.id)) {
             mcqChoicesMap.get(ques.id).forEach(choiceId => {
                 let option = {
-
                     name: choiceId,
-                    displayName: (<HTMLInputElement>document.getElementById(choiceId)).value
+                    displayName: (<HTMLInputElement>document.getElementById(choiceId + "ip")).value
                 }
                 val.options.push(option);
             });
@@ -370,6 +369,7 @@ function addChoice(ph: string, questionId: string, choiceId: string, val: string
     inputelement.setAttribute("value", val);
     inputelement.placeholder = ph;
     inputelement.className = 'addChoiceInput';
+    UxUtils.setId(inputelement, choiceId + "ip");
 
     if (disableInput) {
         inputelement.setAttribute("disabled", "disabled");
