@@ -471,7 +471,18 @@ function getResponsePerUser(id, index) {
             ques.innerText = "Question: " + actionInstance.dataTables[0].dataColumns[questionitr].displayName
             var ans = document.createElement("div");
             ans.className = "responseperquestion";
-            ans.innerText = "Response: " + actionDataRows[index].columnValues[idx];
+            if (actionInstance.dataTables[0].dataColumns[questionitr].valueType.localeCompare("SingleOption") == 0 || actionInstance.dataTables[0].dataColumns[questionitr].valueType.localeCompare("MultiOption") == 0) {
+                var optionques = actionInstance.dataTables[0].dataColumns[questionitr].options
+                for (var opt = 0; opt < optionques.length; opt++) {
+                    if ((optionques[opt].name).localeCompare(actionDataRows[index].columnValues[idx])) {
+                        ans.innerText = "Response: " + optionques[opt].displayName;
+                        break;
+                    }
+                }
+            }
+            else {
+                ans.innerText = "Response: " + actionDataRows[index].columnValues[idx];
+            }
             rowData.appendChild(ques);
             rowData.appendChild(ans);
             questionitr++;
