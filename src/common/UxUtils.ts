@@ -379,6 +379,8 @@ export class UxUtils {
         can.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0);
         return can;
     }
+    /////////////////// HTML Elements ///////////////////
+
 
     /////////////////// CSS Attributes ///////////////////
 
@@ -457,6 +459,18 @@ export class UxUtils {
         return attributes;
     }
 
+    public static lineBreak() {
+        return document.createElement('br');
+    }
+
+    public static createInputElement(ph: string, id: string, type: string) {
+        var inputelement = document.createElement('input');
+        inputelement.setAttribute("type", type);
+        inputelement.setAttribute("value", "");
+        inputelement.setAttribute("id", id);
+        inputelement.placeholder = ph;
+        return inputelement;
+    }
     private static spinnerCSSAdded = false;
     private static addLoadingSpinnerAnimation() {
         if (this.spinnerCSSAdded) {

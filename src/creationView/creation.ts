@@ -4,7 +4,7 @@ import { Utils } from "../common/Utils";
 import { UxUtils } from '../common/UxUtils';
 import { Question } from './Question';
 
-var keys = Object.keys(questionTemplate);
+var questionTemplateKeys = Object.keys(questionTemplate);
 var questionMap = new Map();
 var mcqChoicesMap = new Map();
 var root = document.getElementById("root");
@@ -112,14 +112,14 @@ function submitForm() {
 
 function OnPageLoad() {
     var selectTemplate = document.createElement("select");
-    var surveytitle = createInputElement("Survey title", "surveyTitle");
-    var linebreak = document.createElement('br');
+    var surveytitle = UxUtils.createInputElement("Survey title", "surveyTitle", "text");
     var questionTypeList = document.createElement("select");
     var addQuestionButton = document.createElement("BUTTON");   // Create a <button> element
     var submit = document.createElement("BUTTON");   // Create a <button> element
 
-    selectTemplate.className = 'selectTemplateDropDown';
-    keys.forEach(element => {
+    UxUtils.setClass(selectTemplate, 'selectTemplateDropDown');
+    // selectTemplate.className = 'selectTemplateDropDown';
+    questionTemplateKeys.forEach(element => {
         selectTemplate.options.add(new Option(element));
     });
 
@@ -134,27 +134,29 @@ function OnPageLoad() {
             });
     });
 
-    surveytitle.className = 'surveyTitle';
+    UxUtils.setClass(surveytitle, 'surveyTitle');
 
     questionTypeList.options.add(new Option("MCQ", "1"));
     questionTypeList.options.add(new Option("TEXT", "2"));
     questionTypeList.options.add(new Option("NUMBER", "3"));
     questionTypeList.selectedIndex = -1;
-    questionTypeList.className = 'questionTypeList';
     addQuestionButton.innerHTML = "Add Question";
-    addQuestionButton.className = 'addQuestionButton';
     submit.innerHTML = "Create Form";
     submit.setAttribute("id", "submitForm");
-    submit.className = 'submitButton';
 
-    root.appendChild(selectTemplate);
-    root.appendChild(surveytitle);
-    root.appendChild(bodyDiv);
-    root.appendChild(footerDiv);
-    footerDiv.appendChild(linebreak);
-    footerDiv.appendChild(addQuestionButton);
-    footerDiv.appendChild(questionTypeList);
-    footerDiv.appendChild(submit);
+    UxUtils.setClass(questionTypeList, 'questionTypeList');
+    UxUtils.setClass(addQuestionButton, 'addQuestionButton');
+    UxUtils.setClass(submit, 'submitButton');
+    UxUtils.setClass(footerDiv, 'creationFooterDiv');
+
+    UxUtils.addElement(selectTemplate, root);
+    UxUtils.addElement(surveytitle, root);
+    UxUtils.addElement(bodyDiv, root);
+    UxUtils.addElement(footerDiv, root);
+    UxUtils.addElement(UxUtils.lineBreak(), footerDiv);
+    UxUtils.addElement(addQuestionButton, footerDiv);
+    UxUtils.addElement(questionTypeList, footerDiv);
+    UxUtils.addElement(submit, footerDiv);
 
     addQuestionButton.addEventListener("click", function () {
         addQuestion("1");
@@ -173,40 +175,19 @@ function OnPageLoad() {
 
 // *********************************************** HTML ELEMENT***********************************************
 
-function createInputElement(ph: string, id: string) {
-    var inputelement = document.createElement('input'); // Create Input Field for Name
-    inputelement.setAttribute("type", "text");
-    inputelement.setAttribute("id", id);
-    inputelement.placeholder = ph;
-    return inputelement;
-}
-
-function deleteQuestion(img, qId) {
-    var elem = document.getElementById(img.parentNode.id);
-    elem.parentNode.removeChild(elem);
+function deleteQuestion(elem, qId) {
+    var parentDiv = document.getElementById(elem.parentNode.id);
+    UxUtils.removeElement(parentDiv);
     questionMap.delete(qId);
-}
-
-function addQuestionTitleInputElement(type: string) {
-    var inputelement = document.createElement('input'); // Create Input Field for Name
-    inputelement.setAttribute("type", type);
-    inputelement.setAttribute("value", "");
-    inputelement.setAttribute("id", questionCount.toString());
-    inputelement.className = 'addQuestionTitleInputElement';
-    inputelement.placeholder = "Enter Question";
-
-    return inputelement;
 }
 
 function getQuestionDeletebutton(qId: String) {
     var deleteQuestionButton = document.createElement('img');
     deleteQuestionButton.setAttribute('src', 'images/delete.svg');
-    deleteQuestionButton.style.height = "20px";
-    deleteQuestionButton.style.float = "right";
+    UxUtils.setClass(deleteQuestionButton, 'deleteQuestionButton');
     deleteQuestionButton.addEventListener("click", function () {
         deleteQuestion(this, qId);
     });
-
     return deleteQuestionButton;
 }
 
@@ -216,7 +197,7 @@ function addMcqQuestion(question?: JSON) {
     var qId = questionCount.toString();
     var questionHeading = document.createElement('label'); // Heading of Form
     var choiceCount = 0;
-    var inputelement = addQuestionTitleInputElement("text"); // Create Input Field for Name
+    var inputelement = UxUtils.createInputElement("Enter Question", questionCount.toString(), "text"); // Create Input Field for Name
     var choices = [];
     var ques = new Question(qId, "SingleOption", 0, true);
     var addChoiceButton = document.createElement("BUTTON");   // Create a <button> element
@@ -225,10 +206,12 @@ function addMcqQuestion(question?: JSON) {
     mcqChoicesMap.set(qId, choices);
     questionMap.set(qId, ques);
     qDiv.setAttribute("id", qId + "div");
-    qDiv.appendChild(lineBreak());
-    qDiv.appendChild(questionHeading);
-    qDiv.appendChild(getQuestionDeletebutton(qId));
-    qDiv.appendChild(inputelement);
+
+    UxUtils.setClass(inputelement, 'addQuestionTitleInputElement');
+    UxUtils.addElement(UxUtils.lineBreak(), qDiv);
+    UxUtils.addElement(questionHeading, qDiv);
+    UxUtils.addElement(getQuestionDeletebutton(qId), qDiv);
+    UxUtils.addElement(inputelement, qDiv);
 
     if (question != null) {
         inputelement.value = question["title"];
@@ -238,36 +221,35 @@ function addMcqQuestion(question?: JSON) {
             mcqChoicesMap.set(qId, choices);
 
             var choice = addChoice("Add Choice", qId, qId + "c" + choiceCount++, option.title);
-            cDiv.appendChild(choice);
-
+            UxUtils.addElement(choice, cDiv);
         });
     }
     else {
         choices.push(qId + "c" + choiceCount);
         var choice = addChoice("Add Choice", qId, qId + "c" + choiceCount++);
-        cDiv.appendChild(choice);
+        UxUtils.addElement(choice, cDiv);
 
         choices.push(qId + "c" + choiceCount);
         choice = addChoice("Add Choice", qId, qId + "c" + choiceCount++);
-        cDiv.appendChild(choice);
+        UxUtils.addElement(choice, cDiv);
 
         mcqChoicesMap.set(qId, choices);
     }
 
     addChoiceButton.innerHTML = "+ Add Choice";
-    addChoiceButton.className = 'addChoiceButton';
+    UxUtils.setClass(addChoiceButton, 'addChoiceButton');
 
     addChoiceButton.addEventListener("click", function () {
 
         choices.push(qId + "" + choiceCount);
         var choice = addChoice("Add Choice", qId, qId + "" + choiceCount++);
-        cDiv.appendChild(choice);
+        UxUtils.addElement(choice, cDiv);
         mcqChoicesMap.set(qId, choices);
     });
 
-    qDiv.appendChild(cDiv);
-    qDiv.appendChild(addChoiceButton);
-    qDiv.appendChild(lineBreak());
+    UxUtils.addElement(cDiv, qDiv);
+    UxUtils.addElement(addChoiceButton, qDiv);
+    UxUtils.addElement(UxUtils.lineBreak(), qDiv);
 
     return qDiv;
 }
@@ -275,7 +257,7 @@ function addMcqQuestion(question?: JSON) {
 function addNumberQuestion(question?: JSON) {
     var qDiv = document.createElement("div");
     var questionHeading = document.createElement('label'); // Heading of Form
-    var inputelement = addQuestionTitleInputElement("text"); // Create Input Field for Name
+    var inputelement = UxUtils.createInputElement("Enter Question", questionCount.toString(), "text"); // Create Input Field for Name
     var qId = questionCount.toString();
     var ques = new Question(qId, "Numeric", -1, true);
 
@@ -286,13 +268,14 @@ function addNumberQuestion(question?: JSON) {
     }
 
     qDiv.setAttribute("id", questionCount + "div");
-    qDiv.appendChild(lineBreak());
-    qDiv.appendChild(questionHeading);
-    qDiv.appendChild(getQuestionDeletebutton(qId));
-    qDiv.appendChild(inputelement);
-    qDiv.appendChild(addInputElement("Enter Number", questionCount + "0", "", true));
-    qDiv.appendChild(lineBreak());
 
+    UxUtils.setClass(inputelement, 'addQuestionTitleInputElement');
+    UxUtils.addElement(UxUtils.lineBreak(), qDiv);
+    UxUtils.addElement(questionHeading, qDiv);
+    UxUtils.addElement(getQuestionDeletebutton(qId), qDiv);
+    UxUtils.addElement(inputelement, qDiv);
+    UxUtils.addElement(addInputElement("Enter Number", questionCount + "0", "", true), qDiv);
+    UxUtils.addElement(UxUtils.lineBreak(), qDiv);
     questionCount++;
     return qDiv;
 }
@@ -300,7 +283,7 @@ function addNumberQuestion(question?: JSON) {
 function addTextQuestion(question?: JSON) {
     var qDiv = document.createElement("div");
     var questionHeading = document.createElement('label'); // Heading of Form
-    var inputelement = addQuestionTitleInputElement("text"); // Create Input Field for Name
+    var inputelement = UxUtils.createInputElement("Enter Question", questionCount.toString(), "text"); // Create Input Field for Name
     var qId = questionCount.toString();
     var ques = new Question(qId, "Text", -1, true);
 
@@ -311,18 +294,16 @@ function addTextQuestion(question?: JSON) {
     }
 
     qDiv.setAttribute("id", questionCount + "div");
-    qDiv.appendChild(questionHeading);
-    qDiv.appendChild(getQuestionDeletebutton(qId));
-    qDiv.appendChild(inputelement);
-    qDiv.appendChild(addInputElement("Enter Text", questionCount + "0", "", true));
-    qDiv.appendChild(lineBreak());
+
+    UxUtils.setClass(inputelement, 'addQuestionTitleInputElement');
+    UxUtils.addElement(questionHeading, qDiv);
+    UxUtils.addElement(getQuestionDeletebutton(qId), qDiv);
+    UxUtils.addElement(inputelement, qDiv);
+    UxUtils.addElement(addInputElement("Enter Text", questionCount + "0", "", true), qDiv);
+    UxUtils.addElement(UxUtils.lineBreak(), qDiv);
 
     questionCount++;
     return qDiv;
-}
-
-function lineBreak() {
-    return document.createElement('br');
 }
 
 function addQuestion(type: string, question?: JSON) {
@@ -337,9 +318,10 @@ function addQuestion(type: string, question?: JSON) {
     if (type == "3") {
         newQues = addNumberQuestion(question);
     }
-    newQues.className = 'baseQuestion';
+    UxUtils.setClass(newQues, 'baseQuestion');
+
     questionCount++;
-    bodyDiv.appendChild(newQues);
+    UxUtils.addElement(newQues, bodyDiv);
     window.scrollTo(0, document.body.scrollHeight);
 
     return newQues;
@@ -352,7 +334,7 @@ function addInputElement(ph: string, id: string, val: string = "", disableInput:
     inputelement.setAttribute("value", val);
     inputelement.setAttribute("id", id);
     inputelement.placeholder = ph;
-    inputelement.className = 'inputElement';
+    UxUtils.setClass(inputelement, 'inputElement');
     if (disableInput) {
         inputelement.setAttribute("disabled", "disabled");
     }
@@ -368,7 +350,7 @@ function addChoice(ph: string, questionId: string, choiceId: string, val: string
     inputelement.setAttribute("type", "text");
     inputelement.setAttribute("value", val);
     inputelement.placeholder = ph;
-    inputelement.className = 'addChoiceInput';
+    UxUtils.setClass(inputelement, 'addChoiceInput');
     UxUtils.setId(inputelement, choiceId + "ip");
 
     if (disableInput) {
@@ -378,15 +360,14 @@ function addChoice(ph: string, questionId: string, choiceId: string, val: string
     var deleteButton = getChoiceDeletebutton(questionId, choiceId);
     var inputAndDelete = UxUtils.getHorizontalDiv([inputelement, deleteButton]);
 
-    li.appendChild(inputAndDelete);
+    UxUtils.addElement(inputAndDelete, li);
     return li;
 }
 
 function getChoiceDeletebutton(questionId: string, choiceId: string) {
     var deleteChoiceButton = document.createElement('img');
     deleteChoiceButton.setAttribute('src', 'images/delete.svg');
-    deleteChoiceButton.style.height = "20px";
-    deleteChoiceButton.style.float = "right";
+    UxUtils.setClass(deleteChoiceButton, 'deleteChoiceButton');
     deleteChoiceButton.addEventListener("click", function () {
         deleteChoice(questionId, choiceId);
     });

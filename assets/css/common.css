@@ -17,6 +17,11 @@ label::before {
   content: counter(myCounter) ". "; 
 }
 
+h4::before { 
+    counter-increment: myCounter; 
+    content: counter(myCounter) ". "; 
+}
+
 div#root{
 text-align:left;
 width:-webkit-fill-available;
@@ -159,6 +164,19 @@ CSS for Creation View
   border-radius :3px;
 }
 
+.creationFooterDiv{
+    padding-bottom:20px;
+}
+
+.deleteQuestionButton{
+    height : 20px;
+    float : right;
+}
+
+.deleteChoiceButton{
+    height : 15px;
+    float : right;
+}
 /* -------------------------------------
 CSS for Response View 
 ---------------------------------------- */

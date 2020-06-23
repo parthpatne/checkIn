@@ -145,7 +145,6 @@ async function getTopSummaryView() {
 
 function createQuestionView() {
     var totalQuestion = document.createElement("div");
-    var count = 1;
     actionInstance.dataTables[0].dataColumns.forEach((column) => {
 
         var qDiv = document.createElement("div");
@@ -153,7 +152,7 @@ function createQuestionView() {
         var questionHeading = document.createElement('h4');
 
         qDiv.appendChild(linebreak);
-        questionHeading.innerHTML = count + "." + column.displayName;
+        questionHeading.innerHTML = column.displayName;
         qDiv.appendChild(questionHeading);
         let optionView = null;
         switch (column.valueType) {
@@ -173,7 +172,6 @@ function createQuestionView() {
                 qDiv.appendChild(optionView);
         }
         totalQuestion.appendChild(qDiv);
-        count++;
     });
     return totalQuestion;
 }
