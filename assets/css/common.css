@@ -188,6 +188,13 @@ CSS for Response View
   border-radius :3px;
 }
 
+.responseSubmitButton{
+    float : right;
+}
+
+.radioInput{
+    margin: 10px;
+}
 /* -------------------------------------
 CSS for Summary View 
 ---------------------------------------- */

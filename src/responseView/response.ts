@@ -13,15 +13,15 @@ function createBody() {
     var submit = document.createElement("BUTTON");
     title.innerHTML = actionInstance.displayName;
     submit.innerHTML = "Submit";
-    submit.style.float = "right";
+    UxUtils.setClass(submit, 'responseSubmitButton');
     submit.addEventListener("click", function () {
         submitForm();
     });
-    root.appendChild(title);
+    UxUtils.addElement(title, root);
     createQuestionView();
-    root.appendChild(submit);
-    root.appendChild(document.createElement('br'));
-    root.appendChild(document.createElement('br'));
+    UxUtils.addElement(submit, root);
+    UxUtils.addElement(UxUtils.lineBreak(), root);
+    UxUtils.addElement(UxUtils.lineBreak(), root);
 }
 
 function updateQuestionResponse(questionResponse, colomnId) {
@@ -90,25 +90,25 @@ function createQuestionView() {
     actionInstance.dataTables[0].dataColumns.forEach((column) => {
         var questionDiv = document.createElement("div");
         UxUtils.addElement(UxUtils.lineBreak(), questionDiv);
-        var questionHeading = document.createElement('h4'); // Heading of For
+        var questionHeading = document.createElement('h4');
         questionHeading.innerHTML = column.displayName;
-        questionDiv.appendChild(questionHeading);
+        UxUtils.addElement(questionHeading, questionDiv);
         if (column.valueType == "SingleOption") {
             column.options.forEach((option) => {
                 var radioOption = getRadioButton(option.displayName, column.name, option.name);
-                questionDiv.appendChild(radioOption);
+                UxUtils.addElement(radioOption, questionDiv);
 
             });
         }
         else if (column.valueType == "Text") {
             var radioOption = addInputElement("Enter Text", column.name, "text");
-            questionDiv.appendChild(radioOption);
+            UxUtils.addElement(radioOption, questionDiv);
         }
         else if (column.valueType == "Numeric") {
             var radioOption = addInputElement("Enter Number", column.name, "number");
-            questionDiv.appendChild(radioOption);
+            UxUtils.addElement(radioOption, questionDiv);
         }
-        root.appendChild(questionDiv);
+        UxUtils.addElement(questionDiv, root);
     });
 }
 
@@ -133,9 +133,8 @@ function getRadioButton(text, name, id) {
     radioInput.type = 'radio';
     radioInput.name = name;
     radioInput.id = id;
-    radioInput.style.margin = "10px";
     UxUtils.setClass(radioInput, 'radioInput');
-    radioInputDiv.appendChild(radioInput);
+    UxUtils.addElement(radioInput, radioInputDiv);
     radioInputDiv.appendChild(document.createTextNode(text));
     UxUtils.addElement(UxUtils.lineBreak(), radioInputDiv);
     return radioInputDiv;
