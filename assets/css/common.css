@@ -413,6 +413,18 @@ h4 {
     table-layout: fixed; 
     border-spacing: 10px; 
 }
+.Options {
+    display: table;
+    width: 100%; 
+    table-layout: fixed; 
+    border-spacing: 10px 0px; 
+}
 .Column {
     display: table-cell;
+}
+.headings{
+    display:table;
+    font-weight: bold;
+    font-size: 15px;
+    border-spacing: 10px 0px ;
 }

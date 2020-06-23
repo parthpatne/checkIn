@@ -78,7 +78,8 @@ async function getTopSummaryView() {
     let memberCount = response.memberCount;
     participationPercentage = Math.round((actionSummary.rowCreatorCount / memberCount) * 100);
     let percentageBar = UxUtils.getElement("div");
-    let headingpercentage = UxUtils.getElement("text", { fontWeight: "bold" });
+    let headingpercentage = UxUtils.getElement("text");
+    UxUtils.setClass(headingpercentage, "headings")
     headingpercentage.innerText = "Participation " + participationPercentage + " %";
     UxUtils.addElement(headingpercentage, percentageBar);
     let progressBar = UxUtils.getElement("div");
@@ -141,11 +142,13 @@ function createQuestionView() {
 function getAggregateOptionView(title, optionId, column) {
 
     var optionDiv = UxUtils.getElement("div");
+    let responseRowSpan = UxUtils.getElement("div");
+    UxUtils.setClass(responseRowSpan, "Options");
     var optionTitle = UxUtils.getElement('text');
     UxUtils.setClass(optionTitle, "textDisplay");
 
     optionTitle.innerHTML = title;
-    UxUtils.addElement(optionTitle, optionDiv);
+    UxUtils.addElement(optionTitle, responseRowSpan);
 
     var meterDiv = UxUtils.getElement("div");
     UxUtils.setClass(meterDiv, "meter clickable");
@@ -154,9 +157,9 @@ function getAggregateOptionView(title, optionId, column) {
     let percentage = (actionSummary.defaultAggregates).hasOwnProperty(column.name) ? JSON.parse(actionSummary.defaultAggregates[column.name])[optionId] : 0;
     let wid = percentage / actionSummary.rowCount * 100;
     spanTag1.style.width = isNaN(wid) ? "0%" : wid + "%";
-
     UxUtils.addElement(spanTag1, meterDiv);
-    UxUtils.addElement(meterDiv, optionDiv);
+    UxUtils.addElement(meterDiv, responseRowSpan);
+    UxUtils.addElement(responseRowSpan, optionDiv);
     optionDiv.addEventListener('click', function () {
         getResponsesperQuestion(column, true, optionId);
         setPages("1", "3");
@@ -209,14 +212,17 @@ function getAggregateTextView(column) {
             responseCount++;
         }
     }
-    let responseText = UxUtils.getElement("button");
+    let responseRowSpan = UxUtils.getElement("div");
+    UxUtils.setClass(responseRowSpan, "Row");
+    let responseText = UxUtils.getElement("button", { textAlign: "center" });
     responseText.innerText = responseCount + " Response";
-    UxUtils.setClass(responseText, "button_as_string");
+    UxUtils.setClass(responseText, "button_as_string Column");
     responseText.addEventListener('click', function () {
         getResponsesperQuestion(column, false);
         setPages("1", "3");
     });
-    UxUtils.addElement(responseText, optionDiv);
+    UxUtils.addElement(responseText, responseRowSpan);
+    UxUtils.addElement(responseRowSpan, optionDiv);
     return optionDiv;
 }
 
@@ -299,7 +305,7 @@ function getResponderTabs() {
         nameColumn.innerText = ResponderDate[itr].label;
         UxUtils.addElement(nameColumn, tableRow);
         let columnMid = UxUtils.getElement('TD', { width: "20%" });
-        columnMid.appendChild(document.createTextNode(""));
+        columnMid.innerText = "";
         UxUtils.addElement(columnMid, tableRow);
         let dateColumn = UxUtils.getElement('TD');
         dateColumn.innerText = ResponderDate[itr].value;
