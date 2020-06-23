@@ -1,5 +1,7 @@
 
 import * as actionSDK from 'action-sdk-sunny';
+import { Utils } from "../common/Utils";
+import { UxUtils } from "../common/UxUtils";
 
 var root = document.getElementById("root");
 let actionInstance = null;
@@ -8,34 +10,25 @@ let actionContext = null;
 let actionDataRows = null;
 let actionUserProfiles = null;
 let actionDataRowsLength = 0;
-let actionNonResponderslength = 0;
 let ResponderDate = [];
 let actionNonResponders = [];
-let linebreak = document.createElement("br");
-let isEmptyOrNull = (value: string) => {
-    if (!value || value.trim().length === 0)
-        return true;
-    return false;
-};
 
 function setPages(id1, id2) {
-    var e1 = document.getElementById(id1);
-    var e2 = document.getElementById(id2);
-    console.log("e1.style.display: " + e1.style.display);
-    console.log("e2.style.display: " + e2);
-    if (e1 && e1.style.display == 'block') {
-        e1.style.display = 'none';
-        e2.style.display = 'block';
+    var elementIdCurrent = document.getElementById(id1);
+    var elementIdNext = document.getElementById(id2);
+    if (elementIdCurrent && elementIdCurrent.style.display == 'block') {
+        UxUtils.addCSS(elementIdCurrent, { display: "none" });
+        UxUtils.addCSS(elementIdNext, { display: "block" });
     }
 }
 OnPageLoad();
 
 async function createBody() {
-    var title = document.createElement('h3');
+    var title = UxUtils.getElement('h3');
     title.innerHTML = actionInstance.displayName;
-    root.appendChild(title);
+    UxUtils.addElement(title, root);
     await getUserprofile();
-    root.appendChild(await mainPage());
+    UxUtils.addElement(await mainPage(), root);
     getResNonResTabs();
     getResponderListPagePerQuestion();
     getPageResponsePerUser();
@@ -43,21 +36,17 @@ async function createBody() {
 }
 
 async function mainPage() {
-    console.log("Console log: Main Page");
-    var fullPage = document.createElement("div");
-    fullPage.className = "MainPage";
-    fullPage.id = "1";
-    fullPage.style.display = "block";
+    var firstPage = UxUtils.getElement("div", { display: "block" });
+    UxUtils.setClass(firstPage, "MainPage");
+    UxUtils.setId(firstPage, "1");
     var sumamaryContainer = await getTopSummaryView();
-    fullPage.appendChild(sumamaryContainer);
+    UxUtils.addElement(sumamaryContainer, firstPage);
     var questionContainer = createQuestionView();
-    fullPage.appendChild(questionContainer);
-    console.log("Console log: covered the main page");
-    return fullPage;
+    UxUtils.addElement(questionContainer, firstPage);
+    return firstPage;
 }
 
 async function getUserprofile() {
-    console.log("Console log: getUserrProfile");
     let memberIds: string[] = [];
     if (actionDataRowsLength > 0) {
         for (var i = 0; i < actionDataRowsLength; i++) {
@@ -79,127 +68,108 @@ async function getUserprofile() {
             actionNonResponders.push({ label: tempresponse[i].displayName, value: tempresponse[i].id });
         }
     }
-    actionNonResponderslength = actionNonResponders.length;
 }
 
 async function getTopSummaryView() {
-    console.log("Console log: getTopSummaryView()");
     let participationPercentage = 0;
-    let barDiv = document.createElement("div");
+    let barDiv = UxUtils.getElement("div");
     let getSubscriptionCount = new actionSDK.GetSubscriptionMemberCount.Request(actionContext.subscription);
     let response = await actionSDK.executeApi(getSubscriptionCount) as actionSDK.GetSubscriptionMemberCount.Response;
     let memberCount = response.memberCount;
     participationPercentage = Math.round((actionSummary.rowCreatorCount / memberCount) * 100);
-    let percentagebar = document.createElement("div");
-    let headingpercentage = document.createElement("text");
+    let percentageBar = UxUtils.getElement("div");
+    let headingpercentage = UxUtils.getElement("text", { fontWeight: "bold" });
     headingpercentage.innerText = "Participation " + participationPercentage + " %";
-    headingpercentage.style.fontWeight = "bold";
-    percentagebar.appendChild(headingpercentage);
-    let progressbar = document.createElement("div");
-    let myProgress = document.createElement("progress");
-    myProgress.style.width = "100%"
+    UxUtils.addElement(headingpercentage, percentageBar);
+    let progressBar = UxUtils.getElement("div");
+    let myProgress = UxUtils.getElement("progress", { width: "100%" });
     myProgress.setAttribute("value", participationPercentage.toString());
     myProgress.setAttribute("max", "100");
-    progressbar.appendChild(myProgress);
+    UxUtils.addElement(myProgress, progressBar);
 
-    let buttonlink = document.createElement("span");
-    let leftspan = document.createElement("span");
-    leftspan.style.float = "left";
-    let parText = document.createElement("button");
-    parText.className = "button_as_string"
-    parText.style.fontSize = "10px";
-    parText.style.fontWeight = "bold";
-    parText.textContent = actionSummary.rowCreatorCount + " of " + memberCount + " have responded";
-    parText.addEventListener('click', function () {
+    let buttonLink = UxUtils.getElement("span");
+    let leftspan = UxUtils.getElement("span", { float: "left" });
+    let summaryText = UxUtils.getElement("button");
+    UxUtils.setClass(summaryText, "button_as_string");
+    summaryText.textContent = actionSummary.rowCreatorCount + " of " + memberCount + " have responded";
+    summaryText.addEventListener('click', function () {
         setTabs();
         setPages("1", "2");
     });
 
-    leftspan.appendChild(parText);
-    /*let rightspan = document.createElement("span");
-    rightspan.style.float = "right";
-    let sendRemider = document.createElement("button");
-    sendRemider.className = "button_as_string"
-    sendRemider.textContent = "Send Reminder";
-    sendRemider.addEventListener('click', function () {
-        alert("Reminder Sent");
-    });
-    rightspan.appendChild(sendRemider);*/
-    buttonlink.appendChild(leftspan);
-    //buttonlink.appendChild(rightspan);
+    UxUtils.addElement(summaryText, leftspan);
+    UxUtils.addElement(leftspan, buttonLink);
 
-    barDiv.appendChild(percentagebar);
-    barDiv.appendChild(progressbar);
-    barDiv.appendChild(buttonlink);
+    UxUtils.addElement(percentageBar, barDiv);
+    UxUtils.addElement(progressBar, barDiv);
+    UxUtils.addElement(buttonLink, barDiv);
     return barDiv;
 }
 
 function createQuestionView() {
-    var totalQuestion = document.createElement("div");
+    var totalQuestion = UxUtils.getElement("div");
     actionInstance.dataTables[0].dataColumns.forEach((column) => {
 
-        var qDiv = document.createElement("div");
-        var linebreak = document.createElement('br');
-        var questionHeading = document.createElement('h4');
+        var questionDiv = UxUtils.getElement("div");
+        var questionHeading = UxUtils.getElement('h4');
 
-        qDiv.appendChild(linebreak);
+        UxUtils.addElement(UxUtils.lineBreak(), questionDiv);
         questionHeading.innerHTML = column.displayName;
-        qDiv.appendChild(questionHeading);
+        UxUtils.addElement(questionHeading, questionDiv);
         let optionView = null;
         switch (column.valueType) {
             case actionSDK.ActionDataColumnValueType.SingleOption:
             case actionSDK.ActionDataColumnValueType.MultiOption:
                 column.options.forEach((option: actionSDK.ActionDataColumnOption) => {
                     optionView = getAggregateOptionView(option.displayName, option.name, column);
-                    qDiv.appendChild(optionView);
+                    UxUtils.addElement(optionView, questionDiv);
                 });
                 break;
             case actionSDK.ActionDataColumnValueType.Numeric:
                 optionView = getAggregateNumericView(column);
-                qDiv.appendChild(optionView);
+                UxUtils.addElement(optionView, questionDiv);
                 break;
             default:
                 optionView = getAggregateTextView(column);
-                qDiv.appendChild(optionView);
+                UxUtils.addElement(optionView, questionDiv);
         }
-        totalQuestion.appendChild(qDiv);
+        UxUtils.addElement(questionDiv, totalQuestion);
     });
     return totalQuestion;
 }
 
 function getAggregateOptionView(title, optionId, column) {
 
-    var oDiv = document.createElement("div");
-    var optionTitle = document.createElement('text');
-    optionTitle.className = "textDisplay";
+    var optionDiv = UxUtils.getElement("div");
+    var optionTitle = UxUtils.getElement('text');
+    UxUtils.setClass(optionTitle, "textDisplay");
 
     optionTitle.innerHTML = title;
-    oDiv.appendChild(optionTitle);
+    UxUtils.addElement(optionTitle, optionDiv);
 
-    var mDiv = document.createElement("div");
-    mDiv.className = "meter clickable";
-    var spanTag1 = document.createElement('span');
+    var meterDiv = UxUtils.getElement("div");
+    UxUtils.setClass(meterDiv, "meter clickable");
+    var spanTag1 = UxUtils.getElement('span');
 
     let percentage = (actionSummary.defaultAggregates).hasOwnProperty(column.name) ? JSON.parse(actionSummary.defaultAggregates[column.name])[optionId] : 0;
     let wid = percentage / actionSummary.rowCount * 100;
     spanTag1.style.width = isNaN(wid) ? "0%" : wid + "%";
 
-    mDiv.appendChild(spanTag1);
-    oDiv.appendChild(mDiv);
-    oDiv.addEventListener('click', function () {
+    UxUtils.addElement(spanTag1, meterDiv);
+    UxUtils.addElement(meterDiv, optionDiv);
+    optionDiv.addEventListener('click', function () {
         getResponsesperQuestion(column, true, optionId);
         setPages("1", "3");
     });
-    return oDiv;
+    return optionDiv;
 }
 
 function getAggregateNumericView(column) {
-    let oDiv = document.createElement("div");
+    let optionDiv = UxUtils.getElement("div");
     let questionSummary = (actionSummary.defaultAggregates).hasOwnProperty(column.name) ? JSON.parse(actionSummary.defaultAggregates[column.name]) : {};
-    //let questionSummary = (actionSummary.aggregates).hasOwnProperty(column.id) ?  JSON.parse(actionSummary.aggregates[column.id]) : {};
     let responseCount = 0;
     for (let i = 0; i < questionSummary.length; i++) {
-        if (!isEmptyOrNull(questionSummary[i])) {
+        if (!Utils.isEmptyString(questionSummary[i])) {
             responseCount++;
         }
     }
@@ -207,98 +177,88 @@ function getAggregateNumericView(column) {
     let average = questionSummary.hasOwnProperty("a") ? questionSummary["a"] : 0;
     let responsesCount = (sum === 0) ? responseCount : (Math.round(sum / average));
 
-    let responseRowSpan = document.createElement("span");
-    let sumText = document.createElement("text");
-    sumText.className = "textDisplay";
-    sumText.style.position = "absolute"
-    sumText.style.textAlign = "center";
-    sumText.style.width = "50%";
+    let responseRowSpan = UxUtils.getElement("span");
+    let sumText = UxUtils.getElement("text", { position: "absolute", textAlign: "center", width: "50%" });
+    UxUtils.setClass(sumText, "textDisplay");
     sumText.innerText = sum + "  Sum";
-    let averageText = document.createElement("text");
-    averageText.className = "textDisplay";
+    let averageText = UxUtils.getElement("text", { float: "right" });
+    UxUtils.setClass(averageText, "textDisplay");
     averageText.innerText = average + " average";
-    averageText.style.float = "right";
-    let responseDiv = document.createElement("div");
-    responseDiv.style.gap = "gap.medium";
-    responseDiv.className = "stats-indicator summary-item";
-    let responseText = document.createElement("button");
-    responseText.style.float = "left";
+    let responseText = UxUtils.getElement("button", { float: "left" });
     responseText.innerText = responsesCount + " Response";
-    responseText.className = "button_as_string";
+    UxUtils.setClass(responseText, "button_as_string");
     responseText.addEventListener('click', function () {
         getResponsesperQuestion(column, false);
         setPages("1", "3");
     });
-    responseRowSpan.appendChild(responseText);
-    responseRowSpan.appendChild(sumText);
-    responseRowSpan.appendChild(averageText);
-    let newline = document.createElement("br");
-    oDiv.appendChild(responseRowSpan);
-    oDiv.appendChild(newline);
-    return oDiv;
+    UxUtils.addElement(responseText, responseRowSpan);
+    UxUtils.addElement(sumText, responseRowSpan);
+    UxUtils.addElement(averageText, responseRowSpan);
+    UxUtils.addElement(responseRowSpan, optionDiv);
+    UxUtils.addElement(UxUtils.lineBreak(), optionDiv);
+    return optionDiv;
 }
 
 function getAggregateTextView(column) {
-    let oDiv = document.createElement("div");
-    //let questionSummary =  (actionSummary.aggregates).hasOwnProperty(column.id) ? JSON.parse(actionSummary.aggregates[column.id]) : [];
+    let optionDiv = UxUtils.getElement("div");
     let questionSummary = (actionSummary.defaultAggregates).hasOwnProperty(column.name) ? JSON.parse(actionSummary.defaultAggregates[column.name]) : [];
     let responseCount = 0;
     for (let i = 0; i < questionSummary.length; i++) {
-        if (!isEmptyOrNull(questionSummary[i])) {
+        if (!Utils.isEmptyString(questionSummary[i])) {
             responseCount++;
         }
     }
-    let responseText = document.createElement("button");
+    let responseText = UxUtils.getElement("button");
     responseText.innerText = responseCount + " Response";
-    responseText.className = "button_as_string";
+    UxUtils.setClass(responseText, "button_as_string");
     responseText.addEventListener('click', function () {
         getResponsesperQuestion(column, false);
         setPages("1", "3");
     });
-    oDiv.appendChild(responseText);
-    return oDiv;
+    UxUtils.addElement(responseText, optionDiv);
+    return optionDiv;
 }
 
 async function getResNonResTabs() {
-    var page2 = document.createElement("div");
-    page2.className = "Page";
-    page2.id = "2";
-    var tabDiv = document.createElement("div");
-    tabDiv.className = "tabs";
+    var tabPage = UxUtils.getElement("div");
+    UxUtils.setClass(tabPage, "Page");
+    UxUtils.setId(tabPage, "2");
+    var tabDiv = UxUtils.getElement("div");
+    UxUtils.setClass(tabDiv, "tabs");
 
-    var tabBarDiv = document.createElement("div");
-    tabBarDiv.className = "tabs__horizontal";
+    var tabBarDiv = UxUtils.getElement("div");
+    UxUtils.setClass(tabBarDiv, "tabs__horizontal");
 
-    var button1 = document.createElement("button");
-    button1.className = "tabs__button tabs__button--active";
-    button1.innerText = "Responders";
-    button1.setAttribute("data-for-tab", "1");
+    var responderButton = UxUtils.getElement("button");
+    UxUtils.setClass(responderButton, "tabs__button tabs__button--active");
+    responderButton.innerText = "Responders";
+    responderButton.setAttribute("data-for-tab", "1");
 
-    var button2 = document.createElement("button");
-    button2.className = "tabs__button";
-    button2.innerText = "NonResponders";
-    button2.setAttribute("data-for-tab", "2");
+    var nonResponderButton = UxUtils.getElement("button");
+    UxUtils.setClass(nonResponderButton, "tabs__button");
+    nonResponderButton.innerText = "NonResponders";
+    nonResponderButton.setAttribute("data-for-tab", "2");
 
-    tabDiv.appendChild(button1);
-    tabDiv.appendChild(button2);
+    UxUtils.addElement(responderButton, tabDiv);
+    UxUtils.addElement(nonResponderButton, tabDiv);
 
-    page2.appendChild(tabDiv);
+    UxUtils.addElement(tabDiv, tabPage);
 
-    tabBarDiv.appendChild(getResponderTabs());
-    tabBarDiv.appendChild(getNonRespondersTabs());
-    page2.appendChild(tabBarDiv);
+    UxUtils.addElement(getResponderTabs(), tabBarDiv);
+    UxUtils.addElement(getNonRespondersTabs(), tabBarDiv);
+    UxUtils.addElement(tabBarDiv, tabPage);
 
-    var goback = document.createElement("button");
-    goback.innerText = "Back";
-    goback.className = "button_as_string";
-    page2.appendChild(goback);
+    var backButton = UxUtils.getElement("button");
+    backButton.innerText = "Back";
+    UxUtils.setClass(backButton, "button_as_string");
+    UxUtils.addElement(backButton, tabPage);
 
-    goback.addEventListener('click', function () {
+    backButton.addEventListener('click', function () {
         setPages("2", "1");
     });
-    page2.style.display = "none";
+    UxUtils.addCSS(tabPage, { display: "none" });
 
-    root.appendChild(page2);
+    UxUtils.addElement(tabPage, root);
 }
 
 function setTabs() {
@@ -311,9 +271,6 @@ function setTabs() {
             barParent.querySelectorAll(".tabs__button").forEach(button => {
                 button.classList.remove("tabs__button--active");
             });
-            barParent.querySelectorAll(".tabs__button").forEach(button => {
-                console.log("console.log: button.classList: " + button.classList);
-            });
             contentContainer.querySelectorAll(".tabs__content").forEach(tab => {
                 tab.classList.remove("tabs__content--active");
             });
@@ -325,28 +282,27 @@ function setTabs() {
 }
 
 function getResponderTabs() {
-    var tabContentDiv1 = document.createElement("div");
-    tabContentDiv1.className = "tabs__content tabs__content--active";
-    tabContentDiv1.setAttribute("data-tab", "1");
-    var ResponderDiv = document.createElement("div");
-    let table = document.createElement('TABLE');
-    let tableBody = document.createElement('TBODY');
-    table.appendChild(tableBody);
+    var responderContent = UxUtils.getElement("div");
+    UxUtils.setClass(responderContent, "tabs__content tabs__content--active");
+    responderContent.setAttribute("data-tab", "1");
+    var ResponderDiv = UxUtils.getElement("div");
+    let table = UxUtils.getElement('TABLE');
+    let tableBody = UxUtils.getElement('TBODY');
+    UxUtils.addElement(tableBody, table);
     for (var itr = 0; itr < ResponderDate.length; itr++) {
-        let tr = document.createElement('TR');
-        tr.id = ResponderDate[itr].value2;
-        tr.className = "textDisplay clickable"
-        tableBody.appendChild(tr);
-        let td1 = document.createElement('TD');
-        td1.appendChild(document.createTextNode(ResponderDate[itr].label));
-        tr.appendChild(td1);
-        let td2 = document.createElement('TD');
-        td2.appendChild(document.createTextNode(""));
-        td2.style.width = "20%";
-        tr.appendChild(td2);
-        let td3 = document.createElement('TD');
-        td3.appendChild(document.createTextNode(ResponderDate[itr].value));
-        tr.appendChild(td3);
+        let tableRow = UxUtils.getElement('TR');
+        UxUtils.setId(tableRow, ResponderDate[itr].value2);
+        UxUtils.setClass(tableRow, "textDisplay clickable");
+        UxUtils.addElement(tableRow, tableBody);
+        let nameColumn = UxUtils.getElement('TD');
+        nameColumn.innerText = ResponderDate[itr].label;
+        UxUtils.addElement(nameColumn, tableRow);
+        let columnMid = UxUtils.getElement('TD', { width: "20%" });
+        columnMid.appendChild(document.createTextNode(""));
+        UxUtils.addElement(columnMid, tableRow);
+        let dateColumn = UxUtils.getElement('TD');
+        dateColumn.innerText = ResponderDate[itr].value;
+        UxUtils.addElement(dateColumn, tableRow);
     }
     tableBody.onclick = function (event) {
         let target = (<HTMLElement>event.target);
@@ -357,110 +313,101 @@ function getResponderTabs() {
             setPages("2", "4");
         }
     };
-    ResponderDiv.appendChild(table);
-    tabContentDiv1.appendChild(ResponderDiv);
-    return tabContentDiv1;
+    UxUtils.addElement(table, ResponderDiv);
+    UxUtils.addElement(ResponderDiv, responderContent);
+    return responderContent;
 }
 
 function getNonRespondersTabs() {
-    var tabContentDiv2 = document.createElement("div");
-    tabContentDiv2.className = "tabs__content";
-    tabContentDiv2.setAttribute("data-tab", "2");
-    var NonResponderDiv = document.createElement("div");
-    console.log("Console log: getNonResponderTabs");
-    console.log("actionNonResponderslength: " + actionNonResponders.length);
+    var nonResponderContent = UxUtils.getElement("div");
+    UxUtils.setClass(nonResponderContent, "tabs__content");
+    nonResponderContent.setAttribute("data-tab", "2");
+    var NonResponderDiv = UxUtils.getElement("div");
     for (var itr = 0; itr < actionNonResponders.length; itr++) {
-        console.log("Console log: row in Nonresponder: " + actionNonResponders[itr].label);
-        var perResponder = document.createElement("div");
-        perResponder.className = "textDisplay";
-        perResponder.className = "nonResRow";
+        var perResponder = UxUtils.getElement("div");
+        UxUtils.setClass(perResponder, "textDisplay");
         perResponder.innerText = actionNonResponders[itr].label;
-        NonResponderDiv.appendChild(perResponder);
+        UxUtils.addElement(perResponder, NonResponderDiv);
     }
-    tabContentDiv2.appendChild(NonResponderDiv);
-    return tabContentDiv2;
+    UxUtils.addElement(NonResponderDiv, nonResponderContent);
+    return nonResponderContent;
 }
 
 function getResponderListPagePerQuestion() {
-    var responseView = document.createElement("div");
-    responseView.className = "ResponseViewPage";
-    responseView.id = "3";
-    console.log("responseView.style.display: " + responseView.style.display);
-    responseView.style.display = "none";
-    root.appendChild(responseView);
+    var responseView = UxUtils.getElement("div");
+    UxUtils.setClass(responseView, "ResponseViewPage");
+    UxUtils.setId(responseView, "3");
+    UxUtils.addCSS(responseView, { display: "none" });
+    UxUtils.addElement(responseView, root);
 }
 
 function getResponsesperQuestion(column, options, optionId = "") {
-    var rowDiv = document.createElement("div");
-    rowDiv.className = "responseRow";
+    var rowDiv = UxUtils.getElement("div");
+    UxUtils.setClass(rowDiv, "responseRow");
     var pageId = document.getElementById("3");
-    while (pageId.firstChild) {
-        pageId.removeChild(pageId.firstChild);
-    }
-    let questionTitle = document.createElement("div");
-    questionTitle.className = "TitleDiv";
+    UxUtils.clearElement(pageId);
+    let questionTitle = UxUtils.getElement("div");
+    UxUtils.setClass(questionTitle, "TitleDiv");
     questionTitle.innerText = column.displayName;
-    rowDiv.appendChild(questionTitle);
+    UxUtils.addElement(questionTitle, rowDiv);
     if (pageId) {
         for (var itr = 0; itr < ResponderDate.length; itr++) {
-            var rowData = document.createElement("div");
-            var perRowuser = document.createElement("div");
-            perRowuser.className = "textDisplay";
+            var rowData = UxUtils.getElement("div");
+            var perRowuser = UxUtils.getElement("div");
+            UxUtils.setClass(perRowuser, "textDisplay");
             if (options) {
                 if (optionId.localeCompare(actionDataRows[itr].columnValues[column.name]) == 0) {
                     perRowuser.innerText = " - " + ResponderDate[itr].label;
-                    rowData.appendChild(perRowuser);
+                    UxUtils.addElement(perRowuser, rowData);
                 }
             }
             else {
                 perRowuser.innerText = " - " + ResponderDate[itr].label;
-                var perRowResponse = document.createElement("div");
-                perRowResponse.className = "responseperquestion"
+                var perRowResponse = UxUtils.getElement("div");
+                UxUtils.setClass(perRowResponse, "responseperquestion");
                 perRowResponse.innerText = "Response: " + actionDataRows[itr].columnValues[column.name];
-                rowData.appendChild(perRowuser);
-                rowData.appendChild(perRowResponse);
+                UxUtils.addElement(perRowuser, rowData);
+                UxUtils.addElement(perRowResponse, rowData);
             }
-            rowDiv.appendChild(rowData);
-            rowDiv.appendChild(linebreak);
+            UxUtils.addElement(rowData, rowDiv);
+            UxUtils.addElement(UxUtils.lineBreak(), rowDiv);
         }
     }
-    var goback = document.createElement("button");
-    goback.innerText = "Back";
-    goback.className = "button_as_string";
-    goback.addEventListener('click', function () {
+    var backButton = UxUtils.getElement("button");
+    backButton.innerText = "Back";
+    UxUtils.setClass(backButton, "button_as_string");
+    backButton.addEventListener('click', function () {
         setPages("3", "1");
     });
-    pageId.appendChild(rowDiv);
-    pageId.appendChild(goback);
+    UxUtils.addElement(rowDiv, pageId);
+    UxUtils.addElement(backButton, pageId);
 }
 
 function getPageResponsePerUser() {
-    var ResponsePerUserView = document.createElement("div");
-    ResponsePerUserView.className = "ResponsePerUserViewPage";
-    ResponsePerUserView.id = "4";
-    ResponsePerUserView.style.display = "none";
-    root.appendChild(ResponsePerUserView);
+    var ResponsePerUserView = UxUtils.getElement("div");
+    UxUtils.setClass(ResponsePerUserView, "ResponsePerUserViewPage");
+    UxUtils.setId(ResponsePerUserView, "4");
+    UxUtils.addCSS(ResponsePerUserView, { display: "none" });
+    UxUtils.addElement(ResponsePerUserView, root);
 }
 
 function getResponsePerUser(id, index) {
-    var rowDiv = document.createElement("div");
-    rowDiv.className = "responseRow";
+    var rowDiv = UxUtils.getElement("div");
+    UxUtils.setClass(rowDiv, "responseRow");
     var pageId = document.getElementById("4");
-    while (pageId.firstChild) {
-        pageId.removeChild(pageId.firstChild);
-    }
+    UxUtils.clearElement(pageId);
     if (pageId) {
         var dataPerUser = actionDataRows[index].columnValues;
-        let questionitr = 0;
+        let questionItr = 0;
         for (var idx in dataPerUser) {
-            var rowData = document.createElement("div");
-            var ques = document.createElement("div");
-            ques.className = "textDisplay";
-            ques.innerText = "Question: " + actionInstance.dataTables[0].dataColumns[questionitr].displayName
-            var ans = document.createElement("div");
-            ans.className = "responseperquestion";
-            if (actionInstance.dataTables[0].dataColumns[questionitr].valueType.localeCompare("SingleOption") == 0 || actionInstance.dataTables[0].dataColumns[questionitr].valueType.localeCompare("MultiOption") == 0) {
-                var optionques = actionInstance.dataTables[0].dataColumns[questionitr].options
+            var rowData = UxUtils.getElement("div");
+            var ques = UxUtils.getElement("div");
+            UxUtils.setClass(ques, "textDisplay");
+            ques.innerText = "Question: " + actionInstance.dataTables[0].dataColumns[questionItr].displayName
+            var ans = UxUtils.getElement("div");
+            UxUtils.setClass(ans, "responseperquestion");
+            if (actionInstance.dataTables[0].dataColumns[questionItr].valueType.localeCompare("SingleOption") == 0 || actionInstance.dataTables[0].dataColumns[questionItr].valueType.localeCompare("MultiOption") == 0) {
+                var optionques = actionInstance.dataTables[0].dataColumns[questionItr].options
                 for (var opt = 0; opt < optionques.length; opt++) {
                     if ((optionques[opt].name).localeCompare(actionDataRows[index].columnValues[idx]) == 0) {
                         ans.innerText = "Response: " + optionques[opt].displayName;
@@ -471,21 +418,21 @@ function getResponsePerUser(id, index) {
             else {
                 ans.innerText = "Response: " + actionDataRows[index].columnValues[idx];
             }
-            rowData.appendChild(ques);
-            rowData.appendChild(ans);
-            questionitr++;
-            rowDiv.appendChild(rowData);
-            rowDiv.appendChild(linebreak);
+            UxUtils.addElement(ques, rowData);
+            UxUtils.addElement(ans, rowData);
+            questionItr++;
+            UxUtils.addElement(rowData, rowDiv);
+            UxUtils.addElement(UxUtils.lineBreak(), rowDiv);
         }
     }
-    var goback = document.createElement("button");
-    goback.innerText = "Back";
-    goback.className = "button_as_string";
-    goback.addEventListener('click', function () {
+    var backButton = UxUtils.getElement("button");
+    backButton.innerText = "Back";
+    UxUtils.setClass(backButton, "button_as_string");
+    backButton.addEventListener('click', function () {
         setPages("4", "2");
     });
-    pageId.appendChild(rowDiv);
-    pageId.appendChild(goback);
+    UxUtils.addElement(rowDiv, pageId);
+    UxUtils.addElement(backButton, pageId);
 }
 
 function OnPageLoad() {
