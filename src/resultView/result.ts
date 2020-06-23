@@ -177,16 +177,17 @@ function getAggregateNumericView(column) {
     let average = questionSummary.hasOwnProperty("a") ? questionSummary["a"] : 0;
     let responsesCount = (sum === 0) ? responseCount : (Math.round(sum / average));
 
-    let responseRowSpan = UxUtils.getElement("span");
-    let sumText = UxUtils.getElement("text", { position: "absolute", textAlign: "center", width: "50%" });
-    UxUtils.setClass(sumText, "textDisplay");
-    sumText.innerText = sum + "  Sum";
-    let averageText = UxUtils.getElement("text", { float: "right" });
-    UxUtils.setClass(averageText, "textDisplay");
-    averageText.innerText = average + " average";
-    let responseText = UxUtils.getElement("button", { float: "left" });
+    let responseRowSpan = UxUtils.getElement("div");
+    UxUtils.setClass(responseRowSpan, "Row");
+    let sumText = UxUtils.getElement("text", { textAlign: "center" });
+    UxUtils.setClass(sumText, "textDisplay Column");
+    sumText.innerText = "Sum : " + sum;
+    let averageText = UxUtils.getElement("text", { textAlign: "center" });
+    UxUtils.setClass(averageText, "textDisplay Column");
+    averageText.innerText = "Average : " + average;
+    let responseText = UxUtils.getElement("button", { textAlign: "center" });
     responseText.innerText = responsesCount + " Response";
-    UxUtils.setClass(responseText, "button_as_string");
+    UxUtils.setClass(responseText, "button_as_string Column");
     responseText.addEventListener('click', function () {
         getResponsesperQuestion(column, false);
         setPages("1", "3");
