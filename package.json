@@ -5,8 +5,8 @@
     "scripts": {
         "build": "webpack --env.mode=dev --env.watch=false",
         "zip": "cd ./output && bestzip ./ActionPackage.zip *",
-        "upload-with-teams": "upload-action-package -z ./output/ActionPackage.zip -t ./output/ -e  http://5ac98403ddb9.in.ngrok.io",
-        "upload-without-teams": "upload-action-package -z ./output/ActionPackage.zip -e  http://5ac98403ddb9.in.ngrok.io",
+        "upload-with-teams": "upload-action-package -z ./output/ActionPackage.zip -t ./output/ -e https://int.actions.office365.com",
+        "upload-without-teams": "upload-action-package -z ./output/ActionPackage.zip -e https://int.actions.office365.com",
         "deploy-with-teams": "npm run build && npm run zip && npm run upload-with-teams",
         "deploy-without-teams": "npm run build && npm run zip && npm run upload-without-teams"
     },
