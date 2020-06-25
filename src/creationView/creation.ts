@@ -322,7 +322,7 @@ function addQuestion(type: string, question?: JSON) {
 
     questionCount++;
     UxUtils.addElement(newQues, bodyDiv);
-    window.scrollTo(0, document.body.scrollHeight);
+    window.scrollTo(0, document.documentElement.scrollHeight);
 
     return newQues;
 }
