@@ -12,6 +12,8 @@ let actionUserProfiles = null;
 let actionDataRowsLength = 0;
 let ResponderDate = [];
 let actionNonResponders = [];
+let myResponseCount = 0;
+let myUserId = "";
 
 function setPages(id1, id2) {
     var elementIdCurrent = document.getElementById(id1);
@@ -24,9 +26,20 @@ function setPages(id1, id2) {
 OnPageLoad();
 
 async function createBody() {
-    var title = UxUtils.getElement('h3');
+    var headerContainer = UxUtils.getElement("div");
+    UxUtils.setClass(headerContainer, "headerContainer");
+
+    var title = UxUtils.getElement('div');
+    UxUtils.setClass(title, "summaryTitle");
     title.innerHTML = actionInstance.displayName;
-    UxUtils.addElement(title, root);
+
+    var dueDate = UxUtils.getElement('div');
+    UxUtils.setClass(dueDate, "subheading");
+    dueDate.innerHTML = "Due by " + new Date(actionInstance.expiryTime).toDateString();
+
+    UxUtils.addElement(title, headerContainer);
+    UxUtils.addElement(dueDate, headerContainer);
+    UxUtils.addElement(headerContainer, root);
     await getUserprofile();
     UxUtils.addElement(await mainPage(), root);
     getResNonResTabs();
@@ -60,12 +73,14 @@ async function getUserprofile() {
         let responseResponders = await actionSDK.executeApi(requestResponders) as actionSDK.GetSubscriptionMembers.Response;
         actionUserProfiles = responseResponders.members;
     }
+
+    myUserId = actionContext.userId;
     let requestNonResponders = new actionSDK.GetActionSubscriptionNonParticipants.Request(actionContext.actionId, actionContext.subscription.id);
     let responseNonResponders = await actionSDK.executeApi(requestNonResponders) as actionSDK.GetActionSubscriptionNonParticipants.Response;
     var tempresponse = responseNonResponders.nonParticipants;
     if (tempresponse != null) {
         for (var i = 0; i < tempresponse.length; i++) {
-            actionNonResponders.push({ label: tempresponse[i].displayName, value: tempresponse[i].id });
+            actionNonResponders.push({ label: tempresponse[i].displayName, value2: tempresponse[i].id });
         }
     }
 }
@@ -73,6 +88,7 @@ async function getUserprofile() {
 async function getTopSummaryView() {
     let participationPercentage = 0;
     let barDiv = UxUtils.getElement("div");
+    UxUtils.setClass(barDiv, "TopSummaryContainer")
     let getSubscriptionCount = new actionSDK.GetSubscriptionMemberCount.Request(actionContext.subscription);
     let response = await actionSDK.executeApi(getSubscriptionCount) as actionSDK.GetSubscriptionMemberCount.Response;
     let memberCount = response.memberCount;
@@ -88,18 +104,21 @@ async function getTopSummaryView() {
     myProgress.setAttribute("max", "100");
     UxUtils.addElement(myProgress, progressBar);
 
-    let buttonLink = UxUtils.getElement("span");
-    let leftspan = UxUtils.getElement("span", { float: "left" });
+    let buttonLink = UxUtils.getElement("div");
     let summaryText = UxUtils.getElement("button");
     UxUtils.setClass(summaryText, "button_as_string");
-    summaryText.textContent = actionSummary.rowCreatorCount + " of " + memberCount + " have responded";
+    if (actionSummary.rowCreatorCount == actionSummary.rowCount) {
+        summaryText.textContent = actionSummary.rowCreatorCount + " of " + memberCount + " have responded";
+    }
+    else {
+        summaryText.textContent = actionSummary.rowCount + " responses by " + actionSummary.rowCreatorCount + " people";
+    }
     summaryText.addEventListener('click', function () {
         setTabs();
         setPages("1", "2");
     });
 
-    UxUtils.addElement(summaryText, leftspan);
-    UxUtils.addElement(leftspan, buttonLink);
+    UxUtils.addElement(summaryText, buttonLink);
 
     UxUtils.addElement(percentageBar, barDiv);
     UxUtils.addElement(progressBar, barDiv);
@@ -112,6 +131,7 @@ function createQuestionView() {
     actionInstance.dataTables[0].dataColumns.forEach((column) => {
 
         var questionDiv = UxUtils.getElement("div");
+        UxUtils.setClass(questionDiv, "questionContainer");
         var questionHeading = UxUtils.getElement('h4');
 
         UxUtils.addElement(UxUtils.lineBreak(), questionDiv);
@@ -143,27 +163,37 @@ function getAggregateOptionView(title, optionId, column) {
 
     var optionDiv = UxUtils.getElement("div");
     let responseRowSpan = UxUtils.getElement("div");
-    UxUtils.setClass(responseRowSpan, "Options");
-    var optionTitle = UxUtils.getElement('text');
-    UxUtils.setClass(optionTitle, "textDisplay");
-
-    optionTitle.innerHTML = title;
-    UxUtils.addElement(optionTitle, responseRowSpan);
-
-    var meterDiv = UxUtils.getElement("div");
-    UxUtils.setClass(meterDiv, "meter clickable");
-    var spanTag1 = UxUtils.getElement('span');
 
     let percentage = (actionSummary.defaultAggregates).hasOwnProperty(column.name) ? JSON.parse(actionSummary.defaultAggregates[column.name])[optionId] : 0;
     let wid = percentage / actionSummary.rowCount * 100;
-    spanTag1.style.width = isNaN(wid) ? "0%" : wid + "%";
+    let optionpercentage = isNaN(wid) ? "0%" : wid.toFixed(2) + "%";
+    let optionCount = isNaN(percentage) ? 0 : percentage;
+    UxUtils.setClass(responseRowSpan, "Row");
+
+    let optionDetails = UxUtils.getElement("div");
+    UxUtils.setClass(optionDetails, "Row");
+    var optionTitle = UxUtils.getElement('text', { float: "left" });
+    UxUtils.setClass(optionTitle, "textDisplay Column");
+    optionTitle.innerHTML = title;
+    UxUtils.addElement(optionTitle, optionDetails);
+
+    var optionParticipation = UxUtils.getElement('text', { float: "right" });
+    UxUtils.setClass(optionParticipation, "textDisplay Column");
+    optionParticipation.innerHTML = " (" + optionCount + ") " + optionpercentage;
+    UxUtils.addElement(optionParticipation, optionDetails);
+
+    UxUtils.addElement(optionDetails, responseRowSpan);
+
+    var meterDiv = UxUtils.getElement("div");
+    UxUtils.setClass(meterDiv, "meter");
+    var spanTag1 = UxUtils.getElement('span');
+
+
+    spanTag1.style.width = optionpercentage;
     UxUtils.addElement(spanTag1, meterDiv);
     UxUtils.addElement(meterDiv, responseRowSpan);
     UxUtils.addElement(responseRowSpan, optionDiv);
-    optionDiv.addEventListener('click', function () {
-        getResponsesperQuestion(column, true, optionId);
-        setPages("1", "3");
-    });
+
     return optionDiv;
 }
 
@@ -187,12 +217,12 @@ function getAggregateNumericView(column) {
     sumText.innerText = "Sum : " + sum;
     let averageText = UxUtils.getElement("text", { textAlign: "center" });
     UxUtils.setClass(averageText, "textDisplay Column");
-    averageText.innerText = "Average : " + average;
+    averageText.innerText = "Average : " + average.toFixed(2);
     let responseText = UxUtils.getElement("button", { textAlign: "center" });
     responseText.innerText = responsesCount + " Response";
     UxUtils.setClass(responseText, "button_as_string Column");
     responseText.addEventListener('click', function () {
-        getResponsesperQuestion(column, false);
+        getResponsesperQuestion(column);
         setPages("1", "3");
     });
     UxUtils.addElement(responseText, responseRowSpan);
@@ -218,7 +248,7 @@ function getAggregateTextView(column) {
     responseText.innerText = responseCount + " Response";
     UxUtils.setClass(responseText, "button_as_string Column");
     responseText.addEventListener('click', function () {
-        getResponsesperQuestion(column, false);
+        getResponsesperQuestion(column);
         setPages("1", "3");
     });
     UxUtils.addElement(responseText, responseRowSpan);
@@ -302,11 +332,13 @@ function getResponderTabs() {
         UxUtils.setClass(tableRow, "textDisplay clickable");
         UxUtils.addElement(tableRow, tableBody);
         let nameColumn = UxUtils.getElement('TD');
-        nameColumn.innerText = ResponderDate[itr].label;
+        if (ResponderDate[itr].value2 == myUserId) {
+            nameColumn.innerText = "You";
+        }
+        else {
+            nameColumn.innerText = ResponderDate[itr].label;
+        }
         UxUtils.addElement(nameColumn, tableRow);
-        let columnMid = UxUtils.getElement('TD', { width: "20%" });
-        columnMid.innerText = "";
-        UxUtils.addElement(columnMid, tableRow);
         let dateColumn = UxUtils.getElement('TD');
         dateColumn.innerText = ResponderDate[itr].value;
         UxUtils.addElement(dateColumn, tableRow);
@@ -330,11 +362,18 @@ function getNonRespondersTabs() {
     UxUtils.setClass(nonResponderContent, "tabs__content");
     nonResponderContent.setAttribute("data-tab", "2");
     var NonResponderDiv = UxUtils.getElement("div");
+    UxUtils.setClass(NonResponderDiv, "responseContainer");
     for (var itr = 0; itr < actionNonResponders.length; itr++) {
-        var perResponder = UxUtils.getElement("div");
-        UxUtils.setClass(perResponder, "textDisplay");
-        perResponder.innerText = actionNonResponders[itr].label;
-        UxUtils.addElement(perResponder, NonResponderDiv);
+        var perNonResponder = UxUtils.getElement("div");
+        UxUtils.setClass(perNonResponder, "textDisplay");
+        if (actionNonResponders[itr].value2 == myUserId) {
+            perNonResponder.innerText = "You";
+        }
+        else {
+            perNonResponder.innerText = actionNonResponders[itr].label;
+        }
+
+        UxUtils.addElement(perNonResponder, NonResponderDiv);
     }
     UxUtils.addElement(NonResponderDiv, nonResponderContent);
     return nonResponderContent;
@@ -348,7 +387,7 @@ function getResponderListPagePerQuestion() {
     UxUtils.addElement(responseView, root);
 }
 
-function getResponsesperQuestion(column, options, optionId = "") {
+function getResponsesperQuestion(column) {
     var rowDiv = UxUtils.getElement("div");
     UxUtils.setClass(rowDiv, "responseRow");
     var pageId = document.getElementById("3");
@@ -360,22 +399,20 @@ function getResponsesperQuestion(column, options, optionId = "") {
     if (pageId) {
         for (var itr = 0; itr < ResponderDate.length; itr++) {
             var rowData = UxUtils.getElement("div");
+            UxUtils.setClass(rowData, "responseContainer");
             var perRowuser = UxUtils.getElement("div");
             UxUtils.setClass(perRowuser, "textDisplay");
-            if (options) {
-                if (optionId.localeCompare(actionDataRows[itr].columnValues[column.name]) == 0) {
-                    perRowuser.innerText = " - " + ResponderDate[itr].label;
-                    UxUtils.addElement(perRowuser, rowData);
-                }
+            if (myUserId == actionDataRows[itr].creatorId) {
+                perRowuser.innerText = " - You";
             }
             else {
                 perRowuser.innerText = " - " + ResponderDate[itr].label;
-                var perRowResponse = UxUtils.getElement("div");
-                UxUtils.setClass(perRowResponse, "responseperquestion");
-                perRowResponse.innerText = "Response: " + actionDataRows[itr].columnValues[column.name];
-                UxUtils.addElement(perRowuser, rowData);
-                UxUtils.addElement(perRowResponse, rowData);
             }
+            UxUtils.addElement(perRowuser, rowData);
+            var perRowResponse = UxUtils.getElement("div");
+            UxUtils.setClass(perRowResponse, "responseperquestion");
+            perRowResponse.innerText = actionDataRows[itr].columnValues[column.name];
+            UxUtils.addElement(perRowResponse, rowData);
             UxUtils.addElement(rowData, rowDiv);
             UxUtils.addElement(UxUtils.lineBreak(), rowDiv);
         }
@@ -398,16 +435,29 @@ function getPageResponsePerUser() {
     UxUtils.addElement(ResponsePerUserView, root);
 }
 
-function getResponsePerUser(id, index) {
+async function getResponsePerUser(id, index) {
     var rowDiv = UxUtils.getElement("div");
     UxUtils.setClass(rowDiv, "responseRow");
     var pageId = document.getElementById("4");
     UxUtils.clearElement(pageId);
+    var responderName = UxUtils.getElement("div");
+    UxUtils.setClass(responderName, "TitleDiv");
+    let requestResponders = new actionSDK.GetSubscriptionMembers.Request(actionContext.subscription, [id]);
+    let responseResponders = await actionSDK.executeApi(requestResponders) as actionSDK.GetSubscriptionMembers.Response;
+    var userDetail = responseResponders.members;
+    if (id == myUserId) {
+        responderName.innerText = "Your Response"
+    }
+    else {
+        responderName.innerText = userDetail[0].displayName;
+    }
+    UxUtils.addElement(responderName, rowDiv);
     if (pageId) {
         var dataPerUser = actionDataRows[index].columnValues;
         let questionItr = 0;
         for (var idx in dataPerUser) {
             var rowData = UxUtils.getElement("div");
+            UxUtils.setClass(rowData, "responseContainer");
             var ques = UxUtils.getElement("div");
             UxUtils.setClass(ques, "textDisplay");
             ques.innerText = "Question: " + actionInstance.dataTables[0].dataColumns[questionItr].displayName
@@ -417,13 +467,13 @@ function getResponsePerUser(id, index) {
                 var optionques = actionInstance.dataTables[0].dataColumns[questionItr].options
                 for (var opt = 0; opt < optionques.length; opt++) {
                     if ((optionques[opt].name).localeCompare(actionDataRows[index].columnValues[idx]) == 0) {
-                        ans.innerText = "Response: " + optionques[opt].displayName;
+                        ans.innerText = optionques[opt].displayName;
                         break;
                     }
                 }
             }
             else {
-                ans.innerText = "Response: " + actionDataRows[index].columnValues[idx];
+                ans.innerText = actionDataRows[index].columnValues[idx];
             }
             UxUtils.addElement(ques, rowData);
             UxUtils.addElement(ans, rowData);

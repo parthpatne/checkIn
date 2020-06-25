@@ -232,18 +232,18 @@ float:right
          -moz-border-radius-bottomleft: 20px;
                 border-top-left-radius: 20px;
              border-bottom-left-radius: 20px;
-    background-color: rgb(240, 240, 80);
+    background-color: rgb(244, 196, 52);
     background-image: -webkit-gradient(
       linear,
       left bottom,
       left top,
-      color-stop(0,rgb(207, 207, 15)),
-      color-stop(1, rgb(207, 207, 15))
+      color-stop(0,rgb(244, 196, 52)),
+      color-stop(1, rgb(244, 196, 52))
      );
     background-image: -moz-linear-gradient(
       center bottom,
-      rgb(207, 207, 15) 37%,
-      rgb(207, 207, 15) 69%
+      rgb(244, 196, 52) 37%,
+      rgb(244, 196, 52) 69%
      );
     -webkit-box-shadow: 
       inset 0  2px 5px  rgba(0, 0, 0, 0.25);
@@ -269,7 +269,7 @@ progress[value]::-webkit-progress-bar {
   /*width: 100%;*/
 }
 progress[value]::-webkit-progress-value {
-  background-color: rgb(207, 207, 15);
+  background-color: rgb(244, 196, 52);
   height: 10px;
   -moz-border-radius: 25px;
   -webkit-border-radius: 25px;
@@ -299,22 +299,12 @@ progress::-moz-progress-bar {
   font-family: sans-serif;
   font-weight: "bold";
 }
-.button_as_string{
-    border: none;
-    background: none;
-    outline: none;
-    height: 15px;
-    font-size: 15px;
-    font-family: sans-serif;
-    font-weight: "bold";
-    
-  }
 .button_as_string:hover {
     cursor: pointer;
     text-decoration: underline;
   }
 .textDisplay{
-    font-size: 15px;
+    font-size: 14px;
     font-family: sans-serif;
 }
 .tabs{
@@ -354,8 +344,8 @@ progress::-moz-progress-bar {
   display: none;
   height: 300px;
   overflow-y:auto;
-  border-bottom: 1px solid dimgrey;
-  border-top: 1px solid dimgrey;
+  border-bottom: .5px solid rgb(206, 206, 206);
+  border-top: .5px solid rgb(206, 206, 206);
 }
 .tabs__content--active{
   display: block;
@@ -380,9 +370,7 @@ h4 {
 .responseperquestion{
     font-family: sans-serif;
     font-size: 10px;
-    border-bottom: dotted;
     margin-bottom: 15px;
-    margin-left : 15px;
 }
 .responseperquestion:last-of-type{
     margin-bottom:0;
@@ -393,16 +381,17 @@ h4 {
     font-weight: bold;
     font-family: sans-serif;
     font-size: 15px;
-    border-bottom: 1px solid dimgrey;
-    margin-bottom: 15px;
+    border-bottom: .5px solid rgb(206, 206, 206);
+    padding-bottom: 10px;
     margin-top: 10px;
+    margin-bottom: 10px;
 }
 .responseRow{   
   height: 350px;
   overflow-y: auto;
   top: 20px;
-  border-bottom: 1px solid dimgrey;
-  border-top: 1px solid dimgrey;
+  border-bottom: .5px solid rgb(206, 206, 206);
+  border-top: .5px solid rgb(206, 206, 206);
 }
 .clickable{
     cursor: pointer;
@@ -410,14 +399,9 @@ h4 {
 .Row {
     display: table;
     width: 100%; 
-    table-layout: fixed; 
-    border-spacing: 10px; 
-}
-.Options {
-    display: table;
-    width: 100%; 
-    table-layout: fixed; 
+    table-layout: auto; 
     border-spacing: 10px 0px; 
+    padding-bottom: 2px;
 }
 .Column {
     display: table-cell;
@@ -426,5 +410,47 @@ h4 {
     display:table;
     font-weight: bold;
     font-size: 15px;
-    border-spacing: 10px 0px ;
 }
+.summaryTitle{
+    padding-top: 10px;
+    font-weight: bold;
+    font-size: 20px;
+    font-family: sans-serif;
+    border-top: .5px solid rgb(206, 206, 206);
+}
+.subheading{
+    font-size: 15px;
+    padding-top: 5px;
+    font-family: sans-serif;
+    margin-bottom: 20px;
+}
+.questionContainer{
+    border-bottom: .5px solid rgb(206, 206, 206);
+    padding-bottom: 20px;
+}
+.modulquestionContainere > *:last-child {
+    border-bottom: none;
+}
+.TopSummaryContainer{
+    padding-bottom: 15px;
+    padding-top: 15x;
+    border-bottom: .5px solid rgb(206, 206, 206);
+}
+.responseContainer{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: .5px solid rgb(206, 206, 206);
+}
+.responseContainer:last-of-type{
+    border-bottom: none;
+    padding-bottom: 0px;
+}
+td:not(:first-child) {
+    padding-top:15px;
+    padding-bottom:15px;
+    padding-right:15px; 
+    float: right; 
+  }
+  td{
+      width: 50%;  
+  }
