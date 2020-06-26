@@ -449,7 +449,6 @@ td:not(:first-child) {
     padding-top:15px;
     padding-bottom:15px;
     padding-right:15px; 
-    float: right; 
   }
   td{
       width: 50%;  

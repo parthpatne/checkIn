@@ -8,11 +8,9 @@ let actionInstance = null;
 let actionSummary = null;
 let actionContext = null;
 let actionDataRows = null;
-let actionUserProfiles = null;
 let actionDataRowsLength = 0;
 let ResponderDate = [];
 let actionNonResponders = [];
-let myResponseCount = 0;
 let myUserId = "";
 
 function setPages(id1, id2) {
@@ -69,9 +67,6 @@ async function getUserprofile() {
             var perUserProfile = responseResponders.members;
             ResponderDate.push({ label: perUserProfile[0].displayName, value: new Date(actionDataRows[i].updateTime).toDateString(), value2: perUserProfile[0].id });
         }
-        let requestResponders = new actionSDK.GetSubscriptionMembers.Request(actionContext.subscription, memberIds);
-        let responseResponders = await actionSDK.executeApi(requestResponders) as actionSDK.GetSubscriptionMembers.Response;
-        actionUserProfiles = responseResponders.members;
     }
 
     myUserId = actionContext.userId;
