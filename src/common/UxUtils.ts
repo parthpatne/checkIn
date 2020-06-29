@@ -507,10 +507,14 @@ export class UxUtils {
         return attributes;
     }
 
-    public static getString(key: string) {
-
+    public static getString(key: string, ...args: any[]) {
         if (strings.hasOwnProperty(key)) {
-            return strings[key];
+            let formatted = strings[key];
+            for (let i = 0; i < args.length; i++) {
+                let regexp = new RegExp('\\{' + i + '\\}', 'gi');
+                formatted = formatted.replace(regexp, args[i]);
+            }
+            return formatted;
         }
         else {
             return key;

@@ -33,7 +33,7 @@ async function createBody() {
 
     const dueDate = UxUtils.getElement('div');
     UxUtils.setClass(dueDate, "subHeading");
-    dueDate.innerHTML = "Due by " + new Date(actionInstance.expiryTime).toDateString();
+    dueDate.innerHTML = UxUtils.getString("dueBy", new Date(actionInstance.expiryTime).toDateString());
 
     UxUtils.addElement(title, headerContainer);
     UxUtils.addElement(dueDate, headerContainer);
@@ -91,7 +91,7 @@ async function getTopSummaryView() {
     let percentageBar = UxUtils.getElement("div");
     let headingpercentage = UxUtils.getElement("text");
     UxUtils.setClass(headingpercentage, "headings")
-    headingpercentage.innerText = "Participation " + participationPercentage + " %";
+    headingpercentage.innerText = UxUtils.getString("participationPercentage", participationPercentage);
     UxUtils.addElement(headingpercentage, percentageBar);
     let progressBar = UxUtils.getElement("div");
     let myProgress = UxUtils.getElement("progress", { width: "100%" });
@@ -103,10 +103,10 @@ async function getTopSummaryView() {
     let summaryText = UxUtils.getElement("button");
     UxUtils.setClass(summaryText, "buttonAsString");
     if (actionSummary.rowCreatorCount == actionSummary.rowCount) {
-        summaryText.textContent = actionSummary.rowCreatorCount + " of " + memberCount + " have responded";
+        summaryText.textContent = UxUtils.getString("XofYresponded", actionSummary.rowCreatorCount, memberCount);
     }
     else {
-        summaryText.textContent = actionSummary.rowCount + " responses by " + actionSummary.rowCreatorCount + " people";
+        summaryText.textContent = UxUtils.getString("NResponseYPeople", actionSummary.rowCount, actionSummary.rowCreatorCount);
     }
     summaryText.addEventListener('click', () => {
         setTabs();
@@ -130,7 +130,7 @@ function createQuestionView() {
         const questionHeading = UxUtils.getElement('h4');
 
         UxUtils.addElement(UxUtils.lineBreak(), questionDiv);
-        questionHeading.innerHTML = column.displayName;
+        questionHeading.innerText = column.displayName;
         UxUtils.addElement(questionHeading, questionDiv);
         let optionView = null;
         switch (column.valueType) {
@@ -161,7 +161,7 @@ function getAggregateOptionView(title, optionId, column) {
 
     let percentage = (actionSummary.defaultAggregates).hasOwnProperty(column.name) ? JSON.parse(actionSummary.defaultAggregates[column.name])[optionId] : 0;
     let wid = percentage / actionSummary.rowCount * 100;
-    let optionpercentage = isNaN(wid) ? "0%" : wid.toFixed(2) + "%";
+    let optionpercentage = isNaN(wid) ? 0 : wid.toFixed(2);
     let optionCount = isNaN(percentage) ? 0 : percentage;
     UxUtils.setClass(responseRowSpan, "row");
 
@@ -169,12 +169,12 @@ function getAggregateOptionView(title, optionId, column) {
     UxUtils.setClass(optionDetails, "row");
     let optionTitle = UxUtils.getElement('text', { float: "left" });
     UxUtils.setClass(optionTitle, "textDisplay column");
-    optionTitle.innerHTML = title;
+    optionTitle.innerText = title;
     UxUtils.addElement(optionTitle, optionDetails);
 
     let optionParticipation = UxUtils.getElement('text', { float: "right" });
     UxUtils.setClass(optionParticipation, "textDisplay column");
-    optionParticipation.innerHTML = optionCount + " (" + optionpercentage + ")";
+    optionParticipation.innerText = UxUtils.getString("optionParticipation", optionCount, optionpercentage);
     UxUtils.addElement(optionParticipation, optionDetails);
 
     UxUtils.addElement(optionDetails, responseRowSpan);
@@ -183,8 +183,7 @@ function getAggregateOptionView(title, optionId, column) {
     UxUtils.setClass(meterDiv, "meter");
     let spanTag1 = UxUtils.getElement('span');
 
-
-    spanTag1.style.width = optionpercentage;
+    UxUtils.addCSS(spanTag1, { width: optionpercentage + "%" });
     UxUtils.addElement(spanTag1, meterDiv);
     UxUtils.addElement(meterDiv, responseRowSpan);
     UxUtils.addElement(responseRowSpan, optionDiv);
@@ -209,12 +208,12 @@ function getAggregateNumericView(column) {
     UxUtils.setClass(responseRowSpan, "row");
     let sumText = UxUtils.getElement("text", { textAlign: "center" });
     UxUtils.setClass(sumText, "textDisplay column");
-    sumText.innerText = "Sum : " + sum;
+    sumText.innerText = UxUtils.getString("sum", sum);
     let averageText = UxUtils.getElement("text", { textAlign: "center" });
     UxUtils.setClass(averageText, "textDisplay column");
-    averageText.innerText = "Average : " + average.toFixed(2);
+    averageText.innerText = UxUtils.getString("average", average.toFixed(2));
     let responseText = UxUtils.getElement("button", { textAlign: "center" });
-    responseText.innerText = responsesCount + " Response";
+    responseText.innerText = UxUtils.getString("responseCount", responsesCount);
     UxUtils.setClass(responseText, "buttonAsString column");
     responseText.addEventListener('click', () => {
         getResponsesperQuestion(column);
@@ -240,7 +239,7 @@ function getAggregateTextView(column) {
     let responseRowSpan = UxUtils.getElement("div");
     UxUtils.setClass(responseRowSpan, "row");
     let responseText = UxUtils.getElement("button", { textAlign: "center" });
-    responseText.innerText = responseCount + " Response";
+    responseText.innerText = UxUtils.getString("responseCount", responseCount);
     UxUtils.setClass(responseText, "buttonAsString column");
     responseText.addEventListener('click', () => {
         getResponsesperQuestion(column);
@@ -263,12 +262,12 @@ async function getResNonResTabs() {
 
     let responderButton = UxUtils.getElement("button");
     UxUtils.setClass(responderButton, "tabs__button tabs__button--active");
-    responderButton.innerText = "Responders";
+    responderButton.innerText = UxUtils.getString("responders");
     responderButton.setAttribute("data-for-tab", "1");
 
     let nonResponderButton = UxUtils.getElement("button");
     UxUtils.setClass(nonResponderButton, "tabs__button");
-    nonResponderButton.innerText = "NonResponders";
+    nonResponderButton.innerText = UxUtils.getString("nonResponders");
     nonResponderButton.setAttribute("data-for-tab", "2");
 
     UxUtils.addElement(responderButton, tabDiv);
@@ -281,7 +280,7 @@ async function getResNonResTabs() {
     UxUtils.addElement(tabBarDiv, tabPage);
 
     let backButton = UxUtils.getElement("button");
-    backButton.innerText = "Back";
+    backButton.innerText = UxUtils.getString("back");
     UxUtils.setClass(backButton, "buttonAsString");
     UxUtils.addElement(backButton, tabPage);
 
@@ -335,7 +334,7 @@ function getResponderTabs() {
 
         let nameColumn = UxUtils.getElement('TD');
         if (ResponderDate[itr].value2 == myUserId) {
-            nameColumn.innerText = "You";
+            nameColumn.innerText = UxUtils.getString("You");
         }
         else {
             nameColumn.innerText = ResponderDate[itr].label;
@@ -369,7 +368,7 @@ function getNonRespondersTabs() {
         let perNonResponder = UxUtils.getElement("div");
         UxUtils.setClass(perNonResponder, "textDisplay");
         if (actionNonResponders[itr].value2 == myUserId) {
-            perNonResponder.innerText = "You";
+            perNonResponder.innerText = UxUtils.getString("You");
         }
         else {
             perNonResponder.innerText = actionNonResponders[itr].label;
@@ -410,7 +409,7 @@ function getResponsesperQuestion(column) {
             UxUtils.setClass(profilePic, "profilePic");
             profilePic.setAttribute('src', 'images/dummyUser.png');
             if (myUserId == actionDataRows[itr].creatorId) {
-                perRowuser.innerText = "You";
+                perRowuser.innerText = UxUtils.getString("You");
             }
             else {
                 perRowuser.innerText = ResponderDate[itr].label;
@@ -427,7 +426,7 @@ function getResponsesperQuestion(column) {
         }
     }
     let backButton = UxUtils.getElement("button");
-    backButton.innerText = "Back";
+    backButton.innerText = UxUtils.getString("back");
     UxUtils.setClass(backButton, "buttonAsString");
     backButton.addEventListener('click', () => {
         setPages("responseViewPage", "aggregateSummaryPage");
@@ -455,7 +454,7 @@ async function getResponsePerUser(id, index) {
     let responseResponders = await actionSDK.executeApi(requestResponders) as actionSDK.GetSubscriptionMembers.Response;
     let userDetail = responseResponders.members;
     if (id == myUserId) {
-        responderName.innerText = "Your Response"
+        responderName.innerText = UxUtils.getString("YourResponse");
     }
     else {
         responderName.innerText = userDetail[0].displayName;
@@ -469,7 +468,7 @@ async function getResponsePerUser(id, index) {
             UxUtils.setClass(rowData, "responseContainer");
             let ques = UxUtils.getElement("div");
             UxUtils.setClass(ques, "textDisplay");
-            ques.innerText = "Question: " + actionInstance.dataTables[0].dataColumns[questionItr].displayName
+            ques.innerText = UxUtils.getString("question", actionInstance.dataTables[0].dataColumns[questionItr].displayName);
             let ans = UxUtils.getElement("div");
             UxUtils.setClass(ans, "responsePerQuestion");
             if (actionInstance.dataTables[0].dataColumns[questionItr].valueType.localeCompare("SingleOption") == 0 || actionInstance.dataTables[0].dataColumns[questionItr].valueType.localeCompare("MultiOption") == 0) {
@@ -492,7 +491,7 @@ async function getResponsePerUser(id, index) {
         }
     }
     let backButton = UxUtils.getElement("button");
-    backButton.innerText = "Back";
+    backButton.innerText = UxUtils.getString("back");
     UxUtils.setClass(backButton, "buttonAsString");
     backButton.addEventListener('click', () => {
         setPages("responsePerUserViewPage", "tabPage");
