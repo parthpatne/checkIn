@@ -78,11 +78,13 @@ function createAction(actionPackageId) {
     var surveyTitle = (<HTMLInputElement>document.getElementById("surveyTitle")).innerText;
     if (Utils.isEmptyString(surveyTitle)) {
         UxUtils.showAlertDailog("Validation Failed", "Survey title cannnot be Empty", "OK", null, null, null);
+        return;
     }
 
     var result = getQuestionSet();
     if (!result["isSuccess"]) {
         UxUtils.showAlertDailog("Validation Failed", "Question title cannnot be Empty", "OK", null, null, null);
+        return;
     }
 
     var questionsSet = result["columnArray"];
