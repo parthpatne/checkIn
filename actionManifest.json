@@ -1,6 +1,6 @@
 {
-    "id": "com.microsoft.sample.pragya",
-    "name": "INT Pragy Check-In",
+    "id": "com.microsoft.sample.checkIn",
+    "name": "Check-In (Int)",
     "description": "Survey for employee sentiment",
     "provider": {
         "name": "Microsoft",
@@ -10,7 +10,7 @@
     },
     "icon": "images/appIcon.png",
     "actionModel": "actionModel.json",
-    "version": "1.1.4",
+    "version": "1.0.0",
     "views": {
         "CardView": {
             "sourceLocation": "json/cardView.json"

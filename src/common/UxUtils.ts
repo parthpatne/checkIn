@@ -463,6 +463,49 @@ export class UxUtils {
         return document.createElement('br');
     }
 
+    public static getContentEditableSpan(text: string = "", placeholder: string = "", attributes: {} = null, onInputEvent: () => void) {
+        var element = this.getElement("span", Object.assign(this.getContentEditableSpanAttributes(), attributes));
+        element.setAttribute("placeholder", placeholder);
+        element.setAttribute('contenteditable', "true");
+        element.innerText = text;
+
+        var maxLength = attributes["max-length"];
+        if (maxLength) {
+            element.innerText = text.length > maxLength ? text.substr(0, maxLength) : text;
+        }
+        var prevString = element.innerText;
+
+        element.addEventListener('input', function () {
+            if (this.innerText.trim() == "") {
+                // this.clearElement(this);
+            }
+
+            if (maxLength && this.innerText.length > maxLength) {
+                this.innerText = prevString;
+            } else if (maxLength) {
+                prevString = this.innerText;
+            }
+
+            if (onInputEvent) {
+                onInputEvent();
+            }
+        });
+
+        element.addEventListener('click', function () {
+            element.focus();
+        });
+
+        return element;
+    }
+
+
+    public static getContentEditableSpanAttributes() {
+        var attributes = {};
+        attributes["word-break"] = "break-word";
+        attributes["-webkit-user-select"] = "text";
+        return attributes;
+    }
+
     public static createInputElement(ph: string, id: string, type: string) {
         var inputelement = document.createElement('input');
         inputelement.setAttribute("type", type);
