@@ -48,7 +48,7 @@ async function createBody() {
 
 async function mainPage() {
     const aggregateSummaryPage = UxUtils.getElement("div", { display: "block" });
-    UxUtils.setClass(aggregateSummaryPage, "MainPage");
+    UxUtils.setClass(aggregateSummaryPage, "aggregateSummaryPage");
     UxUtils.setId(aggregateSummaryPage, "aggregateSummaryPage");
     const sumamaryContainer = await getTopSummaryView();
     UxUtils.addElement(sumamaryContainer, aggregateSummaryPage);
