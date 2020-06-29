@@ -112,7 +112,7 @@ function submitForm() {
 
 function OnPageLoad() {
     var selectTemplate = document.createElement("select");
-    var surveytitle = UxUtils.getContentEditableSpan("", "Survey Title", {}, null);
+    var surveytitle = UxUtils.getContentEditableSpan("", UxUtils.getString("surveyTitlePlaceholder"), {}, null);
     surveytitle.setAttribute("id", "surveyTitle");
     var questionTypeList = document.createElement("select");
     var addQuestionButton = document.createElement("BUTTON");   // Create a <button> element

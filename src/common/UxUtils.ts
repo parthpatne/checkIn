@@ -1,4 +1,5 @@
 import { Utils } from "./Utils";
+import strings from '../../assets/strings/strings.json';
 
 export class UxUtils {
     private static readonly DEFAULT_SPACE_LENGTH = "10pt";
@@ -504,6 +505,16 @@ export class UxUtils {
         attributes["word-break"] = "break-word";
         attributes["-webkit-user-select"] = "text";
         return attributes;
+    }
+
+    public static getString(key: string) {
+
+        if (strings.hasOwnProperty(key)) {
+            return strings[key];
+        }
+        else {
+            return key;
+        }
     }
 
     public static createInputElement(ph: string, id: string, type: string) {

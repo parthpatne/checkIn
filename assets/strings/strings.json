@@ -1,4 +1,4 @@
 {
-    "stringKey": "String Value",
-    "_stringKey.comment": "String comment"
+    "surveyTitlePlaceholder": "Survey Title",
+    "_surveyTitlePlaceholder.comment": "survey Title Placeholder"
 }
