@@ -109,13 +109,19 @@ CSS for Creation View
 }
 
 .surveyTitle{
-
   border : none;
   background : #DCDCDC;
   font-weight: bold;
   border-radius :5px;
+  margin-top: 16px;
+  padding:10px;
+  display: block;
 }
 
+.surveyTitle[contenteditable][placeholder]:empty:before {
+    content: attr(placeholder);
+    color: gray;
+}  
 .questionTypeList{
   width:15px;
   height:21px;

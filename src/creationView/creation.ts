@@ -27,11 +27,11 @@ function fetchQuetionSetForTemplate(val: number) {
     clear();
 
     //Set Survey Title to template Title
-    document.getElementById("surveyTitle").setAttribute("value", Object.keys(questionTemplate)[val]);
+    (<HTMLInputElement>document.getElementById("surveyTitle")).innerText = Object.keys(questionTemplate)[val];
 
     //For None Template Selected make survey title empty
     if (val == 0) {
-        document.getElementById("surveyTitle").setAttribute("value", "");
+        (<HTMLInputElement>document.getElementById("surveyTitle")).innerText = "";
     }
 
     //Load all template Questions
@@ -112,7 +112,8 @@ function submitForm() {
 
 function OnPageLoad() {
     var selectTemplate = document.createElement("select");
-    var surveytitle = UxUtils.createInputElement("Survey title", "surveyTitle", "text");
+    var surveytitle = UxUtils.getContentEditableSpan("", "Survey Title", {}, null);
+    surveytitle.setAttribute("id", "surveyTitle");
     var questionTypeList = document.createElement("select");
     var addQuestionButton = document.createElement("BUTTON");   // Create a <button> element
     var submit = document.createElement("BUTTON");   // Create a <button> element
@@ -124,14 +125,21 @@ function OnPageLoad() {
     });
 
     selectTemplate.addEventListener("change", function () {
-        UxUtils.showAlertDailog("Template Change", "All your changes will be lost when template is changed. Are you sure you want to change the template?",
-            "OK", () => {
-                fetchQuetionSetForTemplate(selectTemplate.selectedIndex);
-                currentSelectedTemplate = selectTemplate.selectedIndex;
-            },
-            "Cancel", () => {
-                selectTemplate.selectedIndex = currentSelectedTemplate;
-            });
+
+        if (questionCount == 0 && Utils.isEmptyString(surveytitle.innerText)) {
+            fetchQuetionSetForTemplate(selectTemplate.selectedIndex);
+            currentSelectedTemplate = selectTemplate.selectedIndex;
+        }
+        else {
+            UxUtils.showAlertDailog("Template Change", "All your changes will be lost when template is changed. Are you sure you want to change the template?",
+                "OK", () => {
+                    fetchQuetionSetForTemplate(selectTemplate.selectedIndex);
+                    currentSelectedTemplate = selectTemplate.selectedIndex;
+                },
+                "Cancel", () => {
+                    selectTemplate.selectedIndex = currentSelectedTemplate;
+                });
+        }
     });
 
     UxUtils.setClass(surveytitle, 'surveyTitle');
@@ -366,7 +374,7 @@ function addChoice(ph: string, questionId: string, choiceId: string, val: string
 
 function getChoiceDeletebutton(questionId: string, choiceId: string) {
     var deleteChoiceButton = document.createElement('img');
-    deleteChoiceButton.setAttribute('src', 'images/delete.svg');
+    deleteChoiceButton.setAttribute('src', 'images/deleteChoice.png');
     UxUtils.setClass(deleteChoiceButton, 'deleteChoiceButton');
     deleteChoiceButton.addEventListener("click", function () {
         deleteChoice(questionId, choiceId);
