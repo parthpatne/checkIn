@@ -42,6 +42,7 @@ function fetchQuetionSetForTemplate(val: number) {
 
 function getQuestionSet() {
     let columnArray = [];
+    var isSuccess = true;
     questionMap.forEach(ques => {
 
         var title = (<HTMLInputElement>document.getElementById(ques.id)).value;
@@ -55,9 +56,14 @@ function getQuestionSet() {
 
         if (mcqChoicesMap.get(ques.id)) {
             mcqChoicesMap.get(ques.id).forEach(choiceId => {
+                var optionDisplayName = (<HTMLInputElement>document.getElementById(choiceId + "ip")).value;
+                if (Utils.isEmptyString(optionDisplayName)) {
+                    isSuccess = false;
+                    // break;
+                }
                 let option = {
                     name: choiceId,
-                    displayName: (<HTMLInputElement>document.getElementById(choiceId + "ip")).value
+                    displayName: optionDisplayName
                 }
                 val.options.push(option);
             });
@@ -65,17 +71,26 @@ function getQuestionSet() {
         columnArray.push(val);
     });
 
-    return columnArray;
+    return { isSuccess: isSuccess, columnArray: columnArray };
 }
 
 function createAction(actionPackageId) {
+    var surveyTitle = (<HTMLInputElement>document.getElementById("surveyTitle")).innerText;
+    if (Utils.isEmptyString(surveyTitle)) {
+        UxUtils.showAlertDailog("Validation Failed", "Survey title cannnot be Empty", "OK", null, null, null);
+    }
 
-    var questionsSet = getQuestionSet();
+    var result = getQuestionSet();
+    if (!result["isSuccess"]) {
+        UxUtils.showAlertDailog("Validation Failed", "Question title cannnot be Empty", "OK", null, null, null);
+    }
+
+    var questionsSet = result["columnArray"];
     var action = {
         id: Utils.generateGUID(),
         actionPackageId: actionPackageId,
         version: 1,
-        displayName: (<HTMLInputElement>document.getElementById("surveyTitle")).value,
+        displayName: (<HTMLInputElement>document.getElementById("surveyTitle")).innerText,
         expiryTime: new Date().getTime() + (7 * 24 * 60 * 60 * 1000),
         properties: [],
         dataTables: [
