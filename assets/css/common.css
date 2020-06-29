@@ -1,20 +1,20 @@
 /* Below line is write to use Google font online */
 @import "https://fonts.googleapis.com/css?family=Ubuntu";
 div#main{
-width:830px;
-height:650px;
-margin:0 auto;
-font-family:'Ubuntu',sans-serif
+    width:830px;
+    height:650px;
+    margin:0 auto;
+    font-family:'Ubuntu',sans-serif
 }
 
 
 body { 
-  counter-reset: myCounter; 
+    counter-reset: myCounter; 
 } 
 
 label::before { 
-  counter-increment: myCounter; 
-  content: counter(myCounter) ". "; 
+    counter-increment: myCounter; 
+    content: counter(myCounter) ". "; 
 }
 
 h4::before { 
@@ -23,52 +23,52 @@ h4::before {
 }
 
 div#root{
-text-align:left;
-width:-webkit-fill-available;
-padding:10px 50px 15px;
-float:left
+    text-align:left;
+    width:-webkit-fill-available;
+    padding:10px 50px 15px;
+    float:left
 }
 #main h1{
-margin-top:40px
+    margin-top:40px
 }
 hr{
-margin-top:-5px
+    margin-top:-5px
 }
 label{
-float:left;
-font-size:16px
+    float:left;
+    font-size:16px
 }
 input[type="text"]{
-width:100%;
-margin-top:5px;
-height:15px;
-margin-bottom:5px;
-padding:10px;
+    width:100%;
+    margin-top:5px;
+    height:15px;
+    margin-bottom:5px;
+    padding:10px;
 }
 input:focus {
     border-color: blue
 }
 textarea{
-width:100%;
-border:3px solid #2BC1F2;
-padding:10px;
-margin-bottom:25px;
-margin-top:10px;
-height:100px;
-resize:none
+    width:100%;
+    border:3px solid #2BC1F2;
+    padding:10px;
+    margin-bottom:25px;
+    margin-top:10px;
+    height:100px;
+    resize:none
 }
 input[type="submit"]{
-width:40%;
-padding:10px 45px;
-background-color:#2BC1F2;
-border:none;
-color:#fff;
-font-size:18px;
-font-weight:700;
-cursor:pointer;
-margin-left: 5%;
-margin-right: 5%;
-font-family:'Ubuntu',sans-serif
+    width:40%;
+    padding:10px 45px;
+    background-color:#2BC1F2;
+    border:none;
+    color:#fff;
+    font-size:18px;
+    font-weight:700;
+    cursor:pointer;
+    margin-left: 5%;
+    margin-right: 5%;
+    font-family:'Ubuntu',sans-serif
 }
 
 
@@ -77,35 +77,35 @@ CSS for Creation View
 ---------------------------------------- */
 
 .baseQuestion { 
-  background : #DCDCDC;
-  border-radius: 5px;
-  padding :10px;
-  width :100%;
-  border :none;
-  margin : 10px 0 10px 0;
+    background : #DCDCDC;
+    border-radius: 5px;
+    padding :10px;
+    width :100%;
+    border :none;
+    margin : 10px 0 10px 0;
 }
 
 .inputElement{
-  width: 88% !important; 
-  margin : 0px 0 10px 3%;
-  border : none;
-  background : white;
-  border-radius: 3px;
+    width: 88% !important; 
+    margin : 0px 0 10px 3%;
+    border : none;
+    background : white;
+    border-radius: 3px;
 }
 
 .addQuestionTitleInputElement{
-  width : 88% !important; 
-  margin : 0 0 0 1%;
-  border : none;
-  border-radius: 3px;
-  font-weight:bold;
+    width : 88% !important; 
+    margin : 0 0 0 1%;
+    border : none;
+    border-radius: 3px;
+    font-weight:bold;
 }
 
 .selectTemplateDropDown{
-  border : none;
-  background : #DCDCDC;
-  padding : 5px;
-  border-radius :5px;
+    border : none;
+    background : #DCDCDC;
+    padding : 5px;
+    border-radius :5px;
 }
 
 .surveyTitle{
@@ -123,51 +123,51 @@ CSS for Creation View
     color: gray;
 }  
 .questionTypeList{
-  width:15px;
-  height:21px;
-  background:#6264a7;
-  color:white;
-  border:none;
-  outline:none;
-  box-shadow: none;
+    width:15px;
+    height:21px;
+    background:#6264a7;
+    color:white;
+    border:none;
+    outline:none;
+    box-shadow: none;
 }
 
 .addQuestionButton{
-  float :left; 
-  background :#6264a7;
-  color :white;
-  border :none;
-  height :21px;
-  margin-right:1px;
-  outline:none;
-  box-shadow :none;
+    float :left; 
+    background :#6264a7;
+    color :white;
+    border :none;
+    height :21px;
+    margin-right:1px;
+    outline:none;
+    box-shadow :none;
 }
 
 .submitButton{
-  float :right;
-  background :#6264a7;
-  color :white;
-  border :none;
-  height :21px;
-  outline :none;
-  box-shadow :none;
+    float :right;
+    background :#6264a7;
+    color :white;
+    border :none;
+    height :21px;
+    outline :none;
+    box-shadow :none;
 }
 
 .addChoiceButton{
-  margin-left :25px;
-  float :left; 
-  background : rgb(220, 220, 220);
-  color :#6264a7;
-  border :none;
-  height :21px;
-  outline :none;
-  box-shadow :none;
+    margin-left :25px;
+    float :left; 
+    background : rgb(220, 220, 220);
+    color :#6264a7;
+    border :none;
+    height :21px;
+    outline :none;
+    box-shadow :none;
 }
 
 .addChoiceInput {
-  width :90% !important;
-  border :none;
-  border-radius :3px;
+    width :90% !important;
+    border :none;
+    border-radius :3px;
 }
 
 .creationFooterDiv{
@@ -187,11 +187,11 @@ CSS for Creation View
 CSS for Response View 
 ---------------------------------------- */
 .responseInputElement{
-  width :93%;
-  margin :10px 0 10px 3%;
-  border :none;
-  background :white;
-  border-radius :3px;
+    width :93%;
+    margin :10px 0 10px 3%;
+    border :none;
+    background :white;
+    border-radius :3px;
 }
 
 .responseSubmitButton{
@@ -205,107 +205,82 @@ CSS for Response View
 CSS for Summary View 
 ---------------------------------------- */
 div#fugo{
-float:right
+    float:right
 }
 
 .meter { 
     height: 10px;  /* Can be anything */
     position: relative;
-    /*margin: 60px 0 20px 0;  Just for demo spacing */
     background: #eee;
     -moz-border-radius: 25px;
     -webkit-border-radius: 25px;
     border-radius: 25px;
-    /*padding: 10px;*/
-    /*-webkit-box-shadow: inset 0 -2px 5px rgba(0, 0, 0, 0.25);
-    -moz-box-shadow   : inset 0 -2px 5px rgba(0, 0, 0, 0.25);
-    box-shadow        : inset 0 -2px 5px rgba(0, 0, 0, 0.25);*/
     margin-bottom: 10px;
 }
 
 .meter > span {
     display: block;
     height: 100%;
-       -webkit-border-top-right-radius: 8px;
+    -webkit-border-top-right-radius: 8px;
     -webkit-border-bottom-right-radius: 8px;
-           -moz-border-radius-topright: 8px;
-        -moz-border-radius-bottomright: 8px;
-               border-top-right-radius: 8px;
-            border-bottom-right-radius: 8px;
-        -webkit-border-top-left-radius: 20px;
-     -webkit-border-bottom-left-radius: 20px;
-            -moz-border-radius-topleft: 20px;
-         -moz-border-radius-bottomleft: 20px;
-                border-top-left-radius: 20px;
-             border-bottom-left-radius: 20px;
-    background-color: rgb(240, 240, 80);
+    -moz-border-radius-topright: 8px;
+    -moz-border-radius-bottomright: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    -webkit-border-top-left-radius: 20px;
+    -webkit-border-bottom-left-radius: 20px;
+    -moz-border-radius-topleft: 20px;
+    -moz-border-radius-bottomleft: 20px;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    background-color: rgb(244, 196, 52);
     background-image: -webkit-gradient(
-      linear,
-      left bottom,
-      left top,
-      color-stop(0,rgb(207, 207, 15)),
-      color-stop(1, rgb(207, 207, 15))
-     );
+    linear,
+    left bottom,
+    left top,
+    color-stop(0,rgb(244, 196, 52)),
+    color-stop(1, rgb(244, 196, 52))
+    );
     background-image: -moz-linear-gradient(
-      center bottom,
-      rgb(207, 207, 15) 37%,
-      rgb(207, 207, 15) 69%
-     );
-    -webkit-box-shadow: 
-      inset 0  2px 5px  rgba(0, 0, 0, 0.25);
-      /*inset 0 -2px 5px rgba(0, 0, 0, 0.25);*/
-    -moz-box-shadow: 
-      inset 0  2px 5px  rgba(0, 0, 0, 0.25);
-      /*inset 0 -2px 5px rgba(0, 0, 0, 0.25);*/
-    box-shadow: 
-      inset 0 2px 5px  rgba(0, 0, 0, 0.25);
-      /*inset 0 -2px 5px rgba(0, 0, 0, 0.25);*/
+    center bottom,
+    rgb(244, 196, 52) 37%,
+    rgb(245, 208, 98) 69%
+    );
     position: relative;
     overflow: hidden;
 }
 
 progress[value]::-webkit-progress-bar {
-  background-color: #eee;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
-  height: 10px;
-  -moz-border-radius: 25px;
-  -webkit-border-radius: 25px;
-  border-radius: 25px;
-  border: 0;
-  /*width: 100%;*/
+    background-color: #eee;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+    height: 10px;
+    -moz-border-radius: 25px;
+    -webkit-border-radius: 25px;
+    border-radius: 25px;
+    border: 0;
 }
 progress[value]::-webkit-progress-value {
-  background-color: rgb(207, 207, 15);
-  height: 10px;
-  -moz-border-radius: 25px;
-  -webkit-border-radius: 25px;
-  border-radius: 25px;
-  overflow: hidden;
-  /*width: 100%;*/
-  border:0;
+    background-color: rgb(244, 196, 52);
+    height: 10px;
+    -moz-border-radius: 25px;
+    -webkit-border-radius: 25px;
+    border-radius: 25px;
+    overflow: hidden;
+    border:0;
 }
 progress::-moz-progress-bar {
-  border: 0;
-  height: 10px;
-  border-radius: 25px;
-  width: 100%;
+    border: 0;
+    height: 10px;
+    border-radius: 25px;
+    width: 100%;
 }
 .percentage {
-  float: right;
-  color: white;
-  margin: 5px 5px 0 0;
-  font-size: 12px;
+    float: right;
+    color: white;
+    margin: 5px 5px 0 0;
+    font-size: 12px;
 }
-.button_as_string{
-  border: none;
-  background: none;
-  outline: none;
-  height: 15px;
-  font-size: 15px;
-  font-family: sans-serif;
-  font-weight: "bold";
-}
-.button_as_string{
+.buttonAsString {
     border: none;
     background: none;
     outline: none;
@@ -313,124 +288,182 @@ progress::-moz-progress-bar {
     font-size: 15px;
     font-family: sans-serif;
     font-weight: "bold";
-    
-  }
-.button_as_string:hover {
+}
+.buttonAsString:hover {
     cursor: pointer;
     text-decoration: underline;
-  }
-.textDisplay{
-    font-size: 15px;
+}
+.textDisplay {
+    font-size: 14px;
     font-family: sans-serif;
+    overflow: hidden;
 }
-.tabs{
-  display:flex;
-  flex-direction: row;
-  width:100%;
+.tabs {
+    display:flex;
+    flex-direction: row;
+    width:100%;
 }
-.tabs__horizonal{
-  width: 100%;
-  background: #cccccc;
+.tabs__horizonal {
+    width: 100%;
+    background: #cccccc;
 }
-.tabs__button{
-  display: block;
-  padding: 10px;
-  border:  none;
-  width: 100%;
-  outline: none;
-  cursor: pointer;
-  font-family: sans-serif;
-  font-weight: bold;
+.tabs__button {
+    display: block;
+    padding: 10px;
+    border:  none;
+    width: 100%;
+    outline: none;
+    cursor: pointer;
+    font-family: sans-serif;
+    font-weight: bold;
 }
 .tabs__button:active{
-  background: #6264a7;
-  width: 100%;
-  font-family: sans-serif;
-  font-weight: bold;
+    background: #6264a7;
+    width: 100%;
+    font-family: sans-serif;
+    font-weight: bold;
 }
-.tabs__button--active{
-  width: 100%;
-  background: #6264a7;
-  font-family: sans-serif;
-  font-weight: bold;
+.tabs__button--active {
+    width: 100%;
+    background: #6264a7;
+    font-family: sans-serif;
+    font-weight: bold;
 }
-.tabs__content{
-  padding: 15px;
-  font-size: 15px;
-  display: none;
-  height: 300px;
-  overflow-y:auto;
-  border-bottom: 1px solid dimgrey;
-  border-top: 1px solid dimgrey;
+.tabs__content {
+    padding: 15px;
+    font-size: 15px;
+    display: none;
+    height: 300px;
+    overflow-y:auto;
+    border-bottom: .5px solid rgb(206, 206, 206);
+    border-top: .5px solid rgb(206, 206, 206);
 }
-.tabs__content--active{
-  display: block;
-  height: 300px;
+.tabs__content--active {
+    display: block;
+    height: 300px;
 }
 h4 {
-  font-weight: bold;
-  font-size: medium;
+    font-weight: bold;
+    font-size: medium;
 }
-.Page{
-  display: none;
-}
-.MainPage{
-  display: block;
-}
-.ResponseViewPage{
-  display: none;
-}
-.ResponsePerUserViewPage{
+.tabPage {
     display: none;
+    height: 80%;
 }
-.responseperquestion{
+.aggregateSummaryPage {
+    display: block;
+    height: 80%;
+}
+.responseViewPage {
+    display: none;
+    height: 80%;
+}
+.responsePerUserViewPage {
+    display: none;
+    height: 80%;
+}
+.responsePerQuestion {
     font-family: sans-serif;
     font-size: 10px;
-    border-bottom: dotted;
     margin-bottom: 15px;
-    margin-left : 15px;
+    padding-left: 25px;
 }
-.responseperquestion:last-of-type{
+.responsePerQuestion:last-of-type {
     margin-bottom:0;
     border-bottom: none;
-    margin-left : 15px;
  }
-.TitleDiv{
+.TitleDiv {
     font-weight: bold;
     font-family: sans-serif;
     font-size: 15px;
-    border-bottom: 1px solid dimgrey;
-    margin-bottom: 15px;
+    border-bottom: .5px solid rgb(206, 206, 206);
+    padding-bottom: 10px;
     margin-top: 10px;
+    margin-bottom: 10px;
 }
-.responseRow{   
-  height: 350px;
-  overflow-y: auto;
-  top: 20px;
-  border-bottom: 1px solid dimgrey;
-  border-top: 1px solid dimgrey;
+.responseRow {   
+    height: 360px;
+    overflow-y: auto;
+    top: 20px;
+    border-bottom: .5px solid rgb(206, 206, 206);
+    border-top: .5px solid rgb(206, 206, 206);
 }
-.clickable{
+.clickable {
     cursor: pointer;
 }
-.Row {
+.row {
     display: table;
     width: 100%; 
-    table-layout: fixed; 
-    border-spacing: 10px; 
-}
-.Options {
-    display: table;
-    width: 100%; 
-    table-layout: fixed; 
+    table-layout: auto; 
     border-spacing: 10px 0px; 
+    padding-bottom: 2px;
 }
-.Column {
+.column {
     display: table-cell;
 }
-.headings{
+.headings {
     display:table;
     font-weight: bold;
     font-size: 15px;
-    border-spacing: 10px 0px ;
+}
+.summaryTitle {
+    padding-top: 10px;
+    font-weight: bold;
+    font-size: 20px;
+    font-family: sans-serif;
+    border-top: .5px solid rgb(206, 206, 206);
+}
+.subHeading {
+    font-size: 15px;
+    padding-top: 5px;
+    font-family: sans-serif;
+    margin-bottom: 20px;
+}
+.questionContainer {
+    border-bottom: .5px solid rgb(206, 206, 206);
+    padding-bottom: 20px;
+}
+.modulquestionContainere > *:last-child {
+    border-bottom: none;
+}
+.TopSummaryContainer {
+    padding-bottom: 15px;
+    padding-top: 15x;
+    border-bottom: .5px solid rgb(206, 206, 206);
+}
+.responseContainer {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    overflow: hidden;
+    border-bottom: .5px solid rgb(206, 206, 206);
+}
+.responseContainer:last-of-type {
+    border-bottom: none;
+    padding-bottom: 0px;
+}
+td:not(:first-child) {
+    padding-top:15px;
+    padding-bottom:15px;
+    padding-right:15px; 
+}
+td:first-child {
+    width: 20px;
+}
+td:last-child {
+    text-align: right;
+}
+table {
+    width: 100%;
+    text-align: left;
+}
+.profilePic {
+    height: 20px;
+    width: 20px;
+    vertical-align: text-bottom;
+    padding-right: 5px;
+}
+.userProfile {
+    vertical-align: middle;
+    text-align: center;
+    height: 30px;
 }
