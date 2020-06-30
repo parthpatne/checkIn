@@ -1,6 +1,7 @@
 {
     "id": "com.microsoft.sample.checkIn",
     "name": "Check-In (Int)",
+    "$schema": "https://int.actions.office365.com/ActionCommon/jsons/ActionManifest.schema.json",
     "description": "Survey for employee sentiment",
     "provider": {
         "name": "Microsoft",
@@ -13,18 +14,18 @@
     "version": "1.0.0",
     "views": {
         "CardView": {
-            "sourceLocation": "json/cardView.json"
+            "sourceLocation": "cardView.json"
         },
         "LaunchView": {
-            "sourceLocation": "html/createView.html",
+            "sourceLocation": "createView.html",
             "header": "Survey For Employee Sentiment"
         },
         "UpdateView": {
-            "sourceLocation": "html/updateView.html",
+            "sourceLocation": "updateView.html",
             "header": "Fill out Check-In"
         },
         "DetailView": {
-            "sourceLocation": "html/detailView.html",
+            "sourceLocation": "detailView.html",
             "header": "Results view"
         }
     },
@@ -33,6 +34,5 @@
         "localeFiles": {
             "en-us": "strings/strings.json"
         }
-    },
-    "whitelistedUrlDomains": []
+    }
 }
