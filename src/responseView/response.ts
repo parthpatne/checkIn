@@ -12,7 +12,7 @@ function createBody() {
     var title = document.createElement('h3');
     var submit = document.createElement("BUTTON");
     title.innerHTML = actionInstance.displayName;
-    submit.innerHTML = "Submit";
+    submit.innerHTML = UxUtils.getString("submit");
     UxUtils.setClass(submit, 'responseSubmitButton');
     submit.addEventListener("click", function () {
         submitForm();
@@ -101,11 +101,11 @@ function createQuestionView() {
             });
         }
         else if (column.valueType == "Text") {
-            var radioOption = addInputElement("Enter Text", column.name, "text");
+            var radioOption = addInputElement(UxUtils.getString("enterTextPlaceholder"), column.name, "text");
             UxUtils.addElement(radioOption, questionDiv);
         }
         else if (column.valueType == "Numeric") {
-            var radioOption = addInputElement("Enter Number", column.name, "number");
+            var radioOption = addInputElement(UxUtils.getString("enterNumberPlaceholder"), column.name, "number");
             UxUtils.addElement(radioOption, questionDiv);
         }
         UxUtils.addElement(questionDiv, root);

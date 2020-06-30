@@ -1,5 +1,5 @@
 import * as actionSDK from 'action-sdk-sunny';
-import questionTemplate from '../../assets/json/questionSet.json';
+import questionTemplate from './questionSet.json';
 import { Utils } from "../common/Utils";
 import { UxUtils } from '../common/UxUtils';
 import { Question } from './Question';
@@ -12,6 +12,7 @@ var bodyDiv = document.createElement("div");
 var footerDiv = document.createElement("div");
 var questionCount = 0;
 let currentSelectedTemplate = 0;
+let strings;
 
 OnPageLoad();
 
@@ -46,6 +47,11 @@ function getQuestionSet() {
     questionMap.forEach(ques => {
 
         var title = (<HTMLInputElement>document.getElementById(ques.id)).value;
+
+        if (Utils.isEmptyString(title)) {
+            isSuccess = false;
+            // break;
+        }
         let val = {
             name: ques.id,
             displayName: title,
@@ -77,13 +83,13 @@ function getQuestionSet() {
 function createAction(actionPackageId) {
     var surveyTitle = (<HTMLInputElement>document.getElementById("surveyTitle")).innerText;
     if (Utils.isEmptyString(surveyTitle)) {
-        UxUtils.showAlertDailog("Validation Failed", "Survey title cannnot be Empty", "OK", null, null, null);
+        UxUtils.showAlertDailog(UxUtils.getString("validationErrorTitle"), UxUtils.getString("emptySurveyTitleError"), UxUtils.getString("ok"), null, null, null);
         return;
     }
 
     var result = getQuestionSet();
     if (!result["isSuccess"]) {
-        UxUtils.showAlertDailog("Validation Failed", "Question title cannnot be Empty", "OK", null, null, null);
+        UxUtils.showAlertDailog(UxUtils.getString("validationErrorTitle"), UxUtils.getString("emptyQuestionTitleError"), UxUtils.getString("ok"), null, null, null);
         return;
     }
 
@@ -128,7 +134,16 @@ function submitForm() {
 
 
 function OnPageLoad() {
+    actionSDK.executeApi(new actionSDK.GetLocalizedStrings.Request())
+        .then(function (response: actionSDK.GetLocalizedStrings.Response) {
+            strings = response.strings;
+        })
+        .catch(function (error) {
+            console.error("GetContext - Error: " + JSON.stringify(error));
+        });
+
     var selectTemplate = document.createElement("select");
+
     var surveytitle = UxUtils.getContentEditableSpan("", UxUtils.getString("surveyTitlePlaceholder"), {}, null);
     surveytitle.setAttribute("id", "surveyTitle");
     var questionTypeList = document.createElement("select");
@@ -148,12 +163,13 @@ function OnPageLoad() {
             currentSelectedTemplate = selectTemplate.selectedIndex;
         }
         else {
-            UxUtils.showAlertDailog("Template Change", "All your changes will be lost when template is changed. Are you sure you want to change the template?",
-                "OK", () => {
+            UxUtils.showAlertDailog(UxUtils.getString("validationErrorTitle"), UxUtils.getString("emptyQuestionTitleError"), UxUtils.getString("ok"), null, null, null);
+            UxUtils.showAlertDailog(UxUtils.getString("templateChangeAlertTitle"), UxUtils.getString("templateChangeAlertText"),
+                UxUtils.getString("ok"), () => {
                     fetchQuetionSetForTemplate(selectTemplate.selectedIndex);
                     currentSelectedTemplate = selectTemplate.selectedIndex;
                 },
-                "Cancel", () => {
+                UxUtils.getString("cancel"), () => {
                     selectTemplate.selectedIndex = currentSelectedTemplate;
                 });
         }
@@ -165,8 +181,8 @@ function OnPageLoad() {
     questionTypeList.options.add(new Option("TEXT", "2"));
     questionTypeList.options.add(new Option("NUMBER", "3"));
     questionTypeList.selectedIndex = -1;
-    addQuestionButton.innerHTML = "Add Question";
-    submit.innerHTML = "Create Form";
+    addQuestionButton.innerHTML = UxUtils.getString("addQuestion");
+    submit.innerHTML = UxUtils.getString("submitForm");
     submit.setAttribute("id", "submitForm");
 
     UxUtils.setClass(questionTypeList, 'questionTypeList');
@@ -222,7 +238,7 @@ function addMcqQuestion(question?: JSON) {
     var qId = questionCount.toString();
     var questionHeading = document.createElement('label'); // Heading of Form
     var choiceCount = 0;
-    var inputelement = UxUtils.createInputElement("Enter Question", questionCount.toString(), "text"); // Create Input Field for Name
+    var inputelement = UxUtils.createInputElement(UxUtils.getString("enterQuestionPlaceholder"), questionCount.toString(), "text"); // Create Input Field for Name
     var choices = [];
     var ques = new Question(qId, "SingleOption", 0, true);
     var addChoiceButton = document.createElement("BUTTON");   // Create a <button> element
@@ -245,29 +261,29 @@ function addMcqQuestion(question?: JSON) {
             choices.push(qId + "c" + choiceCount);
             mcqChoicesMap.set(qId, choices);
 
-            var choice = addChoice("Add Choice", qId, qId + "c" + choiceCount++, option.title);
+            var choice = addChoice(UxUtils.getString("addChoicePlaceholder"), qId, qId + "c" + choiceCount++, option.title);
             UxUtils.addElement(choice, cDiv);
         });
     }
     else {
         choices.push(qId + "c" + choiceCount);
-        var choice = addChoice("Add Choice", qId, qId + "c" + choiceCount++);
+        var choice = addChoice(UxUtils.getString("addChoicePlaceholder"), qId, qId + "c" + choiceCount++);
         UxUtils.addElement(choice, cDiv);
 
         choices.push(qId + "c" + choiceCount);
-        choice = addChoice("Add Choice", qId, qId + "c" + choiceCount++);
+        choice = addChoice(UxUtils.getString("addChoicePlaceholder"), qId, qId + "c" + choiceCount++);
         UxUtils.addElement(choice, cDiv);
 
         mcqChoicesMap.set(qId, choices);
     }
 
-    addChoiceButton.innerHTML = "+ Add Choice";
+    addChoiceButton.innerHTML = UxUtils.getString("addChoiceButton");
     UxUtils.setClass(addChoiceButton, 'addChoiceButton');
 
     addChoiceButton.addEventListener("click", function () {
 
         choices.push(qId + "" + choiceCount);
-        var choice = addChoice("Add Choice", qId, qId + "" + choiceCount++);
+        var choice = addChoice(UxUtils.getString("addChoicePlaceholder"), qId, qId + "" + choiceCount++);
         UxUtils.addElement(choice, cDiv);
         mcqChoicesMap.set(qId, choices);
     });
@@ -282,7 +298,7 @@ function addMcqQuestion(question?: JSON) {
 function addNumberQuestion(question?: JSON) {
     var qDiv = document.createElement("div");
     var questionHeading = document.createElement('label'); // Heading of Form
-    var inputelement = UxUtils.createInputElement("Enter Question", questionCount.toString(), "text"); // Create Input Field for Name
+    var inputelement = UxUtils.createInputElement(UxUtils.getString("enterQuestionPlaceholder"), questionCount.toString(), "text"); // Create Input Field for Name
     var qId = questionCount.toString();
     var ques = new Question(qId, "Numeric", -1, true);
 
@@ -299,7 +315,7 @@ function addNumberQuestion(question?: JSON) {
     UxUtils.addElement(questionHeading, qDiv);
     UxUtils.addElement(getQuestionDeletebutton(qId), qDiv);
     UxUtils.addElement(inputelement, qDiv);
-    UxUtils.addElement(addInputElement("Enter Number", questionCount + "0", "", true), qDiv);
+    UxUtils.addElement(addInputElement(UxUtils.getString("enterNumberPlaceholder"), questionCount + "0", "", true), qDiv);
     UxUtils.addElement(UxUtils.lineBreak(), qDiv);
     questionCount++;
     return qDiv;
@@ -308,7 +324,7 @@ function addNumberQuestion(question?: JSON) {
 function addTextQuestion(question?: JSON) {
     var qDiv = document.createElement("div");
     var questionHeading = document.createElement('label'); // Heading of Form
-    var inputelement = UxUtils.createInputElement("Enter Question", questionCount.toString(), "text"); // Create Input Field for Name
+    var inputelement = UxUtils.createInputElement(UxUtils.getString("enterQuestionPlaceholder"), questionCount.toString(), "text"); // Create Input Field for Name
     var qId = questionCount.toString();
     var ques = new Question(qId, "Text", -1, true);
 
@@ -324,7 +340,7 @@ function addTextQuestion(question?: JSON) {
     UxUtils.addElement(questionHeading, qDiv);
     UxUtils.addElement(getQuestionDeletebutton(qId), qDiv);
     UxUtils.addElement(inputelement, qDiv);
-    UxUtils.addElement(addInputElement("Enter Text", questionCount + "0", "", true), qDiv);
+    UxUtils.addElement(addInputElement(UxUtils.getString("enterTextPlaceholder"), questionCount + "0", "", true), qDiv);
     UxUtils.addElement(UxUtils.lineBreak(), qDiv);
 
     questionCount++;
@@ -401,7 +417,7 @@ function getChoiceDeletebutton(questionId: string, choiceId: string) {
 
 function deleteChoice(questionId, choiceId) {
     if (mcqChoicesMap.get(questionId).length == 2) {
-        UxUtils.showAlertDailog("Choice Delete Error", "At least two choices is mandatory", "OK", null, null, null);
+        UxUtils.showAlertDailog(UxUtils.getString("choiceDeleteErrorTitle"), UxUtils.getString("choiceDeleteErrorText"), UxUtils.getString("ok"), null, null, null);
         return;
     }
     var choiceElement = document.getElementById(choiceId);

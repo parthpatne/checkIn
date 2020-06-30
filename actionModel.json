@@ -1,4 +1,5 @@
 {
+    "$schema": "https://int.actions.office365.com/ActionCommon/jsons/ActionModel.schema.json",
     "customProperties": {
         "canAddMore": true
     },
