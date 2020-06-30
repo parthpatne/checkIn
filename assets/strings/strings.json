@@ -26,5 +26,5 @@
     "yourResponse": "Your Response",
     "yourResponse.comment": "Your response for the questions",
     "dueBy": "Due by {0}",
-    "_dueByy.comment": "Survey expiry date"
+    "_dueBy.comment": "Survey expiry date"
 }
