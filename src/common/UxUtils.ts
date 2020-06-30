@@ -1,5 +1,5 @@
 import { Utils } from "./Utils";
-import strings from '../../assets/strings/strings.json';
+import strings from '../../assets/strings/en-us/strings.json';
 
 export class UxUtils {
     private static readonly DEFAULT_SPACE_LENGTH = "10pt";

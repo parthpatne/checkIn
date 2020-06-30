@@ -12,6 +12,7 @@ var bodyDiv = document.createElement("div");
 var footerDiv = document.createElement("div");
 var questionCount = 0;
 let currentSelectedTemplate = 0;
+let strings;
 
 OnPageLoad();
 
@@ -128,8 +129,17 @@ function submitForm() {
 
 
 function OnPageLoad() {
+    actionSDK.executeApi(new actionSDK.GetLocalizedStrings.Request())
+        .then(function (response: actionSDK.GetLocalizedStrings.Response) {
+            strings = response.strings;
+        })
+        .catch(function (error) {
+            console.error("GetContext - Error: " + JSON.stringify(error));
+        });
+
     var selectTemplate = document.createElement("select");
-    var surveytitle = UxUtils.getContentEditableSpan("", UxUtils.getString("surveyTitlePlaceholder"), {}, null);
+
+    var surveytitle = UxUtils.getContentEditableSpan("", "Survey String New", {}, null);
     surveytitle.setAttribute("id", "surveyTitle");
     var questionTypeList = document.createElement("select");
     var addQuestionButton = document.createElement("BUTTON");   // Create a <button> element
