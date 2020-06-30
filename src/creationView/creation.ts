@@ -1,5 +1,5 @@
 import * as actionSDK from 'action-sdk-sunny';
-import questionTemplate from '../../assets/json/questionSet.json';
+import questionTemplate from './questionSet.json';
 import { Utils } from "../common/Utils";
 import { UxUtils } from '../common/UxUtils';
 import { Question } from './Question';
