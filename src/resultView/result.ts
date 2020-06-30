@@ -24,16 +24,16 @@ function setPages(id1, id2) {
 OnPageLoad();
 
 async function createBody() {
-    const headerContainer = UxUtils.getElement("div");
+    const headerContainer = UxUtils.getDiv();
     UxUtils.setClass(headerContainer, "headerContainer");
 
-    const title = UxUtils.getElement('div');
+    const title = UxUtils.getDiv();
     UxUtils.setClass(title, "summaryTitle");
-    title.innerHTML = actionInstance.displayName;
+    UxUtils.setText(title, actionInstance.displayName);
 
-    const dueDate = UxUtils.getElement('div');
+    const dueDate = UxUtils.getDiv();
     UxUtils.setClass(dueDate, "subHeading");
-    dueDate.innerHTML = UxUtils.getString("dueBy", new Date(actionInstance.expiryTime).toDateString());
+    UxUtils.setText(dueDate, UxUtils.getString("dueBy", new Date(actionInstance.expiryTime).toDateString()));
 
     UxUtils.addElement(title, headerContainer);
     UxUtils.addElement(dueDate, headerContainer);
@@ -47,7 +47,7 @@ async function createBody() {
 }
 
 async function mainPage() {
-    const aggregateSummaryPage = UxUtils.getElement("div", { display: "block" });
+    const aggregateSummaryPage = UxUtils.getDiv({ display: "block" });
     UxUtils.setClass(aggregateSummaryPage, "aggregateSummaryPage");
     UxUtils.setId(aggregateSummaryPage, "aggregateSummaryPage");
     const sumamaryContainer = await getTopSummaryView();
@@ -82,31 +82,33 @@ async function getUserprofile() {
 
 async function getTopSummaryView() {
     let participationPercentage = 0;
-    const barDiv = UxUtils.getElement("div");
+    const barDiv = UxUtils.getDiv();
     UxUtils.setClass(barDiv, "TopSummaryContainer")
     let getSubscriptionCount = new actionSDK.GetSubscriptionMemberCount.Request(actionContext.subscription);
     let response = await actionSDK.executeApi(getSubscriptionCount) as actionSDK.GetSubscriptionMemberCount.Response;
     let memberCount = response.memberCount;
     participationPercentage = Math.round((actionSummary.rowCreatorCount / memberCount) * 100);
-    let percentageBar = UxUtils.getElement("div");
+    let percentageBar = UxUtils.getDiv();
     let headingpercentage = UxUtils.getElement("text");
     UxUtils.setClass(headingpercentage, "headings")
-    headingpercentage.innerText = UxUtils.getString("participationPercentage", participationPercentage);
+    UxUtils.setText(headingpercentage, UxUtils.getString("participationPercentage", participationPercentage));
     UxUtils.addElement(headingpercentage, percentageBar);
-    let progressBar = UxUtils.getElement("div");
-    let myProgress = UxUtils.getElement("progress", { width: "100%" });
-    myProgress.setAttribute("value", participationPercentage.toString());
-    myProgress.setAttribute("max", "100");
+    let progressBar = UxUtils.getDiv();
+    UxUtils.setClass(progressBar, "progressBar");
+    let myProgress = UxUtils.getElement('span');
+
+    UxUtils.addCSS(myProgress, { width: participationPercentage + "%" });
+
     UxUtils.addElement(myProgress, progressBar);
 
-    let buttonLink = UxUtils.getElement("div");
+    let buttonLink = UxUtils.getDiv();
     let summaryText = UxUtils.getElement("button");
     UxUtils.setClass(summaryText, "buttonAsString");
     if (actionSummary.rowCreatorCount == actionSummary.rowCount) {
-        summaryText.textContent = UxUtils.getString("XofYresponded", actionSummary.rowCreatorCount, memberCount);
+        UxUtils.setText(summaryText, UxUtils.getString("XofYresponded", actionSummary.rowCreatorCount, memberCount));
     }
     else {
-        summaryText.textContent = UxUtils.getString("NResponseYPeople", actionSummary.rowCount, actionSummary.rowCreatorCount);
+        UxUtils.setText(summaryText, UxUtils.getString("NResponseYPeople", actionSummary.rowCount, actionSummary.rowCreatorCount));
     }
     summaryText.addEventListener('click', () => {
         setTabs();
@@ -122,15 +124,15 @@ async function getTopSummaryView() {
 }
 
 function createQuestionView() {
-    const totalQuestion = UxUtils.getElement("div");
+    const totalQuestion = UxUtils.getDiv();
     actionInstance.dataTables[0].dataColumns.forEach((column) => {
 
-        const questionDiv = UxUtils.getElement("div");
+        const questionDiv = UxUtils.getDiv();
         UxUtils.setClass(questionDiv, "questionContainer");
         const questionHeading = UxUtils.getElement('h4');
 
         UxUtils.addElement(UxUtils.lineBreak(), questionDiv);
-        questionHeading.innerText = column.displayName;
+        UxUtils.setText(questionHeading, column.displayName);
         UxUtils.addElement(questionHeading, questionDiv);
         let optionView = null;
         switch (column.valueType) {
@@ -156,8 +158,8 @@ function createQuestionView() {
 
 function getAggregateOptionView(title, optionId, column) {
 
-    let optionDiv = UxUtils.getElement("div");
-    let responseRowSpan = UxUtils.getElement("div");
+    let optionDiv = UxUtils.getDiv();
+    let responseRowSpan = UxUtils.getDiv();
 
     let percentage = (actionSummary.defaultAggregates).hasOwnProperty(column.name) ? JSON.parse(actionSummary.defaultAggregates[column.name])[optionId] : 0;
     let wid = percentage / actionSummary.rowCount * 100;
@@ -165,21 +167,21 @@ function getAggregateOptionView(title, optionId, column) {
     let optionCount = isNaN(percentage) ? 0 : percentage;
     UxUtils.setClass(responseRowSpan, "row");
 
-    let optionDetails = UxUtils.getElement("div");
+    let optionDetails = UxUtils.getDiv();
     UxUtils.setClass(optionDetails, "row");
-    let optionTitle = UxUtils.getElement('text', { float: "left" });
-    UxUtils.setClass(optionTitle, "textDisplay column");
-    optionTitle.innerText = title;
+    let optionTitle = UxUtils.getElement("text");
+    UxUtils.setClass(optionTitle, "textDisplay columnleft");
+    UxUtils.setText(optionTitle, title);
     UxUtils.addElement(optionTitle, optionDetails);
 
-    let optionParticipation = UxUtils.getElement('text', { float: "right" });
-    UxUtils.setClass(optionParticipation, "textDisplay column");
-    optionParticipation.innerText = UxUtils.getString("optionParticipation", optionCount, optionpercentage);
+    let optionParticipation = UxUtils.getElement("text");
+    UxUtils.setClass(optionParticipation, "textDisplay columnright");
+    UxUtils.setText(optionParticipation, UxUtils.getString("optionParticipation", optionCount, optionpercentage));
     UxUtils.addElement(optionParticipation, optionDetails);
 
     UxUtils.addElement(optionDetails, responseRowSpan);
 
-    let meterDiv = UxUtils.getElement("div");
+    let meterDiv = UxUtils.getDiv();
     UxUtils.setClass(meterDiv, "meter");
     let spanTag1 = UxUtils.getElement('span');
 
@@ -192,7 +194,7 @@ function getAggregateOptionView(title, optionId, column) {
 }
 
 function getAggregateNumericView(column) {
-    let optionDiv = UxUtils.getElement("div");
+    let optionDiv = UxUtils.getDiv();
     let questionSummary = (actionSummary.defaultAggregates).hasOwnProperty(column.name) ? JSON.parse(actionSummary.defaultAggregates[column.name]) : {};
     let responseCount = 0;
     for (let i = 0; i < questionSummary.length; i++) {
@@ -204,17 +206,17 @@ function getAggregateNumericView(column) {
     let average = questionSummary.hasOwnProperty("a") ? questionSummary["a"] : 0;
     let responsesCount = (sum === 0) ? responseCount : (Math.round(sum / average));
 
-    let responseRowSpan = UxUtils.getElement("div");
+    let responseRowSpan = UxUtils.getDiv();
     UxUtils.setClass(responseRowSpan, "row");
-    let sumText = UxUtils.getElement("text", { textAlign: "center" });
-    UxUtils.setClass(sumText, "textDisplay column");
-    sumText.innerText = UxUtils.getString("sum", sum);
-    let averageText = UxUtils.getElement("text", { textAlign: "center" });
-    UxUtils.setClass(averageText, "textDisplay column");
-    averageText.innerText = UxUtils.getString("average", average.toFixed(2));
-    let responseText = UxUtils.getElement("button", { textAlign: "center" });
-    responseText.innerText = UxUtils.getString("responseCount", responsesCount);
-    UxUtils.setClass(responseText, "buttonAsString column");
+    let sumText = UxUtils.getElement("text");
+    UxUtils.setClass(sumText, "textDisplay columncenter");
+    UxUtils.setText(sumText, UxUtils.getString("sum", sum));
+    let averageText = UxUtils.getElement("text");
+    UxUtils.setClass(averageText, "textDisplay columncenter");
+    UxUtils.setText(averageText, UxUtils.getString("average", average.toFixed(2)));
+    let responseText = UxUtils.getElement("button");
+    UxUtils.setText(responseText, UxUtils.getString("responseCount", responsesCount));
+    UxUtils.setClass(responseText, "buttonAsString columncenter");
     responseText.addEventListener('click', () => {
         getResponsesperQuestion(column);
         setPages("aggregateSummaryPage", "responseViewPage");
@@ -228,7 +230,7 @@ function getAggregateNumericView(column) {
 }
 
 function getAggregateTextView(column) {
-    let optionDiv = UxUtils.getElement("div");
+    let optionDiv = UxUtils.getDiv();
     let questionSummary = (actionSummary.defaultAggregates).hasOwnProperty(column.name) ? JSON.parse(actionSummary.defaultAggregates[column.name]) : [];
     let responseCount = 0;
     for (let i = 0; i < questionSummary.length; i++) {
@@ -236,11 +238,11 @@ function getAggregateTextView(column) {
             responseCount++;
         }
     }
-    let responseRowSpan = UxUtils.getElement("div");
+    let responseRowSpan = UxUtils.getDiv();
     UxUtils.setClass(responseRowSpan, "row");
-    let responseText = UxUtils.getElement("button", { textAlign: "center" });
-    responseText.innerText = UxUtils.getString("responseCount", responseCount);
-    UxUtils.setClass(responseText, "buttonAsString column");
+    let responseText = UxUtils.getElement("button");
+    UxUtils.setText(responseText, UxUtils.getString("responseCount", responseCount));
+    UxUtils.setClass(responseText, "buttonAsString columncenter");
     responseText.addEventListener('click', () => {
         getResponsesperQuestion(column);
         setPages("aggregateSummaryPage", "responseViewPage");
@@ -251,23 +253,23 @@ function getAggregateTextView(column) {
 }
 
 async function getResNonResTabs() {
-    let tabPage = UxUtils.getElement("div");
+    let tabPage = UxUtils.getDiv();
     UxUtils.setClass(tabPage, "tabPage");
     UxUtils.setId(tabPage, "tabPage");
-    let tabDiv = UxUtils.getElement("div");
+    let tabDiv = UxUtils.getDiv();
     UxUtils.setClass(tabDiv, "tabs");
 
-    let tabBarDiv = UxUtils.getElement("div");
+    let tabBarDiv = UxUtils.getDiv();
     UxUtils.setClass(tabBarDiv, "tabs__horizontal");
 
     let responderButton = UxUtils.getElement("button");
     UxUtils.setClass(responderButton, "tabs__button tabs__button--active");
-    responderButton.innerText = UxUtils.getString("responders");
+    UxUtils.setText(responderButton, UxUtils.getString("responders"));
     responderButton.setAttribute("data-for-tab", "1");
 
     let nonResponderButton = UxUtils.getElement("button");
     UxUtils.setClass(nonResponderButton, "tabs__button");
-    nonResponderButton.innerText = UxUtils.getString("nonResponders");
+    UxUtils.setText(nonResponderButton, UxUtils.getString("nonResponders"));
     nonResponderButton.setAttribute("data-for-tab", "2");
 
     UxUtils.addElement(responderButton, tabDiv);
@@ -280,7 +282,7 @@ async function getResNonResTabs() {
     UxUtils.addElement(tabBarDiv, tabPage);
 
     let backButton = UxUtils.getElement("button");
-    backButton.innerText = UxUtils.getString("back");
+    UxUtils.setText(backButton, UxUtils.getString("back"));
     UxUtils.setClass(backButton, "buttonAsString");
     UxUtils.addElement(backButton, tabPage);
 
@@ -313,10 +315,10 @@ function setTabs() {
 }
 
 function getResponderTabs() {
-    let responderContent = UxUtils.getElement("div");
+    let responderContent = UxUtils.getDiv();
     UxUtils.setClass(responderContent, "tabs__content tabs__content--active");
     responderContent.setAttribute("data-tab", "1");
-    let ResponderDiv = UxUtils.getElement("div");
+    let ResponderDiv = UxUtils.getDiv();
     let table = UxUtils.getElement('TABLE');
     let tableBody = UxUtils.getElement('TBODY');
     UxUtils.addElement(tableBody, table);
@@ -334,14 +336,14 @@ function getResponderTabs() {
 
         let nameColumn = UxUtils.getElement('TD');
         if (ResponderDate[itr].value2 == myUserId) {
-            nameColumn.innerText = UxUtils.getString("You");
+            UxUtils.setText(nameColumn, UxUtils.getString("You"));
         }
         else {
-            nameColumn.innerText = ResponderDate[itr].label;
+            UxUtils.setText(nameColumn, ResponderDate[itr].label);
         }
         UxUtils.addElement(nameColumn, tableRow);
         let dateColumn = UxUtils.getElement('TD');
-        dateColumn.innerText = ResponderDate[itr].value;
+        UxUtils.setText(dateColumn, ResponderDate[itr].value);
         UxUtils.addElement(dateColumn, tableRow);
     }
     tableBody.onclick = function (event) {
@@ -359,21 +361,31 @@ function getResponderTabs() {
 }
 
 function getNonRespondersTabs() {
-    let nonResponderContent = UxUtils.getElement("div");
+    let nonResponderContent = UxUtils.getDiv();
     UxUtils.setClass(nonResponderContent, "tabs__content");
     nonResponderContent.setAttribute("data-tab", "2");
-    let NonResponderDiv = UxUtils.getElement("div");
+    let NonResponderDiv = UxUtils.getDiv();
     UxUtils.setClass(NonResponderDiv, "responseContainer");
     for (let itr = 0; itr < actionNonResponders.length; itr++) {
-        let perNonResponder = UxUtils.getElement("div");
+        let perNonResponder = UxUtils.getDiv();
+        let userProfile = UxUtils.getElement("span");
+        UxUtils.setClass(userProfile, "userProfile");
+        let perRowuser = UxUtils.getElement("Text");
+        UxUtils.setClass(perRowuser, "textDisplay");
+        let profilePic = UxUtils.getElement('img');
+        UxUtils.setClass(profilePic, "profilePic");
+        profilePic.setAttribute('src', 'images/dummyUser.png');
         UxUtils.setClass(perNonResponder, "textDisplay");
         if (actionNonResponders[itr].value2 == myUserId) {
-            perNonResponder.innerText = UxUtils.getString("You");
+            UxUtils.setText(perRowuser, UxUtils.getString("You"));
         }
         else {
-            perNonResponder.innerText = actionNonResponders[itr].label;
+            UxUtils.setText(perRowuser, actionNonResponders[itr].label);
         }
 
+        UxUtils.addElement(profilePic, userProfile);
+        UxUtils.addElement(perRowuser, userProfile);
+        UxUtils.addElement(userProfile, perNonResponder);
         UxUtils.addElement(perNonResponder, NonResponderDiv);
     }
     UxUtils.addElement(NonResponderDiv, nonResponderContent);
@@ -381,7 +393,7 @@ function getNonRespondersTabs() {
 }
 
 function getResponderListPagePerQuestion() {
-    let responseView = UxUtils.getElement("div");
+    let responseView = UxUtils.getDiv();
     UxUtils.setClass(responseView, "responseViewPage");
     UxUtils.setId(responseView, "responseViewPage");
     UxUtils.addCSS(responseView, { display: "none" });
@@ -389,44 +401,44 @@ function getResponderListPagePerQuestion() {
 }
 
 function getResponsesperQuestion(column) {
-    let rowDiv = UxUtils.getElement("div");
+    let rowDiv = UxUtils.getDiv();
     UxUtils.setClass(rowDiv, "responseRow");
     let pageId = document.getElementById("responseViewPage");
     UxUtils.clearElement(pageId);
-    let questionTitle = UxUtils.getElement("div");
+    let questionTitle = UxUtils.getDiv();
     UxUtils.setClass(questionTitle, "TitleDiv");
-    questionTitle.innerText = column.displayName;
+    UxUtils.setText(questionTitle, column.displayName);
     UxUtils.addElement(questionTitle, rowDiv);
     if (pageId) {
         for (let itr = 0; itr < ResponderDate.length; itr++) {
-            let rowData = UxUtils.getElement("div");
+            let rowData = UxUtils.getDiv();
             UxUtils.setClass(rowData, "responseContainer");
             let userProfile = UxUtils.getElement("span");
             UxUtils.setClass(userProfile, "userProfile");
             let perRowuser = UxUtils.getElement("Text");
             UxUtils.setClass(perRowuser, "textDisplay");
-            let profilePic = document.createElement('img');
+            let profilePic = UxUtils.getElement('img');
             UxUtils.setClass(profilePic, "profilePic");
             profilePic.setAttribute('src', 'images/dummyUser.png');
             if (myUserId == actionDataRows[itr].creatorId) {
-                perRowuser.innerText = UxUtils.getString("You");
+                UxUtils.setText(perRowuser, UxUtils.getString("You"));
             }
             else {
-                perRowuser.innerText = ResponderDate[itr].label;
+                UxUtils.setText(perRowuser, ResponderDate[itr].label);
             }
             UxUtils.addElement(profilePic, userProfile);
             UxUtils.addElement(perRowuser, userProfile);
             UxUtils.addElement(userProfile, rowData);
-            let perRowResponse = UxUtils.getElement("div");
+            let perRowResponse = UxUtils.getDiv();
             UxUtils.setClass(perRowResponse, "responsePerQuestion");
-            perRowResponse.innerText = actionDataRows[itr].columnValues[column.name];
+            UxUtils.setText(perRowResponse, actionDataRows[itr].columnValues[column.name]);
             UxUtils.addElement(perRowResponse, rowData);
             UxUtils.addElement(rowData, rowDiv);
             UxUtils.addElement(UxUtils.lineBreak(), rowDiv);
         }
     }
     let backButton = UxUtils.getElement("button");
-    backButton.innerText = UxUtils.getString("back");
+    UxUtils.setText(backButton, UxUtils.getString("back"));;
     UxUtils.setClass(backButton, "buttonAsString");
     backButton.addEventListener('click', () => {
         setPages("responseViewPage", "aggregateSummaryPage");
@@ -436,7 +448,7 @@ function getResponsesperQuestion(column) {
 }
 
 function getPageResponsePerUser() {
-    let ResponsePerUserView = UxUtils.getElement("div");
+    let ResponsePerUserView = UxUtils.getDiv();
     UxUtils.setClass(ResponsePerUserView, "ResponsePerUserViewPage");
     UxUtils.setId(ResponsePerUserView, "responsePerUserViewPage");
     UxUtils.addCSS(ResponsePerUserView, { display: "none" });
@@ -444,44 +456,44 @@ function getPageResponsePerUser() {
 }
 
 async function getResponsePerUser(id, index) {
-    let rowDiv = UxUtils.getElement("div");
+    let rowDiv = UxUtils.getDiv();
     UxUtils.setClass(rowDiv, "responseRow");
     let pageId = document.getElementById("responsePerUserViewPage");
     UxUtils.clearElement(pageId);
-    let responderName = UxUtils.getElement("div");
+    let responderName = UxUtils.getDiv();
     UxUtils.setClass(responderName, "TitleDiv");
     let requestResponders = new actionSDK.GetSubscriptionMembers.Request(actionContext.subscription, [id]);
     let responseResponders = await actionSDK.executeApi(requestResponders) as actionSDK.GetSubscriptionMembers.Response;
     let userDetail = responseResponders.members;
     if (id == myUserId) {
-        responderName.innerText = UxUtils.getString("YourResponse");
+        UxUtils.setText(responderName, UxUtils.getString("YourResponse"));
     }
     else {
-        responderName.innerText = userDetail[0].displayName;
+        UxUtils.setText(responderName, userDetail[0].displayName);
     }
     UxUtils.addElement(responderName, rowDiv);
     if (pageId) {
         let dataPerUser = actionDataRows[index].columnValues;
         let questionItr = 0;
         for (let idx in dataPerUser) {
-            let rowData = UxUtils.getElement("div");
+            let rowData = UxUtils.getDiv();
             UxUtils.setClass(rowData, "responseContainer");
-            let ques = UxUtils.getElement("div");
+            let ques = UxUtils.getDiv();
             UxUtils.setClass(ques, "textDisplay");
-            ques.innerText = UxUtils.getString("question", actionInstance.dataTables[0].dataColumns[questionItr].displayName);
-            let ans = UxUtils.getElement("div");
+            UxUtils.setText(ques, UxUtils.getString("question", actionInstance.dataTables[0].dataColumns[questionItr].displayName));
+            let ans = UxUtils.getDiv();
             UxUtils.setClass(ans, "responsePerQuestion");
             if (actionInstance.dataTables[0].dataColumns[questionItr].valueType.localeCompare("SingleOption") == 0 || actionInstance.dataTables[0].dataColumns[questionItr].valueType.localeCompare("MultiOption") == 0) {
                 let optionques = actionInstance.dataTables[0].dataColumns[questionItr].options
                 for (let opt = 0; opt < optionques.length; opt++) {
                     if ((optionques[opt].name).localeCompare(actionDataRows[index].columnValues[idx]) == 0) {
-                        ans.innerText = optionques[opt].displayName;
+                        UxUtils.setText(ans, optionques[opt].displayName);
                         break;
                     }
                 }
             }
             else {
-                ans.innerText = actionDataRows[index].columnValues[idx];
+                UxUtils.setText(ans, actionDataRows[index].columnValues[idx]);
             }
             UxUtils.addElement(ques, rowData);
             UxUtils.addElement(ans, rowData);
@@ -491,7 +503,7 @@ async function getResponsePerUser(id, index) {
         }
     }
     let backButton = UxUtils.getElement("button");
-    backButton.innerText = UxUtils.getString("back");
+    UxUtils.setText(backButton, UxUtils.getString("back"));
     UxUtils.setClass(backButton, "buttonAsString");
     backButton.addEventListener('click', () => {
         setPages("responsePerUserViewPage", "tabPage");
