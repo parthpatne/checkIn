@@ -111,7 +111,7 @@ async function getTopSummaryView() {
         UxUtils.setText(summaryText, UxUtils.getString("NResponseYPeople", actionSummary.rowCount, actionSummary.rowCreatorCount));
     }
     summaryText.addEventListener('click', () => {
-        setTabs();
+        UxUtils.setTabs("tabs__button", "tabs__button--active", "tabs__content", "tabs__content--active", "data-for-tab", "data-tab");
         setPages("aggregateSummaryPage", "tabPage");
     });
 
@@ -263,14 +263,12 @@ async function getResNonResTabs() {
     UxUtils.setClass(tabBarDiv, "tabs__horizontal");
 
     let responderButton = UxUtils.getElement("button");
-    UxUtils.setClass(responderButton, "tabs__button tabs__button--active");
     UxUtils.setText(responderButton, UxUtils.getString("responders"));
-    responderButton.setAttribute("data-for-tab", "1");
+    UxUtils.addAttribute(responderButton, { "class": "tabs__button tabs__button--active", "data-for-tab": "1" });
 
     let nonResponderButton = UxUtils.getElement("button");
-    UxUtils.setClass(nonResponderButton, "tabs__button");
     UxUtils.setText(nonResponderButton, UxUtils.getString("nonResponders"));
-    nonResponderButton.setAttribute("data-for-tab", "2");
+    UxUtils.addAttribute(nonResponderButton, { "class": "tabs__button", "data-for-tab": "2" });
 
     UxUtils.addElement(responderButton, tabDiv);
     UxUtils.addElement(nonResponderButton, tabDiv);
@@ -293,31 +291,9 @@ async function getResNonResTabs() {
 
     UxUtils.addElement(tabPage, root);
 }
-
-function setTabs() {
-    document.querySelectorAll(".tabs__button").forEach(button => {
-        button.addEventListener("click", () => {
-            const barParent = button.parentElement;
-            const contentContainer = barParent.parentElement;
-            const tabNum = button.getAttribute("data-for-tab");
-            const tabActive = contentContainer.querySelector(`.tabs__content[data-tab="${tabNum}"]`);
-            barParent.querySelectorAll(".tabs__button").forEach(button => {
-                button.classList.remove("tabs__button--active");
-            });
-            contentContainer.querySelectorAll(".tabs__content").forEach(tab => {
-                tab.classList.remove("tabs__content--active");
-            });
-
-            button.classList.add("tabs__button--active");
-            tabActive.classList.add("tabs__content--active");
-        });
-    });
-}
-
 function getResponderTabs() {
     let responderContent = UxUtils.getDiv();
-    UxUtils.setClass(responderContent, "tabs__content tabs__content--active");
-    responderContent.setAttribute("data-tab", "1");
+    UxUtils.addAttribute(responderContent, { "class": "tabs__content tabs__content--active", "data-tab": "1" });
     let ResponderDiv = UxUtils.getDiv();
     let table = UxUtils.getElement('TABLE');
     let tableBody = UxUtils.getElement('TBODY');
@@ -329,8 +305,7 @@ function getResponderTabs() {
         UxUtils.addElement(tableRow, tableBody);
         let profilePicColumn = UxUtils.getElement('TD');
         let profilePic = UxUtils.getElement("img");
-        UxUtils.setClass(profilePic, "profilePic");
-        profilePic.setAttribute('src', 'images/dummyUser.png');
+        UxUtils.addAttribute(profilePic, { "class": "profilePic", "src": "images/dummyUser.png" });
         UxUtils.addElement(profilePic, profilePicColumn);
         UxUtils.addElement(profilePicColumn, tableRow);
 
@@ -362,8 +337,7 @@ function getResponderTabs() {
 
 function getNonRespondersTabs() {
     let nonResponderContent = UxUtils.getDiv();
-    UxUtils.setClass(nonResponderContent, "tabs__content");
-    nonResponderContent.setAttribute("data-tab", "2");
+    UxUtils.addAttribute(nonResponderContent, { "class": "tabs__content", "data-tab": "2" });
     let NonResponderDiv = UxUtils.getDiv();
     UxUtils.setClass(NonResponderDiv, "responseContainer");
     for (let itr = 0; itr < actionNonResponders.length; itr++) {
@@ -373,8 +347,7 @@ function getNonRespondersTabs() {
         let perRowuser = UxUtils.getElement("Text");
         UxUtils.setClass(perRowuser, "textDisplay");
         let profilePic = UxUtils.getElement('img');
-        UxUtils.setClass(profilePic, "profilePic");
-        profilePic.setAttribute('src', 'images/dummyUser.png');
+        UxUtils.addAttribute(profilePic, { "class": "profilePic", "src": "images/dummyUser.png" });
         UxUtils.setClass(perNonResponder, "textDisplay");
         if (actionNonResponders[itr].value2 == myUserId) {
             UxUtils.setText(perRowuser, UxUtils.getString("You"));
@@ -418,8 +391,7 @@ function getResponsesperQuestion(column) {
             let perRowuser = UxUtils.getElement("Text");
             UxUtils.setClass(perRowuser, "textDisplay");
             let profilePic = UxUtils.getElement('img');
-            UxUtils.setClass(profilePic, "profilePic");
-            profilePic.setAttribute('src', 'images/dummyUser.png');
+            UxUtils.addAttribute(profilePic, { "class": "profilePic", "src": "images/dummyUser.png" });
             if (myUserId == actionDataRows[itr].creatorId) {
                 UxUtils.setText(perRowuser, UxUtils.getString("You"));
             }

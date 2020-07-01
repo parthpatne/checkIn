@@ -331,6 +331,32 @@ export class UxUtils {
         element.innerHTML = text;
     }
 
+    /*  arg1: common classname of button
+        argr2: classname for button for which content will be shown(active)
+        arg3: common classname for the contents 
+        arg4: classname for the content to be displayed(active)
+        arg5: Attribute for the button to fetch data active content class (format: data-for-*)
+        arg6: Attribute for the content to display the data (format: data-*)
+    */
+    public static setTabs(buttonClass: string, buttonClassActive: string, contentClass: string, contentClassActive: string, OnButtonAttribute: string, onContentAttribute: string) {
+        document.querySelectorAll("." + buttonClass).forEach(button => {
+            button.addEventListener("click", () => {
+                const barParent = button.parentElement;
+                const contentContainer = barParent.parentElement;
+                const tabNum = button.getAttribute(OnButtonAttribute);
+                const tabActive = contentContainer.querySelector(`.${contentClass}[${onContentAttribute}="${tabNum}"]`);
+                barParent.querySelectorAll("." + buttonClass).forEach(button => {
+                    button.classList.remove(buttonClassActive);
+                });
+                contentContainer.querySelectorAll("." + contentClass).forEach(tab => {
+                    tab.classList.remove(contentClassActive);
+                });
+
+                button.classList.add(buttonClassActive);
+                tabActive.classList.add(contentClassActive);
+            });
+        });
+    }
     private static getPixelRatio() {
         var ctx: any = document.createElement("canvas").getContext("2d"),
             dpr = window.devicePixelRatio || 1,
@@ -348,10 +374,8 @@ export class UxUtils {
             ratio = this.getPixelRatio();
         }
         var can = document.createElement("canvas");
-        can.width = w * ratio;
-        can.height = h * ratio;
-        can.style.width = w + "pt";
-        can.style.height = h + "pt";
+        this.addAttribute(can, { "width": w * ratio, "height": h * ratio });
+        this.addCSS(can, { "width": w + "pt", "height": h + "pt" });
         can.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0);
         return can;
     }
@@ -359,6 +383,15 @@ export class UxUtils {
 
 
     /////////////////// CSS Attributes ///////////////////
+
+    /*
+    Add classname and other non-css attributes
+    */
+    public static addAttribute(element: HTMLElement, attributes: {} = null) {
+        for (var atr in attributes) {
+            element.setAttribute(atr, attributes[atr]);
+        }
+    }
 
     public static getLoadingSpinnerAttributes() {
         this.addLoadingSpinnerAnimation();
@@ -370,15 +403,14 @@ export class UxUtils {
 
     public static getContentEditableSpan(text: string = "", placeholder: string = "", attributes: {} = null, onInputEvent: () => void) {
         var element = this.getElement("span");
+        this.addAttribute(element, { "placeholder": placeholder, 'contenteditable': true });
         element.classList.add("getContentEditableSpanAttributes");
         Object.assign(element, attributes);
-        element.setAttribute("placeholder", placeholder);
-        element.setAttribute('contenteditable', "true");
-        element.innerText = text;
+        UxUtils.setText(element, text);
 
         var maxLength = attributes["max-length"];
         if (maxLength) {
-            element.innerText = text.length > maxLength ? text.substr(0, maxLength) : text;
+            UxUtils.setText(element, text.length > maxLength ? text.substr(0, maxLength) : text);
         }
         var prevString = element.innerText;
 
@@ -388,7 +420,7 @@ export class UxUtils {
             }
 
             if (maxLength && this.innerText.length > maxLength) {
-                this.innerText = prevString;
+                UxUtils.setText(this, prevString);
             } else if (maxLength) {
                 prevString = this.innerText;
             }
@@ -421,10 +453,7 @@ export class UxUtils {
 
     public static createInputElement(ph: string, id: string, type: string) {
         var inputelement = document.createElement('input');
-        inputelement.setAttribute("type", type);
-        inputelement.setAttribute("value", "");
-        inputelement.setAttribute("id", id);
-        inputelement.placeholder = ph;
+        this.addAttribute(inputelement, { "type": type, "value": "", "id": id, placeholder: ph });
         return inputelement;
     }
     private static spinnerCSSAdded = false;

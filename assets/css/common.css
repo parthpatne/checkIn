@@ -290,16 +290,6 @@ div#fugo{
     position: relative;
     overflow: hidden;
 }
-.percentage {
-    float: right;
-    color: white;
-    margin: 5px 5px 0 0;
-    font-size: 12px;
-}
-.myProgress{
-    width: 100%;
-    max-width: 100;
-}
 .buttonAsString {
     border: none;
     background: none;
