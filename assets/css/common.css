@@ -221,12 +221,12 @@ div#fugo{
 .meter > span {
     display: block;
     height: 100%;
-    -webkit-border-top-right-radius: 8px;
-    -webkit-border-bottom-right-radius: 8px;
-    -moz-border-radius-topright: 8px;
-    -moz-border-radius-bottomright: 8px;
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
+    -webkit-border-top-right-radius: 20px;
+    -webkit-border-bottom-right-radius: 20px;
+    -moz-border-radius-topright: 20px;
+    -moz-border-radius-bottomright: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
     -webkit-border-top-left-radius: 20px;
     -webkit-border-bottom-left-radius: 20px;
     -moz-border-radius-topleft: 20px;
@@ -249,36 +249,56 @@ div#fugo{
     position: relative;
     overflow: hidden;
 }
+.progressBar { 
+    height: 10px;  /* Can be anything */
+    position: relative;
+    background: #eee;
+    -moz-border-radius: 25px;
+    -webkit-border-radius: 25px;
+    border-radius: 25px;
+    margin-bottom: 10px;
+}
 
-progress[value]::-webkit-progress-bar {
-    background-color: #eee;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
-    height: 10px;
-    -moz-border-radius: 25px;
-    -webkit-border-radius: 25px;
-    border-radius: 25px;
-    border: 0;
-}
-progress[value]::-webkit-progress-value {
-    background-color: rgb(244, 196, 52);
-    height: 10px;
-    -moz-border-radius: 25px;
-    -webkit-border-radius: 25px;
-    border-radius: 25px;
+.progressBar > span {
+    display: block;
+    height: 100%;
+    -webkit-border-top-right-radius: 20px;
+    -webkit-border-bottom-right-radius: 20px;
+    -moz-border-radius-topright: 20px;
+    -moz-border-radius-bottomright: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    -webkit-border-top-left-radius: 20px;
+    -webkit-border-bottom-left-radius: 20px;
+    -moz-border-radius-topleft: 20px;
+    -moz-border-radius-bottomleft: 20px;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    background-color:#6264a7;
+    background-image: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0,#6264a7),
+    color-stop(1, #6264a7)
+    );
+    background-image: -moz-linear-gradient(
+    center bottom,
+    #6264a7 37%,
+    #6264a7 69%
+    );
+    position: relative;
     overflow: hidden;
-    border:0;
-}
-progress::-moz-progress-bar {
-    border: 0;
-    height: 10px;
-    border-radius: 25px;
-    width: 100%;
 }
 .percentage {
     float: right;
     color: white;
     margin: 5px 5px 0 0;
     font-size: 12px;
+}
+.myProgress{
+    width: 100%;
+    max-width: 100;
 }
 .buttonAsString {
     border: none;
@@ -401,6 +421,16 @@ h4 {
 .column {
     display: table-cell;
 }
+.columncenter {
+    display: table-cell;
+    text-align: center;
+}
+.columnleft {
+    float: left;
+}
+.columnright {
+    float: right;
+}
 .headings {
     display:table;
     font-weight: bold;
@@ -466,4 +496,93 @@ table {
     vertical-align: middle;
     text-align: center;
     height: 30px;
+}
+/* -------------------------------------
+Common CSS UxUtils
+---------------------------------------- */
+.alertView {
+    margin:  20px;
+    padding: 20px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    max-width: 320px;
+}
+.alertTitleDiv {
+    color: #32485f;
+    font-size: 20px;
+    font-weight: 600;
+}
+.alertMessageView {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    color: #6f7e8f;
+    font-size: 16px;
+    overflow: auto;
+}
+.alertBottomView {
+    display: flex;
+    justify-content: flex-end;
+}
+.buttonAttributes {
+    font-size: 14px;
+    font-weight: 600;
+    margin-left: 20px;
+    color: rgb(0, 111, 241);
+    -webkit-appearance: none;
+    border: none;
+}
+.fullScreenTransparentContainer{
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(50, 72, 95, 0.5);
+    z-index: 2;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.labelAttributes {
+    overflow-wrap:break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+}
+.horizontalDivAttributes {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+.verticalDivAttributes {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.circularImageAttributes {
+    border-radius: 50%;
+    width: dimen;
+    height: dimen;
+    flex: none;
+}
+.imageAttributes {
+    overflow: hidden;
+    object-fit: cover;
+}
+.loadingSpinnerAttributes {
+    border-width: 2pt solid;
+    border: 2pt solid #f1f2f4;
+    border-top:  2pt solid rgb(0, 161, 255);
+    border-bottom:  2pt solid  rgb(0, 161, 255);
+    border-radius: 50%;
+    width: 16pt;
+    height: 16pt;
+    animation: spin 1.5s ease-in-out infinite;
+}
+.contentEditableSpanAttributes{
+    word-break: break-word;
+    -webkit-user-select: text;
 }

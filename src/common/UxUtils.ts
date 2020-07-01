@@ -4,65 +4,30 @@ import strings from '../../assets/strings/en-us/strings.json';
 export class UxUtils {
     private static readonly DEFAULT_SPACE_LENGTH = "10pt";
     private static readonly DEFAULT_IMAGE_DIMEN = "50pt";
-    private static readonly BLUE_COLOR = "rgb(0, 111, 241)";
-    private static readonly LIGHT_BLUE_COLOR = "rgb(0, 161, 255)";
-    private static readonly BUTTON_BG_BLUE_COLOR = "rgb(0, 121, 216)";
-    private static readonly RED_COLOR = "rgb(208, 2, 27)";
-    private static readonly LIGHT_RED_COLOR = "rgb(222, 45, 79)"
-    private static readonly LINE_SEPARATOR_ATTRIBUTE = "0.5pt solid #d4d8db";
-    private static readonly PAGE_BG_COLOR = "#f1f2f4";
-    private static readonly SHADOW_COLOR = "rgba(0, 0, 0, 0.1)";
-    private static readonly CLEAR_COLOR = "rgba(0, 0, 0, 0)";
-    private static readonly TEXT_PRIMARY_COLOR = "rgb(50, 72, 95)";
-    private static readonly TEXT_SECONDARY_COLOR = "rgb(102, 119, 135)";
-    private static readonly GREY_BACKGROUND_COLOR = "rgba(212, 216, 219, 0.4)";
 
     public static showAlertDailog(title: string, message: string, okButtonTitle: string, okButtonAction: () => void, cancelButtonTitle: string, cancelButtonAction: () => void) {
         var fullScreenTransparentDiv = this.getFullScreenTransparentContainer();
 
-        var alertView = this.getDiv({
-            "margin": "20px",
-            "padding": "20px",
-            "background-color": "white",
-            "display": "flex",
-            "flex-direction": "column",
-            "max-width": "320px;"
-        });
+        var alertView = this.getDiv();
+        alertView.classList.add("alertView");
         this.addElement(alertView, fullScreenTransparentDiv);
 
-        var alertTitleView = this.getLabel(title, {
-            "color": "#32485f",
-            "font-size": "20px",
-            "font-weight": "600"
-        });
+        var alertTitleView = this.getLabel(title);
+        alertTitleView.classList.add("alertTitleDiv");
         this.addElement(alertTitleView, alertView);
 
-        var alertMessageView = this.getLabel(message, {
-            "margin-top": "20px",
-            "margin-bottom": "20px",
-            "color": "#6f7e8f",
-            "font-size": "16px",
-            "overflow": "auto"
-        });
+        var alertMessageView = this.getLabel(message);
+        alertMessageView.classList.add("alertMessageView");
         this.addElement(alertMessageView, alertView);
 
-        var alertBottomView = this.getDiv({
-            "display": "flex",
-            "justify-content": "flex-end"
-        });
+        var alertBottomView = this.getDiv();
+        alertBottomView.classList.add("alertBottomView");
         this.addElement(alertBottomView, alertView);
 
-        var buttonAttributes = {
-            "font-size": "14px",
-            "font-weight": "600",
-            "margin-left": "20px",
-            "color": this.BLUE_COLOR,
-            "-webkit-appearance": "none",
-            "border": "none"
-        };
 
         if (cancelButtonTitle != null && cancelButtonTitle != "") {
-            var cancelButton = this.getLabel(cancelButtonTitle, buttonAttributes);
+            var cancelButton = this.getLabel(cancelButtonTitle);
+            cancelButton.classList.add("buttonAttributes");
             cancelButton.onclick = () => {
                 this.removeElement(fullScreenTransparentDiv, document.body);
                 if (cancelButtonAction)
@@ -72,7 +37,8 @@ export class UxUtils {
         }
 
         if (okButtonTitle != null && okButtonTitle != "") {
-            var okButton = this.getLabel(okButtonTitle, buttonAttributes);
+            var okButton = this.getLabel(okButtonTitle);
+            okButton.classList.add("buttonAttributes");
             okButton.onclick = () => {
                 this.removeElement(fullScreenTransparentDiv, document.body);
                 if (okButtonAction)
@@ -85,7 +51,10 @@ export class UxUtils {
     }
 
     public static getLoadingSpinner(attributes: {} = null): HTMLDivElement {
-        return this.getDiv(Object.assign(this.getLoadingSpinnerAttributes(), attributes));
+        var loadSpinner = this.getDiv();
+        loadSpinner.classList.add("loadingSpinnerAttributes");
+        Object.assign(loadSpinner, attributes);
+        return loadSpinner;
     }
 
     public drawPieChart(data: number[], colors: string[], borderColor: string, canvas: HTMLCanvasElement, canvasWidth, canvasHeight) {
@@ -121,24 +90,15 @@ export class UxUtils {
     /////////////////// General Utility ///////////////////
 
     public static getFullScreenTransparentContainer() {
-        return this.getDiv({
-            "height": "100%",
-            "width": "100%",
-            "position": "fixed",
-            "top": "0",
-            "left": "0",
-            "background-color": "rgba(50, 72, 95, 0.5)",
-            "z-index": "2",
-            "display": "flex",
-            "flex": "1",
-            "flex-direction": "column",
-            "justify-content": "center",
-            "align-items": "center"
-        });
+        var fullScreenTransparentContainer = this.getDiv();
+        fullScreenTransparentContainer.classList.add("fullScreenTransparentContainer");
+        return fullScreenTransparentContainer;
     }
 
     public static getHorizontalDiv(childrenElements: any[], attributes: {} = null): HTMLDivElement {
-        var div: HTMLDivElement = this.getDiv(Object.assign(this.getHorizontalDivAttributes(), attributes));
+        var div: HTMLDivElement = this.getDiv();
+        div.classList.add("horizontalDivAttributes");
+        Object.assign(div, attributes);
         for (var i = 0; i < childrenElements.length; i++) {
             var childElement = childrenElements[i];
             if (childElement) {
@@ -149,7 +109,9 @@ export class UxUtils {
     }
 
     public static getVerticalDiv(childrenElements: any[], attributes: {} = null): HTMLDivElement {
-        var div: HTMLDivElement = this.getDiv(Object.assign(this.getVerticalDivAttributes(), attributes));
+        var div: HTMLDivElement = this.getDiv();
+        div.classList.add("verticalDivAttributes");
+        Object.assign(div, attributes);
         for (var i = 0; i < childrenElements.length; i++) {
             var childElement = childrenElements[i];
             if (childElement) {
@@ -160,15 +122,19 @@ export class UxUtils {
     }
 
     public static getFlexibleSpace(): HTMLDivElement {
-        return this.getDiv(this.getCoverRestOfTheSpaceAttributes());
+        return this.getDiv({ flex: "1 1 auto" });
     }
 
     public static getSpace(length: string = this.DEFAULT_SPACE_LENGTH): HTMLDivElement {
-        return this.getDiv(this.getSpaceAttributes(length));
+        var spaceDiv = this.getDiv();
+        this.addCSS(spaceDiv, { width: length, height: length, flex: "none" });
+        return spaceDiv;
     }
 
     public static getLabel(text: string = null, attributes: {} = null, showLinks: boolean = true): HTMLDivElement {
-        var labelDiv: HTMLDivElement = this.getDiv(Object.assign(this.getLabelAttributes(), attributes));
+        var labelDiv: HTMLDivElement = this.getDiv();
+        labelDiv.classList.add("labelAttributes");
+        Object.assign(labelDiv, attributes);
         this.setText(labelDiv, text, true, showLinks);
         return labelDiv;
     }
@@ -193,11 +159,18 @@ export class UxUtils {
     }
 
     public static getBase64CircularImage(data: string = null, dimen: string = this.DEFAULT_IMAGE_DIMEN, attributes: {} = null): HTMLImageElement {
-        return this.getBase64Image(data, Object.assign(this.getCircularImageAttributes(dimen), attributes));
+        var circularImage = this.getBase64Image(data);
+        circularImage.classList.add("circularImageAttributes");
+        Object.assign(circularImage, attributes);
+        return circularImage;
     }
 
     public static getCircularImage(path: string = null, dimen: string = this.DEFAULT_IMAGE_DIMEN, attributes: {} = null): HTMLImageElement {
-        return this.getImage(path, Object.assign(this.getCircularImageAttributes(dimen), attributes));
+        var circularImage = this.getImage(path);
+        circularImage.classList.add("circularImageAttributes");
+        Object.assign(circularImage, attributes);
+        return circularImage;
+
     }
 
     public static getBase64Image(data: string = null, attributes: {} = null): HTMLImageElement {
@@ -209,8 +182,10 @@ export class UxUtils {
     }
 
     public static getImage(path: string = null, attributes: {} = null): HTMLImageElement {
-        var image: HTMLImageElement = <HTMLImageElement>this.getElement("img", Object.assign(this.getImageAttributes(), attributes));
+        var image: HTMLImageElement = <HTMLImageElement>this.getElement("img");
         image.src = path;
+        image.classList.add("imageAttributes");
+        Object.assign(image, attributes);
         return image;
     }
 
@@ -385,79 +360,8 @@ export class UxUtils {
 
     /////////////////// CSS Attributes ///////////////////
 
-    public static getHorizontalDivAttributes() {
-        var attributes = {};
-        attributes["display"] = "flex";
-        attributes["flex-direction"] = "row";
-        attributes["align-items"] = "center";
-        attributes["justify-content"] = "space-between";
-        return attributes;
-    }
-
-    public static getVerticalDivAttributes() {
-        var attributes = {};
-        attributes["display"] = "flex";
-        attributes["flex-direction"] = "column";
-        attributes["justify-content"] = "space-between";
-        return attributes;
-    }
-
-    public static getCircularImageAttributes(dimen: string) {
-        var attributes = this.getImageAttributes();
-        attributes["border-radius"] = "50%";
-        attributes["width"] = dimen;
-        attributes["height"] = dimen;
-        attributes["flex"] = "none";
-        return attributes;
-    }
-
-    public static getImageAttributes() {
-        var attributes = {};
-        // Aspect fill
-        attributes["overflow"] = "hidden";
-        attributes["object-fit"] = "cover";
-        return attributes;
-    }
-
-    public static getLabelAttributes() {
-        var attributes = {};
-        attributes["overflow-wrap"] = "break-word";
-        attributes["word-wrap"] = "break-word";
-        attributes["word-break"] = "break-word";
-        // attributes["-ms-hyphens"] = "auto";
-        // attributes["-moz-hyphens"] = "auto";
-        // attributes["-webkit-hyphens"] = "auto";
-        // attributes["hyphens"] = "auto";
-        return attributes;
-    }
-
-    public static getSpaceAttributes(length: string) {
-        var attributes = {};
-        attributes["width"] = length;
-        attributes["height"] = length;
-        attributes["flex"] = "none";
-        return attributes;
-    }
-
-    public static getCoverRestOfTheSpaceAttributes() {
-        var attributes = {};
-        attributes["flex"] = "1 1 auto";
-        return attributes;
-    }
-
     public static getLoadingSpinnerAttributes() {
         this.addLoadingSpinnerAnimation();
-
-        var attributes = {};
-        var borderWidth = "2pt solid ";
-        attributes["border"] = borderWidth + this.PAGE_BG_COLOR;
-        attributes["border-top"] = borderWidth + this.LIGHT_BLUE_COLOR;
-        attributes["border-bottom"] = borderWidth + this.LIGHT_BLUE_COLOR;
-        attributes["border-radius"] = "50%";
-        attributes["width"] = "16pt";
-        attributes["height"] = "16pt";
-        attributes["animation"] = "spin 1.5s ease-in-out infinite";
-        return attributes;
     }
 
     public static lineBreak() {
@@ -465,7 +369,9 @@ export class UxUtils {
     }
 
     public static getContentEditableSpan(text: string = "", placeholder: string = "", attributes: {} = null, onInputEvent: () => void) {
-        var element = this.getElement("span", Object.assign(this.getContentEditableSpanAttributes(), attributes));
+        var element = this.getElement("span");
+        element.classList.add("getContentEditableSpanAttributes");
+        Object.assign(element, attributes);
         element.setAttribute("placeholder", placeholder);
         element.setAttribute('contenteditable', "true");
         element.innerText = text;
@@ -497,14 +403,6 @@ export class UxUtils {
         });
 
         return element;
-    }
-
-
-    public static getContentEditableSpanAttributes() {
-        var attributes = {};
-        attributes["word-break"] = "break-word";
-        attributes["-webkit-user-select"] = "text";
-        return attributes;
     }
 
     public static getString(key: string, ...args: any[]) {
