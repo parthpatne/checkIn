@@ -16,7 +16,7 @@ export class UxUtils {
     *       cacelButtonAction - function() with action on cancelbutton. Optional
     *   @return Null
    */
-    public static showAlertDailog(title: string, message: string, okButtonTitle: string, okButtonAction: () => void, cancelButtonTitle: string, cancelButtonAction: () => void) {
+    public static showAlertDialog(title: string, message: string, okButtonTitle: string, okButtonAction: () => void, cancelButtonTitle: string, cancelButtonAction: () => void) {
         var fullScreenTransparentDiv = this.getFullScreenTransparentContainer();
 
         var alertView = this.getDiv();
