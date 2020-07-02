@@ -21,7 +21,7 @@ let strings;
 OnPageLoad();
 
 /**
-  * @desc Entry Point for Building Up Creation View,It Loads requires attributes from Action SDK like Localized String
+  * @desc Entry Point for Building Up Creation View and Loads requires attributes from Action SDK
 */
 function OnPageLoad() {
 
