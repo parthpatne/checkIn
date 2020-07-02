@@ -658,9 +658,9 @@ export class UxUtils {
     /*
     *   @desc Creates an input element with placeholder, id and value provided as paramter
     *   @params 
-    *       ph - placeholder
+    *       ph - placeholder for the input tag
     *       id - id of HTML element
-    *       type - type of input element
+    *       type - type of input element, numeric/text etc
     *   @return HTML input element
     */
     public static createInputElement(ph: string, id: string, type: string) {
