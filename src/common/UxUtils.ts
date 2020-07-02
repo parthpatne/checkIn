@@ -5,7 +5,7 @@ export class UxUtils {
     private static readonly DEFAULT_SPACE_LENGTH = "10pt";
     private static readonly DEFAULT_IMAGE_DIMEN = "50pt";
 
-    public static showAlertDailog(title: string, message: string, okButtonTitle: string, okButtonAction: () => void, cancelButtonTitle: string, cancelButtonAction: () => void) {
+    public static showAlertDialog(title: string, message: string, okButtonTitle: string, okButtonAction: () => void, cancelButtonTitle: string, cancelButtonAction: () => void) {
         var fullScreenTransparentDiv = this.getFullScreenTransparentContainer();
 
         var alertView = this.getDiv();
