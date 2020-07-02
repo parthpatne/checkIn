@@ -309,6 +309,8 @@ div#fugo{
     overflow: hidden;
 }
 .tabs {
+    margin-top: 30px;
+    top:30px;
     display:flex;
     flex-direction: row;
     width:100%;
@@ -343,14 +345,14 @@ div#fugo{
     padding: 15px;
     font-size: 15px;
     display: none;
-    height: 300px;
-    overflow-y:auto;
+    height: 330px;
+    overflow-y:scroll;
     border-bottom: .5px solid rgb(206, 206, 206);
     border-top: .5px solid rgb(206, 206, 206);
 }
 .tabs__content--active {
     display: block;
-    height: 300px;
+    height: 330px;
 }
 h4 {
     font-weight: bold;
@@ -362,7 +364,9 @@ h4 {
 }
 .aggregateSummaryPage {
     display: block;
-    height: 80%;
+    height: 100%;
+    overflow-y:scroll;
+    display: block;
 }
 .responseViewPage {
     display: none;
@@ -376,7 +380,7 @@ h4 {
     font-family: sans-serif;
     font-size: 10px;
     margin-bottom: 15px;
-    padding-left: 25px;
+    padding-left: 35px;
 }
 .responsePerQuestion:last-of-type {
     margin-bottom:0;
@@ -387,14 +391,15 @@ h4 {
     font-family: sans-serif;
     font-size: 15px;
     border-bottom: .5px solid rgb(206, 206, 206);
-    padding-bottom: 10px;
+    padding-bottom: 15px;
     margin-top: 10px;
     margin-bottom: 10px;
 }
 .responseRow {   
-    height: 360px;
-    overflow-y: auto;
-    top: 20px;
+    height: 380px;
+    overflow: scroll;
+    top: 30px;
+    margin-top: 30px;
     border-bottom: .5px solid rgb(206, 206, 206);
     border-top: .5px solid rgb(206, 206, 206);
 }
@@ -477,15 +482,36 @@ table {
     text-align: left;
 }
 .profilePic {
-    height: 20px;
-    width: 20px;
-    vertical-align: text-bottom;
+    height: 25px;
+    width: 25px;
+    vertical-align: middle;
     padding-right: 5px;
+    border-radius: 50%;
 }
 .userProfile {
     vertical-align: middle;
     text-align: center;
     height: 30px;
+}
+::-webkit-scrollbar {
+    width: 5px;
+}
+::-webkit-scrollbar-track {
+    -webkit-border-radius: 10px;
+    border-radius: 5px;
+}
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 5px;
+    background:  rgb(206, 206, 206); 
+    height: 5px;
+}
+::-webkit-scrollbar-thumb:window-inactive {
+    background:  rgb(206, 206, 206); 
+}
+.textBold{
+    margin-top: 10px;
+    font-weight: bold;
 }
 /* -------------------------------------
 Common CSS UxUtils
@@ -508,7 +534,7 @@ Common CSS UxUtils
     margin-bottom: 20px;
     color: #6f7e8f;
     font-size: 16px;
-    overflow: auto;
+    overflow-y: scroll;
 }
 .alertBottomView {
     display: flex;
