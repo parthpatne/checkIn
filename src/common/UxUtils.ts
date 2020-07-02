@@ -16,7 +16,7 @@ export class UxUtils {
     *       cacelButtonAction - function() with action on cancelbutton. Optional
     *   @return Null
    */
-    public static showAlertDailog(title: string, message: string, okButtonTitle: string, okButtonAction: () => void, cancelButtonTitle: string, cancelButtonAction: () => void) {
+    public static showAlertDialog(title: string, message: string, okButtonTitle: string, okButtonAction: () => void, cancelButtonTitle: string, cancelButtonAction: () => void) {
         var fullScreenTransparentDiv = this.getFullScreenTransparentContainer();
 
         var alertView = this.getDiv();
@@ -405,7 +405,13 @@ export class UxUtils {
         this.addCSS(element, attributes);
         return element;
     }
-
+    /*
+   *   @desc Add click event on HTML element
+   *   @params 
+   *       element - HTMLElement fow which onclick need to be set
+   *       clickEvent - function for the action on onclick
+   *   @return Null;
+   */
     public static addClickEvent(element: HTMLElement, clickEvent: () => void) {
         if (clickEvent != null) {
             element.onclick = clickEvent;
@@ -457,7 +463,6 @@ export class UxUtils {
             element.style.cssText = cssText;
         }
     }
-
     public static highlightLinksInElement(element: HTMLElement) {
         if (element == null)
             return;
@@ -628,7 +633,15 @@ export class UxUtils {
 
         return element;
     }
-
+    /*
+    *   @desc gets the localized string from string.json and replace the argumnent in string.json with the argumnets received in the function
+    *       e.g. - addAttribute("question", qno, qdata);
+    *       then it will be replace in string.json string with key=question and arg {0} with qno and arg {1} with qdata
+    *   @params 
+    *       key - key in string.json
+    *       args - values to replace the arguments 
+    *   @return formatted string 
+    */
     public static getString(key: string, ...args: any[]) {
         if (strings.hasOwnProperty(key)) {
             let formatted = strings[key];
@@ -642,7 +655,14 @@ export class UxUtils {
             return key;
         }
     }
-
+    /*
+    *   @desc Creates an input element with placeholder, id and value provided as paramter
+    *   @params 
+    *       ph - placeholder
+    *       id - id of HTML element
+    *       type - type of input element
+    *   @return HTML input element
+    */
     public static createInputElement(ph: string, id: string, type: string) {
         var inputelement = document.createElement('input');
         this.addAttribute(inputelement, { "type": type, "value": "", "id": id, placeholder: ph });
