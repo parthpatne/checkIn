@@ -1,4 +1,4 @@
-Steps:
+Steps To Run the CheckIn Sample App:
 
 1) git clone 
 2) npm install
