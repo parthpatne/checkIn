@@ -371,11 +371,11 @@ h4 {
 }
 .responseViewPage {
     display: none;
-    height: 80%;
+    height: 85%;
 }
 .responsePerUserViewPage {
     display: none;
-    height: 80%;
+    height: 85%;
 }
 .responsePerQuestion {
     font-family: sans-serif;
@@ -397,7 +397,15 @@ h4 {
     margin-bottom: 10px;
 }
 .responseRow {   
-    height: 390px;
+    height: 100%;
+    overflow: scroll;
+    top: 30px;
+    margin-top: 30px;
+    border-bottom: .5px solid rgb(206, 206, 206);
+    border-top: .5px solid rgb(206, 206, 206);
+}
+.responseRowPerUser {
+    height: 80vh;
     overflow: scroll;
     top: 30px;
     margin-top: 30px;

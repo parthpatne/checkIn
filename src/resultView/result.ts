@@ -473,7 +473,7 @@ function getPageResponsePerUser() {
 */
 async function getResponsePerUser(id, index) {
     let rowDiv = UxUtils.getDiv();
-    UxUtils.setClass(rowDiv, "responseRow");
+    UxUtils.setClass(rowDiv, "responseRowPerUser");
     let pageId = document.getElementById("responsePerUserViewPage");
     UxUtils.clearElement(pageId);
     let responderName = UxUtils.getDiv();
