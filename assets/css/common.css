@@ -330,14 +330,14 @@ div#fugo{
     font-weight: bold;
 }
 .tabs__button:active{
-    background: #6264a7;
+    border-bottom: 2px solid #6264a7;
     width: 100%;
     font-family: sans-serif;
     font-weight: bold;
 }
 .tabs__button--active {
     width: 100%;
-    background: #6264a7;
+    border-bottom: 2px solid #6264a7;
     font-family: sans-serif;
     font-weight: bold;
 }
@@ -347,6 +347,7 @@ div#fugo{
     display: none;
     height: 330px;
     overflow-y:scroll;
+    border-top: .5px solid rgb(206, 206, 206);
     border-bottom: .5px solid rgb(206, 206, 206);
     border-top: .5px solid rgb(206, 206, 206);
 }
@@ -396,7 +397,7 @@ h4 {
     margin-bottom: 10px;
 }
 .responseRow {   
-    height: 380px;
+    height: 390px;
     overflow: scroll;
     top: 30px;
     margin-top: 30px;

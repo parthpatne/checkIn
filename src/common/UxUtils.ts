@@ -8,13 +8,11 @@ export class UxUtils {
     *   @desc creates a alert box, with title, message to display and ok/cancel action and provide the styling
     *       e.g. - showAlertDailog("alertTitle","Messgae","ok",OnOk,"cancel",onCancel;
     *       here, onOk and onCancel are two functions
-    *   @params
-    *       title - Title of alert
-    *       okButtonTitle - string to display for ok
-    *       okButtonAction - function() with action on okbutton click. Optional
-    *       cancelButtonTitle - string to display for cancel button
-    *       cacelButtonAction - function() with action on cancelbutton. Optional
-    *   @return Null
+    *   @param title - Title of alert: string
+    *   @param okButtonTitle - string to display for ok: string
+    *   @param okButtonAction - function() with action on okbutton click (Optional): function()
+    *   @param cancelButtonTitle - string to display for cancel button: string
+    *   @param cacelButtonAction - function() with action on cancelbutton (Optional): function()
    */
     public static showAlertDialog(title: string, message: string, okButtonTitle: string, okButtonAction: () => void, cancelButtonTitle: string, cancelButtonAction: () => void) {
         var fullScreenTransparentDiv = this.getFullScreenTransparentContainer();
@@ -62,8 +60,7 @@ export class UxUtils {
     }
     /*
     *   @desc Create a spinner to show till the page is being loading and adds the css styling. You can add your own style attributes as well
-    *   @params
-    *       attributes - css attributes. Optional
+    *   @param attributes - css attributes (Optional): Object{}
     *   @return div HTML element with spin animation
     */
     public static getLoadingSpinner(attributes: {} = null): HTMLDivElement {
@@ -75,14 +72,12 @@ export class UxUtils {
     /*
     *   @desc Create a pie chart for the provided data and provided respective colors.
     *   here, arc(x,y,r,sAngle,eAngle,counterclockwise) = arc(canvasWidth / 2, canvasHeight / 2, radius, startAngle, endAngle, counterClockWise);
-    *   @params
-    *       data - array of numbers
-    *       colors - array of colors per numbers in data
-    *       borderColor - color for pieChart circumference
-    *       canvas - The HTML <canvas> element is to draw graphics on a web page
-    *       canvasWidth - width of canvas, which will be 2*radius of piechart
-    *       canvasHeight - height of canvas, which will be 2*radius of piechart
-    *   @return Null
+    *   @param data - array of numbers: number[]
+    *   @param colors - array of colors per numbers in data: string[]
+    *   @param borderColor - color for pieChart circumference: string
+    *   @param canvas - The HTML <canvas> element is to draw graphics on a web page: HTMLCanvasElement
+    *   @param canvasWidth - width of canvas, which will be 2*radius of piechart: number
+    *   @param canvasHeight - height of canvas, which will be 2*radius of piechart: number
     */
     public drawPieChart(data: number[], colors: string[], borderColor: string, canvas: HTMLCanvasElement, canvasWidth, canvasHeight) {
         var ctx = canvas.getContext("2d");
@@ -117,7 +112,6 @@ export class UxUtils {
     /////////////////// General Utility ///////////////////
     /*
     *   @desc Creates a transparent full screen div using the stack order of an element.
-    *   @params Empty
     *   @return div HTML element
     */
     public static getFullScreenTransparentContainer() {
@@ -128,9 +122,8 @@ export class UxUtils {
     /*
     *   @desc Creates div element positions in row-direction. It creates a div and appends the provided childrenElements horizontally.
     *       e.g. - getHorizontalDiv([element1,element2],{"style1":"value1","style2":"value2"});
-    *   @params 
-    *       childrenElements - array of elements which will be positioned row-directional
-    *       attribute - css sttribute for elements. Optional
+    *   @param childrenElements - array of elements which will be positioned row-directional: any HTMLElement[]
+    *   @param attribute - css sttribute for elements (Optional): Object{}
     *   @return div with element's flex direction row
     */
     public static getHorizontalDiv(childrenElements: any[], attributes: {} = null): HTMLDivElement {
@@ -148,9 +141,8 @@ export class UxUtils {
     /*
     *   @desc Creates div element psotions in column-direction. It creates a div and appends the provided childrenElements vertically.
     *       e.g. - getHorizontalDiv([element1,element2],{"style1":"value1","style2":"value2"});
-    *   @params 
-    *       childrenElements - array of elements which will be positioned column-directional
-    *       attribute - css sttribute for elements. Optional
+    *   @param childrenElements - array of elements which will be positioned row-directional: any HTMLElement[]
+    *   @param attribute - css sttribute for elements (Optional): Object{}
     *   @return div with element's flex direction column
     */
     public static getVerticalDiv(childrenElements: any[], attributes: {} = null): HTMLDivElement {
@@ -168,7 +160,6 @@ export class UxUtils {
     /*
     *   @desc Creates a div which is sized according to its width and height properties,
     *   but grows to absorb any extra free space in the flex container, and shrinks to its minimum size to fit the container.
-    *   @params Empty
     *   @result div HTML element
     */
     public static getFlexibleSpace(): HTMLDivElement {
@@ -176,8 +167,7 @@ export class UxUtils {
     }
     /*
     *   @desc Creates a div which is sized according to length provided
-    *   @params 
-    *       length - for height and width styling
+    *   @param length - for height and width styling (Optional): string
     *   @result div HTML element
     */
     public static getSpace(length: string = this.DEFAULT_SPACE_LENGTH): HTMLDivElement {
@@ -187,10 +177,9 @@ export class UxUtils {
     }
     /*
     *   @desc Creates a div element and populates the element's text with the provided string.
-    *   @params 
-    *       text - text to display
-    *       attributes - css attributed for label. Optional
-    *       showLink - Heightlight the text if the text is href. Optional
+    *   @param text - text to display: string
+    *   @param attributes - css attributed for label (Optional): Object{}
+    *   @param showLink - Heightlight the text if the text is href (Optional): boolean
     *   @result div HTML element
     */
     public static getLabel(text: string = null, attributes: {} = null, showLinks: boolean = true): HTMLDivElement {
@@ -204,10 +193,9 @@ export class UxUtils {
     *   @desc Creates a button HTML element 
     *       e.g. - getButton("Click me", testClick, {"style1":"value1","style2":"value2"});
     *       testClick is clickEvent function
-    *   @params 
-    *       title - string on button
-    *       clickEvent - function for onclick event for button. optional
-    *       attribute - css sttribute for button. Optional
+    *   @param title - string on button: string
+    *   @param clickEvent - function for onclick event for button (Optional): function()
+    *   @param attribute - css sttribute for button (Optional): Object{}
     *   @return button element
     */
     public static getButton(title: string = null, clickEvent: () => void = null, attributes: {} = null): HTMLDivElement {
@@ -219,12 +207,10 @@ export class UxUtils {
     /*
     *   @desc set the text content for HTML element, either innerHTML or innerText
     *       e.g. - setText(element, "stringtodisplay");
-    *   @params 
-    *       element - HTMLElement for which the you want to set the text
-    *       text - string to set. Optional
-    *       asHTML - if true then it will set .innerHTML else innerText. Optional
-    *       showLink - Heightlight the text if the text is href. Optional
-    *  @return Null; 
+    *   @param element - HTMLElement for which the you want to set the text: HTMLElement
+    *   @param text - string to set (Optional): string
+    *   @param asHTML - if true then it will set .innerHTML else innerText (Optional): boolean
+    *   @param showLink - Heightlight the text if the text is href (Optional): boolean
     */
     public static setText(element: HTMLElement, text: string = null, asHTML: boolean = true, showLinks: boolean = true) {
         if (asHTML) {
@@ -239,11 +225,10 @@ export class UxUtils {
     }
     /*
     *   @desc It takes a image path as parameter, convert it to circular base 64 image and add provided css attributes
-    *   @params 
-    *       data - image path
-    *       dimen - image dimension. Optional
-    *       attributes - css attributes. Optional
-    *  @return circular base 64 image; 
+    *   @param data - image path: string
+    *   @param dimen - image dimension (Optional): string
+    *   @param attributes - css attributes (Optional): Object{}
+    *   @return circular base 64 image; 
     */
     public static getBase64CircularImage(data: string = null, dimen: string = this.DEFAULT_IMAGE_DIMEN, attributes: {} = null): HTMLImageElement {
         var circularImage = this.getBase64Image(data);
@@ -253,11 +238,10 @@ export class UxUtils {
     }
     /*
     *   @desc It takes a image path as parameter, convert it to circular image and add provided css attributes
-    *   @params 
-    *       data - image path
-    *       dimen - image dimension. Optional
-    *       attributes - css attributes. Optional
-    *  @return circular image; 
+    *   @param data - image path: string
+    *   @param dimen - image dimension (Optional): string
+    *   @param attributes - css attributes (Optional): Object{}
+    *   @return circular image; 
     */
     public static getCircularImage(path: string = null, dimen: string = this.DEFAULT_IMAGE_DIMEN, attributes: {} = null): HTMLImageElement {
         var circularImage = this.getImage(path);
@@ -268,30 +252,27 @@ export class UxUtils {
     }
     /*
     *   @desc It takes a image path as parameter, convert it to base 64 image and add provided css attributes
-    *   @params 
-    *       data - image path
-    *       dimen - image dimension. Optional
-    *       attributes - css attributes. Optional
-    *  @return base64 converted image; 
+    *   @param data - image path: string
+    *   @param dimen - image dimension (Optional): string
+    *   @param attributes - css attributes (Optional): Object{}
+    *   @return base64 converted image; 
     */
     public static getBase64Image(data: string = null, attributes: {} = null): HTMLImageElement {
         return this.getImage(this.getBase64Src(data), attributes);
     }
     /*
     *   @desc It takes a image path as parameter and use the base64 encoded string as a value of the src parameter, using a data:image/... construct.
-    *   @params 
-    *       data - image path
-    *  @return base64 converted source; 
+    *   @param data - image path: string
+    *   @return base64 converted source; 
     */
     public static getBase64Src(data: string): string {
         return "data:image/png;base64," + data;
     }
     /*
     *   @desc It takes a image path as parameter and add provided css attributes
-    *   @params 
-    *       data - image path
-    *       attributes - css attributes. Optional
-    *  @return image HTML element; 
+    *   @param data - image path: string
+    *   @param attributes - css attributes (Optional): Object{}
+    *   @return image HTML element; 
     */
     public static getImage(path: string = null, attributes: {} = null): HTMLImageElement {
         var image: HTMLImageElement = <HTMLImageElement>this.getElement("img");
@@ -303,8 +284,7 @@ export class UxUtils {
     /*
     *   @desc creates a HTML div element
     *       e.g. - getDiv({"style1":"value1","style2":"value2"});
-    *   @params 
-    *       attributes - css attribute for the given div element. Optional
+    *   @param attributes - css attribute for the given div element (Optional): Object{}
     *   @return div element
     */
     public static getDiv(attributes: {} = null): HTMLDivElement {
@@ -312,8 +292,7 @@ export class UxUtils {
     }
     /*
     *   @desc Creates a pre(preformatted text) element which preserves both spaces and line breaks.
-    *   @params 
-    *       attributes - css attribute for the given pre element. Optional
+    *   @param attributes - css attribute for the given pre element (Optional): Object{}
     *   @return div pre tagged element
     */
     public static getPrettyPrintDiv(attributes: {} = null): HTMLDivElement {
@@ -322,11 +301,10 @@ export class UxUtils {
     /*
     *   @desc Creates a canvas element with provided width and height to draw graphics on a web page.
     *       e.g. - getCanvas(10,10,{"border":"1px solid #000000"})
-    *   @params 
-    *       width - width of canvas
-    *       height - height of canvas
-    *       attributes - css attribute for the given pre element. Optional
-    *   @return div pre tagged element
+    *   @param width - width of canvas: number
+    *   @param height - height of canvas: number
+    *   @param attributes - css attribute for the given pre element (Optional): Object{}
+    *   @return HTML canvas element
     */
     public static getCanvas(width: number, height: number, attributes: {} = null): HTMLCanvasElement {
         var canvas: HTMLCanvasElement = this.createHiDPICanvas(width, height);
@@ -335,10 +313,8 @@ export class UxUtils {
     }
     /*
     *   @desc appends the element to it's parent element
-    *   @params 
-    *       element - child element;
-    *       parentElement - parent element. Optional
-    *   @return Null
+    *   @param element - child element: HTMLElement
+    *   @param parentElement - parent element (Optional) :HTMLElement
     */
     public static addElement(element: HTMLElement = null, parentElement: HTMLElement = null) {
         if (element && parentElement) {
@@ -347,10 +323,8 @@ export class UxUtils {
     }
     /*
     *   @desc It removes the provided child element from it's parentElement
-    *   @params 
-    *       element - child HTML element;
-    *       parentElement - parent HTML element. Optional
-    *   @return Null
+    *   @param element - child HTML element: HTMLElement
+    *   @param parentElement - parent HTML element (Optional): HTMLElement
     */
     public static removeElement(element: HTMLElement = null, parentElement: HTMLElement = null) {
         if (element == null)
@@ -370,11 +344,9 @@ export class UxUtils {
     }
     /*
     *   @desc It replaces one child element with another element under a parentElement
-    *   @params 
-    *       newElement - new child element to be appended
-    *       oldElement - old child element appended to the parent element
-    *       parentElement - parentElement, whose child element will be replaced
-    *   @return Null
+    *   @param newElement - new child element to be appended: HTMLElement
+    *   @param oldElement - old child element appended to the parent element: HTMLElement
+    *   @param parentElement - parentElement, whose child element will be replaced: HTMLElement
     */
     public static replaceElement(newElement: HTMLElement = null, oldElement: HTMLElement = null, parentElement: HTMLElement = null) {
         if (newElement && oldElement && parentElement) {
@@ -383,9 +355,7 @@ export class UxUtils {
     }
     /*
     *   @desc It removes all the child element from the provided element
-    *   @params 
-    *       element - HTML element;
-    *   @return Null
+    *   @param element - HTML element you want to remove: HTMLElement
     */
     public static clearElement(element: HTMLElement = null) {
         while (element && element.firstChild) {
@@ -395,10 +365,9 @@ export class UxUtils {
     /*
     *   @desc creates a HTML element of the type you will pass in argument
     *       e.g. - getElement("span",{"style1":"value1"})
-    *   @params 
-    *      elementTag - element type to create
-    *      attributes - css attributes to add in the element. Optional
-    *   @return button element
+    *   @param elementTag - element type to create: string
+    *   @params attributes - css attributes to add in the element (Optional): Object{}
+    *   @return HTML element of provided elementTag type
    */
     public static getElement(elementTag: string, attributes: {} = null): HTMLElement {
         var element: HTMLElement = document.createElement(elementTag);
@@ -407,10 +376,8 @@ export class UxUtils {
     }
     /*
    *   @desc Add click event on HTML element
-   *   @params 
-   *       element - HTMLElement fow which onclick need to be set
-   *       clickEvent - function for the action on onclick
-   *   @return Null;
+   *   @param element - HTMLElement fow which onclick need to be set: HTMLElement
+   *   @param clickEvent - function for the action on onclick: function()
    */
     public static addClickEvent(element: HTMLElement, clickEvent: () => void) {
         if (clickEvent != null) {
@@ -418,12 +385,10 @@ export class UxUtils {
         }
     }
     /*
-    *   @desc set the id for the HTML element
+    *   @desc Set the id for the HTML element
     *       e.g. setId(element, "elementId")
-    *   @params 
-    *       element - HTMLElement for which you will set id
-    *       id - element identifier
-    *   @return Null; It will set all the attribite for the element
+    *   @param element - HTMLElement for which you will set id: HTMLElement
+    *   @param id - element identifier: string
     */
     public static setId(element: HTMLElement, id: string) {
         if (!Utils.isEmptyString(id)) {
@@ -431,12 +396,10 @@ export class UxUtils {
         }
     }
     /*
-    *   @desc set the css for the HTML element
+    *   @desc Set the css for the HTML element
     *       e.g. - setClass(element, "classnameone classnametwo")
-    *   @params 
-    *       element - HTMLElement in which you have to apply attributes
-    *       classname - elemets's class name(s)
-    *   @return Null; It will set all the attribite for the element
+    *   @param element - HTMLElement in which you have to apply attributes: HTMLElement
+    *   @param classname - elemets's class name(s): string
     */
     public static setClass(element: HTMLElement, className: string) {
         if (!Utils.isEmptyString(className)) {
@@ -446,10 +409,8 @@ export class UxUtils {
     /*
     *   @desc set the css for the HTML element
     *       e.g. - addCSS(element, { style1: value })
-    *   @params 
-    *       element - HTMLElement in which you have to apply attributes
-    *       attributes - css attributes. Optional
-    *   @return Null; It will set all the attribite for the element
+    *   @param element - HTMLElement in which you have to apply attributes: HTMLElement
+    *   @param attributes - css attributes (Optional): Object{}
     */
     public static addCSS(element: HTMLElement, attributes: {}) {
         if (attributes != null) {
@@ -522,14 +483,12 @@ export class UxUtils {
     /* 
     *   @desc It sets tabs functionality using buttons, div, classes and data-* attributes
     *       e.g. - setTabs("buttonClass", "buttonClass--active", "contentClass", "contentClass--active", "data-for-tab", "data-tab");
-    *   @params  
-    *       arg1: common classname of button
-    *       arg2: classname for button for which content will be shown(active)
-    *       arg3: common classname for the contents 
-    *       arg4: classname for the content to be displayed(active)
-    *       arg5: Attribute for the button to fetch data active content class
-    *       arg6: Attribute for the content to display the data
-    *   return Null; sets the clicked button and respective content as active class for active tab
+    *   @param buttonClass: common classname of button: string
+    *   @param buttonClassActive: classname for button for which content will be shown(active): string
+    *   @param contentClass: common classname for the contents: string
+    *   @param contentClassActive: classname for the content to be displayed(active): string
+    *   @param OnButtonAttribute: Attribute for the button to fetch data active content class: string
+    *   @param onContentAttribute: Attribute for the content to display the data: string
     */
     public static setTabs(buttonClass: string, buttonClassActive: string, contentClass: string, contentClassActive: string, OnButtonAttribute: string, onContentAttribute: string) {
         document.querySelectorAll("." + buttonClass).forEach(button => {
@@ -579,10 +538,8 @@ export class UxUtils {
     /*
     *   @desc set the non-css attribute for the HTML element
     *       e.g. - addAttribute(element, { "class": "classname", "atr1": "value1", "atr2": "value2" });
-    *   @params 
-    *       element - HTMLElement in which you have to apply attributes
-    *       attributes - element attributes to set. Optional
-    *   @return Null; It will set all the attribite for the element
+    *   @param element - HTMLElement in which you have to apply attributes: HTMLElement
+    *   @param attributes - element attributes to set (Optional): Object{}
     */
     public static addAttribute(element: HTMLElement, attributes: {} = null) {
         for (var atr in attributes) {
@@ -637,9 +594,8 @@ export class UxUtils {
     *   @desc gets the localized string from string.json and replace the argumnent in string.json with the argumnets received in the function
     *       e.g. - addAttribute("question", qno, qdata);
     *       then it will be replace in string.json string with key=question and arg {0} with qno and arg {1} with qdata
-    *   @params 
-    *       key - key in string.json
-    *       args - values to replace the arguments 
+    *   @param key - key in string.json: string
+    *   @param args - values to replace the arguments: Object{} 
     *   @return formatted string 
     */
     public static getString(key: string, ...args: any[]) {
@@ -657,10 +613,9 @@ export class UxUtils {
     }
     /*
     *   @desc Creates an input element with placeholder, id and value provided as paramter
-    *   @params 
-    *       ph - placeholder for the input tag
-    *       id - id of HTML element
-    *       type - type of input element, numeric/text etc
+    *   @param ph - placeholder for the input tag: string
+    *   @param id - id of HTML element: string
+    *   @param type - type of input element, numeric/text etc: string
     *   @return HTML input element
     */
     public static createInputElement(ph: string, id: string, type: string) {
