@@ -2,6 +2,7 @@ import * as actionSDK from 'action-sdk-sunny';
 import questionTemplate from './questionSet.json';
 import { Utils } from "../common/Utils";
 import { UxUtils } from '../common/UxUtils';
+import { ActionSdkHelper } from '../common/ActionSdkHelper';
 import { Question } from './Question';
 
 const questionTemplateTitles = Object.keys(questionTemplate);
@@ -9,19 +10,19 @@ const choiceIdPrefix = "choiceId";
 let questionMap = new Map();
 let singleOptionChoicesMap = new Map();
 let root = document.getElementById("root");
-let bodyDiv = UxUtils.getElement("div");
-let footerDiv = UxUtils.getElement("div");
+let bodyDiv = UxUtils.getDiv();
+let footerDiv = UxUtils.getDiv();
 let questionCount = 0;
 let currentSelectedTemplate = 0;
 let strings;
 
-/**
-  * Entry Point for Building Up the Creation View
+/*
+* Entry Point for Building Up the Creation View
 */
 OnPageLoad();
 
-/**
-  * @desc Entry Point for Building Up Creation View and Loads requires attributes from Action SDK
+/*
+* @desc Entry Point for Building Up Creation View and Loads requires attributes from Action SDK
 */
 function OnPageLoad() {
 
@@ -35,22 +36,12 @@ function OnPageLoad() {
         addQuestion(actionSDK.ActionDataColumnValueType.SingleOption);
     });
 
+    strings = ActionSdkHelper.getLocalizedStrings();
     surveytitle.setAttribute("id", "surveyTitle");
     submitButton.setAttribute("id", "submitForm");
     UxUtils.setClass(selectTemplate, 'selectTemplateDropDown');
 
-    /**
-    * Gets the localized strings in which the app is rendered
-    */
-    actionSDK.executeApi(new actionSDK.GetLocalizedStrings.Request())
-        .then(function (response: actionSDK.GetLocalizedStrings.Response) {
-            strings = response.strings;
-        })
-        .catch(function (error) {
-            console.error("GetContext - Error: " + JSON.stringify(error));
-        });
-
-    /**
+    /*
     * Create DropDown List for Question Templates Selection
     */
     questionTemplateTitles.forEach(element => {
@@ -64,7 +55,7 @@ function OnPageLoad() {
             currentSelectedTemplate = selectTemplate.selectedIndex;
         }
         else {
-            /**
+            /*
             * Show Dialog Alert for Content Loss after changing the Question Template
             */
             UxUtils.showAlertDialog(UxUtils.getString("templateChangeAlertTitle"), UxUtils.getString("templateChangeAlertText"),
@@ -78,7 +69,7 @@ function OnPageLoad() {
         }
     });
 
-    /**
+    /*
     * Create DropDown List for Adding new Question with avaliable Question Types
     */
     questionTypeList.options.add(new Option("SingleOption", actionSDK.ActionDataColumnValueType.SingleOption));
@@ -90,7 +81,7 @@ function OnPageLoad() {
         questionTypeList.selectedIndex = -1;
     });
 
-    /**
+    /*
     * Set CSS styling Attributed to HTML components using class name defined in CSS file
     */
     UxUtils.setClass(surveytitle, 'surveyTitle');
@@ -99,7 +90,7 @@ function OnPageLoad() {
     UxUtils.setClass(submitButton, 'submitButton');
     UxUtils.setClass(footerDiv, 'creationFooterDiv');
 
-    /**
+    /*
     * Prepare HTML DOM Body
     */
     UxUtils.addElement(selectTemplate, root);
@@ -112,9 +103,9 @@ function OnPageLoad() {
     UxUtils.addElement(submitButton, footerDiv);
 }
 
-/**
-  * @desc Fetch and Render Questions of given index of Question Set Template Json
-  * @param {Number} selectedIndex of Question template
+/*
+* @desc Fetch and Render Questions of given index of Question Set Template Json
+* @param {Number} selectedIndex of Question template
 */
 function fetchQuetionSetForTemplate(selectedIndex: number) {
 
@@ -122,19 +113,19 @@ function fetchQuetionSetForTemplate(selectedIndex: number) {
     bodyDiv.innerHTML = "";
     questionCount = 0;
 
-    /**
+    /*
     * Set Survey Title to template Title
     */
     (<HTMLInputElement>document.getElementById("surveyTitle")).innerText = Object.keys(questionTemplate)[selectedIndex];
 
-    /**
+    /*
     * For None Selected Question Template make survey title empty
     */
     if (selectedIndex == 0) {
         (<HTMLInputElement>document.getElementById("surveyTitle")).innerText = "";
     }
 
-    /**
+    /*
     * Render Question Set for Given Template
     */
     templateQuestions.forEach(question => {
@@ -143,29 +134,29 @@ function fetchQuetionSetForTemplate(selectedIndex: number) {
     });
 }
 
-/**
-  * @desc Create new Question of given type with optional question JSON attribute which will create Question with Prefilled Content
-  * @param {actionSDK.ActionDataColumnValueType} type : Question Type 
-  * @param {JSON} questionJson : required for prefilled question content
-  * @return question component of given question type
+/*
+* @desc Create new Question of given type with optional question JSON attribute which will create Question with Prefilled Content
+* @param {actionSDK.ActionDataColumnValueType} type : Question Type 
+* @param {JSON} questionJson : required for prefilled question content
+* @return question component of given question type
 */
 function addQuestion(type: actionSDK.ActionDataColumnValueType, questionJson?: JSON) {
     let question;
 
     if (type == actionSDK.ActionDataColumnValueType.SingleOption) {
-        /**
+        /*
         * Render SingleOption Question Component
         */
         question = addSingleOptionQuestion(questionJson);
     }
     if (type == actionSDK.ActionDataColumnValueType.Text) {
-        /**
+        /*
         * Render TEXT Question Component
         */
         question = addTextQuestion(questionJson);
     }
     if (type == actionSDK.ActionDataColumnValueType.Numeric) {
-        /**
+        /*
         * Render NUMBER Question Component
         */
         question = addNumberQuestion(questionJson);
@@ -177,13 +168,14 @@ function addQuestion(type: actionSDK.ActionDataColumnValueType, questionJson?: J
     return question;
 }
 
-/**
-  * @desc Create new SingleOption Question with optional question JSON attribute which will create Question with Prefilled Content
-  * @param {JSON} questionJson : required for prefilled question content
-  * @return SingleOption question component
+/*
+* @desc Create new SingleOption Question with optional question JSON attribute which will create Question with Prefilled Content
+* @param {JSON} questionJson : required for prefilled question content
+* @return SingleOption question component
 */
 function addSingleOptionQuestion(question?: JSON) {
-    let questionDiv = UxUtils.getElement("div");
+    let questionDiv = UxUtils.getDiv();
+
     let choiceDiv = UxUtils.getElement("ul");
     let questionId = questionCount.toString();
     let questionHeading = UxUtils.getElement("label");
@@ -211,7 +203,7 @@ function addSingleOptionQuestion(question?: JSON) {
     UxUtils.addElement(questionTitleInputelement, questionDiv);
 
     if (question != null) {
-        /**
+        /*
         * Render Question with given Prefilled Content
         */
         questionTitleInputelement.value = question["title"];
@@ -224,7 +216,7 @@ function addSingleOptionQuestion(question?: JSON) {
         });
     }
     else {
-        /**
+        /*
         * Add two default choice with empty content
         */
 
@@ -246,14 +238,15 @@ function addSingleOptionQuestion(question?: JSON) {
     return questionDiv;
 }
 
-/**
-  * @desc Create new Number Question with optional question JSON attribute which will create Question with Prefilled Content
-  * @param {JSON} questionJson : required for prefilled question content
-  * @return Number question component
+/*
+* @desc Create new Number Question with optional question JSON attribute which will create Question with Prefilled Content
+* @param {JSON} questionJson : required for prefilled question content
+* @return Number question component
 */
 function addNumberQuestion(question?: JSON) {
     //Todo: @parth try to combine Text , Number and SingleOption part
-    let questionDiv = UxUtils.getElement("div");
+    let questionDiv = UxUtils.getDiv();
+
     let questionHeading = UxUtils.getElement("label");
     let questionTitleInputelement = UxUtils.createInputElement(UxUtils.getString("enterQuestionPlaceholder"), questionCount.toString(), "text"); // Create Input Field for Name
     let questionId = questionCount.toString();
@@ -279,14 +272,15 @@ function addNumberQuestion(question?: JSON) {
     return questionDiv;
 }
 
-/**
-  * @desc Create new TEXT Question with optional question JSON attribute which will create Question with Prefilled Content
-  * @param {JSON} questionJson : required for prefilled question content
-  * @return TEXT question component
+/*
+* @desc Create new TEXT Question with optional question JSON attribute which will create Question with Prefilled Content
+* @param {JSON} questionJson : required for prefilled question content
+* @return TEXT question component
 */
 function addTextQuestion(question?: JSON) {
     //Todo: @parth try to combine Text , Number and SingleOption part
-    let questionDiv = UxUtils.getElement("div");
+    let questionDiv = UxUtils.getDiv();
+
     let questionHeading = UxUtils.getElement("label");
     let questionTitleInputelement = UxUtils.createInputElement(UxUtils.getString("enterQuestionPlaceholder"), questionCount.toString(), "text"); // Create Input Field for Name
     let questionId = questionCount.toString();
@@ -313,40 +307,33 @@ function addTextQuestion(question?: JSON) {
     return questionDiv;
 }
 
-/**
-  * @desc Function to trigger the flow for Creating new survey instance,
-  *       fetch the action package context from Service which is required to create the new action instance
+/*
+* @desc Function to trigger the flow for Creating new survey instance,
+*       fetch the action package context from Service which is required to create the new action instance
 */
 function submitForm() {
-    actionSDK.executeApi(new actionSDK.GetContext.Request())
-        .then(function (response: actionSDK.GetContext.Response) {
-            console.info("GetContext - Response: " + JSON.stringify(response));
-            createAction(response.context.actionPackageId);
-        })
-        .catch(function (error) {
-            console.error("GetContext - Error: " + JSON.stringify(error));
-        });
+    ActionSdkHelper.getActionPackageId(createAction);
 }
 
-/**
-  * @desc Function to create new action instance after validation,
-  *       in case of validation failure it will prompt Dialog specific to error
-  * @param {string} actionPackageId required for prefilled question content
+/*
+* @desc Function to create new action instance after validation,
+*       in case of validation failure it will prompt Dialog specific to error
+* @param {string} actionPackageId required for prefilled question content
 */
 function createAction(actionPackageId: string) {
     let surveyTitle = (<HTMLInputElement>document.getElementById("surveyTitle")).innerText;
 
 
-    /**
-     * Validate for Non Empty Survey title
+    /*
+    * Validate for Non Empty Survey title
     */
     if (Utils.isEmptyString(surveyTitle)) {
         UxUtils.showAlertDialog(UxUtils.getString("validationErrorTitle"), UxUtils.getString("emptySurveyTitleError"), UxUtils.getString("ok"), null, null, null);
         return;
     }
 
-    /**
-     * Validate Question Set with required inputs and prepare the Question List Array
+    /*
+    * Validate Question Set with required inputs and prepare the Question List Array
     */
     let result = getQuestionSet();
     if (!result["isSuccess"]) {
@@ -356,8 +343,8 @@ function createAction(actionPackageId: string) {
 
     let questionsSet = result["columnArray"];
 
-    /**
-     * Prepare the Action Instance Request Object
+    /*
+    * Prepare the Action Instance Request Object
     */
     let action: actionSDK.Action = {
         id: Utils.generateGUID(),
@@ -375,23 +362,16 @@ function createAction(actionPackageId: string) {
             }
         ]
     };
-    let request = new actionSDK.CreateAction.Request(action);
 
-    /**
-     * Service Request to create new Action Instance 
+    /*
+    * Service Request to create new Action Instance 
     */
-    actionSDK.executeApi(request)
-        .then(function (response: actionSDK.GetContext.Response) {
-            console.info("CreateAction - Response: " + JSON.stringify(response));
-        })
-        .catch(function (error) {
-            console.error("CreateAction - Error: " + JSON.stringify(error));
-        });
+    ActionSdkHelper.createActionInstance(action);
 }
 
-/**
- *  @desc Funtion to Validate Question Set with required inputs and prepare the Question List Array
- *  @return {Object} result with attributes {boolean} isSuccess and {JSON Array} columnArray                   
+/*
+*  @desc Funtion to Validate Question Set with required inputs and prepare the Question List Array
+*  @return {Object} result with attributes {boolean} isSuccess and {JSON Array} columnArray                   
 */
 function getQuestionSet() {
     let columnArray = [];
@@ -434,9 +414,9 @@ function getQuestionSet() {
     return { isSuccess: isSuccess, columnArray: columnArray };
 }
 
-/**
- * @desc Funtion to Create and Bind delete button for given question id
- * @param {string} questionId of the Question
+/*
+* @desc Funtion to Create and Bind delete button for given question id
+* @param {string} questionId of the Question
 */
 function getQuestionDeletebutton(questionId: string) {
     let deleteQuestionButton = UxUtils.getElement("img");
@@ -448,10 +428,10 @@ function getQuestionDeletebutton(questionId: string) {
     return deleteQuestionButton;
 }
 
-/**
- * @desc Funtion to Delete Question Component
- * @param {HTMLElement} element
- * @param {string} questionId of the Question which need to get deleted
+/*
+* @desc Funtion to Delete Question Component
+* @param {HTMLElement} element
+* @param {string} questionId of the Question which need to get deleted
 */
 function deleteQuestion(element: HTMLElement, questionId: string) {
     let parentDiv = document.getElementById((<HTMLElement>element.parentNode).id);
@@ -459,10 +439,10 @@ function deleteQuestion(element: HTMLElement, questionId: string) {
     questionMap.delete(questionId);
 }
 
-/**
- * @desc Function to Add choice for MCQ/SingleSelect Question type
- * @param {HTMLElement} element
- * @param {string} questionId of the Question which need to get deleted
+/*
+* @desc Function to Add choice for MCQ/SingleSelect Question type
+* @param {HTMLElement} element
+* @param {string} questionId of the Question which need to get deleted
 */
 function addChoice(ph: string, questionId: string, choiceId: string, val: string = "") {
     let li = UxUtils.getElement("li");
@@ -479,11 +459,11 @@ function addChoice(ph: string, questionId: string, choiceId: string, val: string
     return li;
 }
 
-/**
- * @desc Create Delete Button component for MCQ/SingleSelect Question type
- * @param {string} questionId of the Question
- * @param {string} choiceId of the Question to get deleted
- * @returns {HTMLElement} delete Choice Button component for MCQ/SingleSelect Question type
+/*
+* @desc Create Delete Button component for MCQ/SingleSelect Question type
+* @param {string} questionId of the Question
+* @param {string} choiceId of the Question to get deleted
+* @returns {HTMLElement} delete Choice Button component for MCQ/SingleSelect Question type
 */
 function getChoiceDeletebutton(questionId: string, choiceId: string) {
     let deleteChoiceButton = UxUtils.getElement("img");
@@ -495,10 +475,10 @@ function getChoiceDeletebutton(questionId: string, choiceId: string) {
     return deleteChoiceButton;
 }
 
-/**
- * @desc Function to Delete choice for MCQ/SingleSelect Question type
- * @param {string} questionId of the Question
- * @param {string} choiceId of the Question to get deleted
+/*
+* @desc Function to Delete choice for MCQ/SingleSelect Question type
+* @param {string} questionId of the Question
+* @param {string} choiceId of the Question to get deleted
 */
 function deleteChoice(questionId: string, choiceId: string) {
     if (singleOptionChoicesMap.get(questionId).length == 2) {

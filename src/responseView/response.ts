@@ -1,68 +1,44 @@
 import * as actionSDK from 'action-sdk-sunny';
 import { Utils } from '../common/Utils';
 import { UxUtils } from '../common/UxUtils';
+import { ActionSdkHelper } from '../common/ActionSdkHelper';
 
 let root = document.getElementById("root");
-let row = {};
-let actionInstance = null;
+let actionInstance: actionSDK.Action = null;
+let columnValues: {
+    [key: string]: string;
+};
 
-/**
-  * Entry Point for Building Up the Response View
+/*
+* Entry Point for Building Up the Response View
 */
 OnPageLoad();
 
-/**
-  * @desc Entry Point for Building Up Response View and Loads requires attributes from Action SDK
+/*
+* @desc Entry Point for Building Up Response View and Loads requires attributes from Action SDK,
+*       Fetch Action Instance using Service API and on Success create Response body
 */
 function OnPageLoad() {
-    actionSDK.executeApi(new actionSDK.GetContext.Request())
-        .then(function (response: actionSDK.GetContext.Response) {
-            console.info("GetContext - Response: " + JSON.stringify(response));
-            /**
-             * Get Action Instance Details 
-            */
-            getActionInstance(response.context.actionId);
-        })
-        .catch(function (error) {
-            console.error("GetContext - Error: " + JSON.stringify(error));
-        });
+    ActionSdkHelper.getAction(createBody);
 }
 
-/**
-  * @desc Fetch Action Instance using Service API for given action Instance id
-  * @param {string} actionId of Action Instance to get fetch from Service
+/*
+* @desc Create Response View Body for corresponding Action Instances
 */
-function getActionInstance(actionId: string) {
-    actionSDK.executeApi(new actionSDK.GetAction.Request(actionId))
-        .then(function (response: actionSDK.GetAction.Response) {
-            console.info("Response: " + JSON.stringify(response));
-            actionInstance = response.action;
-            /**
-            * After fetching the action instance details prepare the body of response view
-            */
-            createBody();
-        })
-        .catch(function (error) {
-            console.log("Error: " + JSON.stringify(error));
-        });
-}
-
-/**
-  * @desc Create Response View Body for corresponding Action Instances
-*/
-function createBody() {
+function createBody(action: actionSDK.Action) {
+    actionInstance = action;
     let title = UxUtils.getElement('h3');
     let submitResponseButton = UxUtils.getButton(UxUtils.getString("submit"), function () {
-        /**
-          * Submit Response flow to create response for corresponding Action Instances
+        /*
+        * Submit Response flow to create response for corresponding Action Instances
         */
         submitForm();
     });
     title.innerHTML = actionInstance.displayName;
     UxUtils.setClass(submitResponseButton, 'responseSubmitButton');
     UxUtils.addElement(title, root);
-    /**
-      * Prepare the Question View Component of the response view
+    /*
+    * Prepare the Question View Component of the response view
     */
     createQuestionView();
     UxUtils.addElement(submitResponseButton, root);
@@ -70,8 +46,8 @@ function createBody() {
     UxUtils.addElement(UxUtils.lineBreak(), root);
 }
 
-/**
-  * @desc Prepare the Question View Component of the response view
+/*
+* @desc Prepare the Question View Component of the response view
 */
 function createQuestionView() {
     actionInstance.dataTables[0].dataColumns.forEach((column) => {
@@ -80,13 +56,13 @@ function createQuestionView() {
         questionTitle.innerHTML = column.displayName;
 
         UxUtils.addElement(UxUtils.lineBreak(), questionDiv);
-        /**
-          * Add Question Title
+        /*
+        * Add Question Title
         */
         UxUtils.addElement(questionTitle, questionDiv);
 
-        /**
-          * Add Columns specific to Column type
+        /*
+        * Add Columns specific to Column type
         */
         if (column.valueType == actionSDK.ActionDataColumnValueType.SingleOption) {
             column.options.forEach((option) => {
@@ -106,65 +82,37 @@ function createQuestionView() {
     });
 }
 
-/**
-  * @desc Function to trigger the flow for Submit Survey Response,
-  *       Get action package context from Service which is required to create response
+/*
+* @desc Function to trigger the flow for Submit Survey Response,
+*       Get action package context from Service which is required to create response
 */
 function submitForm() {
-    actionSDK.executeApi(new actionSDK.GetContext.Request())
-        .then(function (response: actionSDK.GetContext.Response) {
-            console.info("GetContext - Response: " + JSON.stringify(response));
-            /**
-              * Create Submit Response Request
-            */
-            addDataRows(response.context.actionId);
-        })
-        .catch(function (error) {
-            console.error("GetContext - Error: " + JSON.stringify(error));
-        });
-}
-
-/**
-  * @desc Prepare Request object and Make Service API Request for Submit of Response
-  * @param {string} actionId of the Action Instance
-*/
-function addDataRows(actionId: string) {
-    let addDataRowRequest = new actionSDK.AddActionDataRow.Request(getDataRow(actionId));
-    let closeViewRequest = new actionSDK.CloseView.Request();
-
-    /**
-      * @desc Prepare Batch Request object for simultaneously making multiple APIs Request
+    /*
+    * Create Submit Response Request
     */
-    let batchRequest = new actionSDK.BaseApi.BatchRequest([addDataRowRequest, closeViewRequest]);
-    actionSDK.executeBatchApi(batchRequest)
-        .then(function (batchResponse) {
-            console.info("BatchResponse: " + JSON.stringify(batchResponse));
-        })
-        .catch(function (error) {
-            console.error("Error: " + JSON.stringify(error));
-        })
+    ActionSdkHelper.addDataRows(getDataRow);
 }
 
-/**
-  * @desc Prepare Data Row request object for given Action Instance Id
-  * @param {string} actionId of the Action Instance
-  * @returns Data Row request object
+/*
+* @desc Prepare Data Row request object for given Action Instance Id
+* @param {string} actionId of the Action Instance
+* @returns Data Row request object
 */
 function getDataRow(actionId: string) {
     return {
         id: Utils.generateGUID(),
         actionId: actionId,
         dataTableId: "TestDataSet",
-        columnValues: row
+        columnValues: columnValues
     };
 }
 
-/**
-  * @desc Prepare HTML component for Input type Responses and handles Update Question Response
-  * @param {string} placeholder of empty input response element
-  * @param {string} id of input response element
-  * @param {string} type allowed for input response element
-  * @returns {HTMLElement} inputElement
+/*
+* @desc Prepare HTML component for Input type Responses and handles Update Question Response
+* @param {string} placeholder of empty input response element
+* @param {string} id of input response element
+* @param {string} type allowed for input response element
+* @returns {HTMLElement} inputElement
 */
 function addInputElement(placeholder: string, id: string, type: string) {
     let inputElement = UxUtils.createInputElement(placeholder, id, type);
@@ -176,12 +124,12 @@ function addInputElement(placeholder: string, id: string, type: string) {
     return inputElement;
 }
 
-/**
-  * @desc Prepare HTML component for MCQ/SingleSelect choice responses and handles Update Question Response
-  * @param {string} text of MCQ/SingleSelect choice
-  * @param {string} name of MCQ/SingleSelect choice
-  * @param {string} id of MCQ/SingleSelect choice Div
-  * @returns {HTMLElement} inputElement
+/*
+* @desc Prepare HTML component for MCQ/SingleSelect choice responses and handles Update Question Response
+* @param {string} text of MCQ/SingleSelect choice
+* @param {string} name of MCQ/SingleSelect choice
+* @param {string} id of MCQ/SingleSelect choice Div
+* @returns {HTMLElement} inputElement
 */
 function getRadioButton(text: string, name: string, id: string) {
     let radioInputDiv = document.createElement("div");
@@ -201,11 +149,11 @@ function getRadioButton(text: string, name: string, id: string) {
     return radioInputDiv;
 }
 
-/**
-  * @desc Function to Update Question Response after update of response
-  * @param {string} questionResponse for corresponding Question with colomn Id
-  * @param {string} colomnId of corresponding Question 
+/*
+* @desc Function to Update Question Response after update of response
+* @param {string} questionResponse for corresponding Question with colomn Id
+* @param {string} colomnId of corresponding Question 
 */
 function updateQuestionResponse(questionResponse: string, colomnId: string) {
-    row[colomnId] = questionResponse;
+    columnValues[colomnId] = questionResponse;
 }

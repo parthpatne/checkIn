@@ -70,47 +70,6 @@ export class UxUtils {
         return loadSpinner;
     }
     /*
-    *   @desc Create a pie chart for the provided data and provided respective colors.
-    *   here, arc(x,y,r,sAngle,eAngle,counterclockwise) = arc(canvasWidth / 2, canvasHeight / 2, radius, startAngle, endAngle, counterClockWise);
-    *   @param data - array of numbers: number[]
-    *   @param colors - array of colors per numbers in data: string[]
-    *   @param borderColor - color for pieChart circumference: string
-    *   @param canvas - The HTML <canvas> element is to draw graphics on a web page: HTMLCanvasElement
-    *   @param canvasWidth - width of canvas, which will be 2*radius of piechart: number
-    *   @param canvasHeight - height of canvas, which will be 2*radius of piechart: number
-    */
-    public drawPieChart(data: number[], colors: string[], borderColor: string, canvas: HTMLCanvasElement, canvasWidth, canvasHeight) {
-        var ctx = canvas.getContext("2d");
-
-        var total = 0;
-        for (var i = 0; i < data.length; i++) {
-            total += data[i];
-        }
-
-        var lineWidth = 1;
-        var radius = canvasHeight / 2 - lineWidth;
-        var counterClockWise = false;
-        var startAngle = -(Math.PI / 2);
-        for (var i = 0; i < data.length; i++) {
-            ctx.fillStyle = colors[i];
-            ctx.strokeStyle = borderColor;
-            ctx.lineWidth = lineWidth;
-
-            var endAngle = startAngle + (2 * Math.PI * (data[i] / total));
-
-            ctx.beginPath();
-            ctx.moveTo(canvasWidth / 2, canvasHeight / 2);
-            ctx.arc(canvasWidth / 2, canvasHeight / 2, radius, startAngle, endAngle, counterClockWise);
-            ctx.lineTo(canvasWidth / 2, canvasHeight / 2);
-            ctx.fill();
-            ctx.stroke();
-
-            startAngle = endAngle;
-        }
-    }
-
-    /////////////////// General Utility ///////////////////
-    /*
     *   @desc Creates a transparent full screen div using the stack order of an element.
     *   @return div HTML element
     */
@@ -182,11 +141,11 @@ export class UxUtils {
     *   @param showLink - Heightlight the text if the text is href (Optional): boolean
     *   @result div HTML element
     */
-    public static getLabel(text: string = null, attributes: {} = null, showLinks: boolean = true): HTMLDivElement {
+    public static getLabel(text: string = null, attributes: {} = null): HTMLDivElement {
         var labelDiv: HTMLDivElement = this.getDiv();
         labelDiv.classList.add("labelAttributes");
         Object.assign(labelDiv, attributes);
-        this.setText(labelDiv, text, true, showLinks);
+        this.setText(labelDiv, text, true);
         return labelDiv;
     }
     /*
@@ -200,7 +159,7 @@ export class UxUtils {
     */
     public static getButton(title: string = null, clickEvent: () => void = null, attributes: {} = null): HTMLDivElement {
         var buttonDiv: HTMLDivElement = this.getDiv(attributes);
-        this.setText(buttonDiv, title, true, false);
+        this.setText(buttonDiv, title, true);
         this.addClickEvent(buttonDiv, clickEvent);
         return buttonDiv;
     }
@@ -212,15 +171,11 @@ export class UxUtils {
     *   @param asHTML - if true then it will set .innerHTML else innerText (Optional): boolean
     *   @param showLink - Heightlight the text if the text is href (Optional): boolean
     */
-    public static setText(element: HTMLElement, text: string = null, asHTML: boolean = true, showLinks: boolean = true) {
+    public static setText(element: HTMLElement, text: string = null, asHTML: boolean = true) {
         if (asHTML) {
             element.innerHTML = text.trim();
         } else {
             element.innerText = text.trim();
-        }
-
-        if (showLinks) {
-            this.highlightLinksInElement(element);
         }
     }
     /*
@@ -423,61 +378,6 @@ export class UxUtils {
             }
             element.style.cssText = cssText;
         }
-    }
-    public static highlightLinksInElement(element: HTMLElement) {
-        if (element == null)
-            return;
-
-        var allowedTypes = ["label", "div", "p"];
-        if (allowedTypes.indexOf(element.nodeName.toLowerCase()) == -1)
-            return;
-
-        var text = element.innerHTML;
-
-        // Regex for Http or ftp url.
-        // (\b(https?|ftp):? : word start with http/https/ftp followed by .
-        // \/\/ : //
-        // [-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|] : any number of character from [-A-Z0-9+&@#\/%?=~_|!:,.;], 
-        //      ends with any of these character [-A-Z0-9+&@#\/%=~_|]
-        var urlRegexHttp = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig; // for http urls
-
-        // Regex for www url 
-        // (^|[^\/]) : start of line (^) or not start with /.
-        // www\. : www.
-        // [-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]) : any number of character from [-A-Z0-9+&@#\/%?=~_|!:,.;], 
-        //      ends with any of these character [-A-Z0-9+&@#\/%=~_|]
-        var urlRegexWww = /(^|[^\/])(www\.[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim; // for www urls
-
-        // Regex for tel: and sms: detection
-        // (tel|sms):) : word start with tel: or sms:
-        // ([+]?\d{1,3}[.-\s]?)? : Optional : + is optional, 1-3 digit number, ./-/space is optional.
-        // ([(]?\d{1,3}[)]?[.-\s]?){1,2} : 1-3 digit number with/without (), ./-/space is optional. And this can but repaet max 2 times.
-        // \d{4} : 4 digit number.
-        var telSmsRegex = /(\b(tel|sms):)([+]?\d{1,3}[.-\s]?)?([(]?\d{1,3}[)]?[.-\s]?){1,2}\d{4}/gim;
-
-        text = text.replace(urlRegexHttp, function (url) {
-            return "<a href=\"" + url + "\">" + url + "</a>";
-        });
-
-        text = text.replace(urlRegexWww, function (url) {
-            var newUrl = url;
-
-            if (url.toLowerCase().indexOf("www") == 0) {
-                newUrl = "http://" + url;
-                return "<a href=\"" + newUrl + "\">" + url + "</a>";
-            } else if (url.toLowerCase().indexOf("www") == 1) {
-                newUrl = "http://" + url.substring(1);
-                return url.charAt(0) + "<a href=\"" + newUrl + "\">" + url.substring(1) + "</a>";
-            } else {
-                return url;
-            }
-        });
-
-        text = text.replace(telSmsRegex, function (url) {
-            return "<a href=\"" + url + "\">" + url + "</a>";
-        });
-
-        element.innerHTML = text;
     }
 
     /* 

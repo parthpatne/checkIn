@@ -7,7 +7,6 @@ div#main{
     font-family:'Ubuntu',sans-serif
 }
 
-
 body { 
     counter-reset: myCounter; 
 } 
