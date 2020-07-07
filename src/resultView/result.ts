@@ -2,6 +2,7 @@
 import * as actionSDK from 'action-sdk-sunny';
 import { Utils } from "../common/Utils";
 import { UxUtils } from "../common/UxUtils";
+import { ActionSdkHelper } from '../common/ActionSdkHelper';
 
 const root = document.getElementById("root");
 let actionInstance = null;
@@ -12,12 +13,12 @@ let actionDataRowsLength = 0;
 let ResponderDate = [];
 let actionNonResponders = [];
 let myUserId = "";
+let actionMemberCount = 0;
 OnPageLoad();
 /*
 *   @desc Creates the body of SummaryView when you click on ViewResults on actionInstance
 */
 async function createBody() {
-    await getUserprofile();
     UxUtils.addElement(await mainPage(), root);
     getResNonResTabs();
     getResponderListPagePerQuestion();
@@ -44,57 +45,13 @@ function getHeaderContainer() {
     return headerContainer;
 }
 /*
-*   @desc Creates the aggreagteSummary of summary View. It has three module: getHeader, summarized progress bar and question summary
-*/
-async function mainPage() {
-    const aggregateSummaryPage = UxUtils.getDiv({ display: "block" });
-    UxUtils.setClass(aggregateSummaryPage, "aggregateSummaryPage");
-    UxUtils.setId(aggregateSummaryPage, "aggregateSummaryPage");
-    const headerContainer = getHeaderContainer();
-    UxUtils.addElement(headerContainer, aggregateSummaryPage);
-    const sumamaryContainer = await getTopSummaryView();
-    UxUtils.addElement(sumamaryContainer, aggregateSummaryPage);
-    const questionContainer = createQuestionView();
-    UxUtils.addElement(questionContainer, aggregateSummaryPage);
-    return aggregateSummaryPage;
-}
-/*
-*   @desc Fetch all the responders, non-responders for the actionInstance using Action SDK apis and store results in global variables. 
-*   actionDataRows contains array of objects with all the responses
-*/
-async function getUserprofile() {
-    let memberIds: string[] = [];
-    if (actionDataRowsLength > 0) {
-        for (let i = 0; i < actionDataRowsLength; i++) {
-            memberIds.push(actionDataRows[i].creatorId);
-            let requestResponders = new actionSDK.GetSubscriptionMembers.Request(actionContext.subscription, [actionDataRows[i].creatorId]);
-            let responseResponders = await actionSDK.executeApi(requestResponders) as actionSDK.GetSubscriptionMembers.Response;
-            let perUserProfile = responseResponders.members;
-            ResponderDate.push({ label: perUserProfile[0].displayName, value: new Date(actionDataRows[i].updateTime).toDateString(), value2: perUserProfile[0].id });
-        }
-    }
-
-    myUserId = actionContext.userId;
-    let requestNonResponders = new actionSDK.GetActionSubscriptionNonParticipants.Request(actionContext.actionId, actionContext.subscription.id);
-    let responseNonResponders = await actionSDK.executeApi(requestNonResponders) as actionSDK.GetActionSubscriptionNonParticipants.Response;
-    let tempresponse = responseNonResponders.nonParticipants;
-    if (tempresponse != null) {
-        for (let i = 0; i < tempresponse.length; i++) {
-            actionNonResponders.push({ label: tempresponse[i].displayName, value2: tempresponse[i].id });
-        }
-    }
-}
-/*
 *	 @desc Container to display the progress bar with people who and responded to total memeber of the group
 */
 async function getTopSummaryView() {
     let participationPercentage = 0;
     const barDiv = UxUtils.getDiv();
-    UxUtils.setClass(barDiv, "TopSummaryContainer")
-    let getSubscriptionCount = new actionSDK.GetSubscriptionMemberCount.Request(actionContext.subscription);
-    let response = await actionSDK.executeApi(getSubscriptionCount) as actionSDK.GetSubscriptionMemberCount.Response;
-    let memberCount = response.memberCount;
-    participationPercentage = Math.round((actionSummary.rowCreatorCount / memberCount) * 100);
+    UxUtils.setClass(barDiv, "TopSummaryContainer");
+    participationPercentage = Math.round((actionSummary.rowCreatorCount / actionMemberCount) * 100);
     let percentageBar = UxUtils.getDiv();
     let headingpercentage = UxUtils.getElement("text");
     UxUtils.setClass(headingpercentage, "headings")
@@ -112,7 +69,7 @@ async function getTopSummaryView() {
     let summaryText = UxUtils.getElement("button");
     UxUtils.setClass(summaryText, "buttonAsString");
     if (actionSummary.rowCreatorCount == actionSummary.rowCount) {
-        UxUtils.setText(summaryText, UxUtils.getString("XofYresponded", actionSummary.rowCreatorCount, memberCount));
+        UxUtils.setText(summaryText, UxUtils.getString("XofYresponded", actionSummary.rowCreatorCount, actionMemberCount));
     }
     else {
         UxUtils.setText(summaryText, UxUtils.getString("NResponseYPeople", actionSummary.rowCount, actionSummary.rowCreatorCount));
@@ -273,6 +230,21 @@ function getAggregateTextView(column) {
     UxUtils.addElement(responseText, responseRowSpan);
     UxUtils.addElement(responseRowSpan, textQuestion);
     return textQuestion;
+}
+/*
+*   @desc Creates the aggreagteSummary of summary View. It has three module: getHeader, summarized progress bar and question summary
+*/
+async function mainPage() {
+    const aggregateSummaryPage = UxUtils.getDiv({ display: "block" });
+    UxUtils.setClass(aggregateSummaryPage, "aggregateSummaryPage");
+    UxUtils.setId(aggregateSummaryPage, "aggregateSummaryPage");
+    const headerContainer = getHeaderContainer();
+    UxUtils.addElement(headerContainer, aggregateSummaryPage);
+    const sumamaryContainer = await getTopSummaryView();
+    UxUtils.addElement(sumamaryContainer, aggregateSummaryPage);
+    const questionContainer = createQuestionView();
+    UxUtils.addElement(questionContainer, aggregateSummaryPage);
+    return aggregateSummaryPage;
 }
 /*
 *	@desc Create a tab interface with two tabs, per responders and non-responders and append it to HTML body.
@@ -468,19 +440,17 @@ function getPageResponsePerUser() {
 }
 /*
 *	@desc Populate the response page per user. 
-*	@param id - id of user received from subscriptionMmber: string (id of the user)
+*	@param id - creatorId of user received from subscriptionMmber: string
 *   @param index - index of user response stored in dataRows which is same as the index of rows in table: number (row index)
 */
 async function getResponsePerUser(id, index) {
     let rowDiv = UxUtils.getDiv();
-    UxUtils.setClass(rowDiv, "responseRowPerUser");
+    UxUtils.setClass(rowDiv, "responseRow");
     let pageId = document.getElementById("responsePerUserViewPage");
     UxUtils.clearElement(pageId);
     let responderName = UxUtils.getDiv();
     UxUtils.setClass(responderName, "TitleDiv");
-    let requestResponders = new actionSDK.GetSubscriptionMembers.Request(actionContext.subscription, [id]);
-    let responseResponders = await actionSDK.executeApi(requestResponders) as actionSDK.GetSubscriptionMembers.Response;
-    let userDetail = responseResponders.members;
+    let userDetail = ActionSdkHelper.getResponder(actionContext.subscription, [id]);
     if (id == myUserId) {
         UxUtils.setText(responderName, UxUtils.getString("YourResponse"));
     }
@@ -528,19 +498,11 @@ async function getResponsePerUser(id, index) {
     UxUtils.addElement(backButton, pageId);
 }
 /*
-*   @desc Gets the context of actionInstance, which will be used to fetch the responders, their responses and non-responders. 
-*   It makes an API call to service and gets the context as response which is saved in a global variable 
+*   @desc This function makes api call to get the actionIntsance details like context, responses, summary and calls setActionInstanceVariable
+*   which sets the global variables to be used for SummaryView
 */
-function OnPageLoad() {
-    actionSDK.executeApi(new actionSDK.GetContext.Request())
-        .then(function (response: actionSDK.GetContext.Response) {
-            console.info("GetContext - Response: " + JSON.stringify(response));
-            actionContext = response.context;
-            getDataRows(response.context.actionId);
-        })
-        .catch(function (error) {
-            console.error("GetContext - Error: " + JSON.stringify(error));
-        });
+async function OnPageLoad() {
+    ActionSdkHelper.getDataRows(setActionInstanceVariable);
 }
 /*
 *	@desc It switched between display:none and display:block based on the page navigation.
@@ -557,29 +519,34 @@ function setPages(id1, id2) {
     }
 }
 /*
-*   @desc It uses actionId of actionInstance to fetch summary and dataRows.
-*   Datarows are the array of objects of all the responses
-*   It makes an API call to service and gets the context as response which is saved in a global variable 
-*   actionDataRows: stores all the responses, the format of response will be array of actionDataRow objects which are the rows generated in each response 
-*   actionSummary: It is summary of the data-rows like number of responders
-*   actionInstance: It is the detail of actionInstance like creatorid, expirt time etc
-*   @param actionId - (actionSDK.GetContext.Response).context.actionId
+*	@desc This function sets the global variable to be used through out the SummaryView
+*   @param context - action context: actionSDK.ActionSdkContext
+*   @param instance - action insatance: actionSDK.action
+*   @param summary - action instance summary: actionSDK.ActionDataRowsSummary
+*   @param dataRows - total response rows: actionSDK.ActionDataRow
 */
-function getDataRows(actionId) {
-    let getActionRequest = new actionSDK.GetAction.Request(actionId);
-    let getSummaryRequest = new actionSDK.GetActionDataRowsSummary.Request(actionId, true);
-    let getDataRowsRequest = new actionSDK.GetActionDataRows.Request(actionId);
-    let batchRequest = new actionSDK.BaseApi.BatchRequest([getActionRequest, getSummaryRequest, getDataRowsRequest]);
-    actionSDK.executeBatchApi(batchRequest)
-        .then(function (batchResponse: actionSDK.BaseApi.BatchResponse) {
-            console.info("BatchResponse: " + JSON.stringify(batchResponse));
-            actionInstance = (<actionSDK.GetAction.Response>batchResponse.responses[0]).action;
-            actionSummary = (<actionSDK.GetActionDataRowsSummary.Response>batchResponse.responses[1]).summary;
-            actionDataRows = (<actionSDK.GetActionDataRows.Response>batchResponse.responses[2]).dataRows;
-            actionDataRowsLength = actionDataRows == null ? 0 : actionDataRows.length;
-            createBody();
-        })
-        .catch(function (error) {
-            console.log("Console log: Error: " + JSON.stringify(error));
-        });
+async function setActionInstanceVariable(context: string = "", instance: string[] = null, summary: {} = null, dataRows: {} = null) {
+    actionContext = context;
+    actionInstance = instance;
+    actionSummary = summary;
+    actionDataRows = dataRows;
+    actionDataRowsLength = actionDataRows == null ? 0 : actionDataRows.length;
+    await getUserprofile();
+}
+/*
+*   @desc Fetch all the responders, non-responders for the actionInstance using Action SDK apis and store results in global variables. 
+*   actionDataRows contains array of objects with all the responses
+*/
+async function getUserprofile() {
+    myUserId = actionContext.userId;
+    ActionSdkHelper.getRespondersNonResponders(actionContext, actionDataRowsLength, actionDataRows, setRespondersNonResponders);
+}
+/*
+*   @desc sets the Responders and nonResponders List in global variable for summaryView 
+*/
+async function setRespondersNonResponders(memberCount, ResponderDetail, nonResponders) {
+    actionMemberCount = memberCount;
+    ResponderDate = ResponderDetail;
+    actionNonResponders = nonResponders;
+    createBody();
 }
