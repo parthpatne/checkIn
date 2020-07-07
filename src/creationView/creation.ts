@@ -185,8 +185,9 @@ function addSingleOptionQuestion(question?: JSON) {
     let choices = [];
     let choiceCount = 0;
     let addChoiceButton = UxUtils.getButton(UxUtils.getString("addChoiceButton"), function () {
-        choices.push(questionId + "" + choiceCount);
-        let choice = addChoice(UxUtils.getString("addChoicePlaceholder"), questionId, questionId + choiceIdPrefix + choiceCount++);
+        let choiceId = getChoiceId(questionId, choiceCount++);
+        choices.push(choiceId);
+        let choice = addChoice(UxUtils.getString("addChoicePlaceholder"), questionId, choiceId);
         UxUtils.addElement(choice, choiceDiv);
         singleOptionChoicesMap.set(questionId, choices);
     });
@@ -208,10 +209,10 @@ function addSingleOptionQuestion(question?: JSON) {
         */
         questionTitleInputelement.value = question["title"];
         question["options"].forEach(option => {
-            choices.push(questionId + choiceIdPrefix + choiceCount);
+            let choiceId = getChoiceId(questionId, choiceCount++);
+            choices.push(choiceId);
             singleOptionChoicesMap.set(questionId, choices);
-
-            let choice = addChoice(UxUtils.getString("addChoicePlaceholder"), questionId, questionId + choiceIdPrefix + choiceCount++, option.title);
+            let choice = addChoice(UxUtils.getString("addChoicePlaceholder"), questionId, choiceId, option.title);
             UxUtils.addElement(choice, choiceDiv);
         });
     }
@@ -221,13 +222,15 @@ function addSingleOptionQuestion(question?: JSON) {
         */
 
         /* Choice 1 */
-        choices.push(questionId + choiceIdPrefix + choiceCount);
-        let choice = addChoice(UxUtils.getString("addChoicePlaceholder"), questionId, questionId + choiceIdPrefix + choiceCount++);
+        let choiceId1 = getChoiceId(questionId, choiceCount++);
+        choices.push(choiceId1);
+        let choice = addChoice(UxUtils.getString("addChoicePlaceholder"), questionId, choiceId1);
         UxUtils.addElement(choice, choiceDiv);
 
         /* Choice 2 */
-        choices.push(questionId + choiceIdPrefix + choiceCount);
-        choice = addChoice(UxUtils.getString("addChoicePlaceholder"), questionId, questionId + choiceIdPrefix + choiceCount++);
+        let choiceId2 = getChoiceId(questionId, choiceCount++);
+        choices.push(choiceId2);
+        choice = addChoice(UxUtils.getString("addChoicePlaceholder"), questionId, choiceId2);
         UxUtils.addElement(choice, choiceDiv);
         singleOptionChoicesMap.set(questionId, choices);
     }
@@ -238,6 +241,9 @@ function addSingleOptionQuestion(question?: JSON) {
     return questionDiv;
 }
 
+function getChoiceId(questionId: string, choiceCount) {
+    return (questionId + choiceIdPrefix + choiceCount);
+}
 /*
 * @desc Create new Number Question with optional question JSON attribute which will create Question with Prefilled Content
 * @param {JSON} questionJson : required for prefilled question content
