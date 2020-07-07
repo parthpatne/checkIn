@@ -173,7 +173,7 @@ function addQuestion(type: actionSDK.ActionDataColumnValueType, questionJson?: J
 * @param {JSON} questionJson : required for prefilled question content
 * @return SingleOption question component
 */
-function addSingleOptionQuestion(question?: JSON) {
+function addSingleOptionQuestion(questionJson?: JSON) {
     let questionDiv = UxUtils.getDiv();
 
     let choiceDiv = UxUtils.getElement("ul");
@@ -181,7 +181,13 @@ function addSingleOptionQuestion(question?: JSON) {
     let questionHeading = UxUtils.getElement("label");
     let questionTitleInputelement = UxUtils.createInputElement(UxUtils.getString("enterQuestionPlaceholder"), questionCount.toString(), "text");
     //Todo : @parth replace this with actionSdk Question Model
-    let ques = new Question(questionId, "SingleOption", 0, true);
+    let question: actionSDK.ActionDataColumn = {
+        name: questionId,
+        displayName: "",
+        valueType: actionSDK.ActionDataColumnValueType.SingleOption,
+        allowNullValue: false,
+        options: []
+    }
     let choices = [];
     let choiceCount = 0;
     let addChoiceButton = UxUtils.getButton(UxUtils.getString("addChoiceButton"), function () {
@@ -194,7 +200,7 @@ function addSingleOptionQuestion(question?: JSON) {
 
     questionTitleInputelement.setAttribute("dt", "SingleOption");
     singleOptionChoicesMap.set(questionId, choices);
-    questionMap.set(questionId, ques);
+    questionMap.set(questionId, question);
     questionDiv.setAttribute("id", questionId + "div");
 
     UxUtils.setClass(questionTitleInputelement, 'addQuestionTitleInputElement');
@@ -203,12 +209,12 @@ function addSingleOptionQuestion(question?: JSON) {
     UxUtils.addElement(getQuestionDeletebutton(questionId), questionDiv);
     UxUtils.addElement(questionTitleInputelement, questionDiv);
 
-    if (question != null) {
+    if (questionJson != null) {
         /*
         * Render Question with given Prefilled Content
         */
-        questionTitleInputelement.value = question["title"];
-        question["options"].forEach(option => {
+        questionTitleInputelement.value = questionJson["title"];
+        questionJson["options"].forEach(option => {
             let choiceId = getChoiceId(questionId, choiceCount++);
             choices.push(choiceId);
             singleOptionChoicesMap.set(questionId, choices);
@@ -249,20 +255,26 @@ function getChoiceId(questionId: string, choiceCount) {
 * @param {JSON} questionJson : required for prefilled question content
 * @return Number question component
 */
-function addNumberQuestion(question?: JSON) {
+function addNumberQuestion(questionJson?: JSON) {
     //Todo: @parth try to combine Text , Number and SingleOption part
     let questionDiv = UxUtils.getDiv();
 
     let questionHeading = UxUtils.getElement("label");
     let questionTitleInputelement = UxUtils.createInputElement(UxUtils.getString("enterQuestionPlaceholder"), questionCount.toString(), "text"); // Create Input Field for Name
     let questionId = questionCount.toString();
-    let ques = new Question(questionId, "Numeric", -1, true);
+    let question: actionSDK.ActionDataColumn = {
+        name: questionId,
+        displayName: "",
+        valueType: actionSDK.ActionDataColumnValueType.Numeric,
+        allowNullValue: false,
+        options: []
+    }
     let disabledResponse = UxUtils.createInputElement(UxUtils.getString("enterTextPlaceholder"), questionCount.toString(), "text");
     disabledResponse.disabled = true
 
-    questionMap.set(questionId, ques);
-    if (question != null) {
-        questionTitleInputelement.value = question["title"];
+    questionMap.set(questionId, question);
+    if (questionJson != null) {
+        questionTitleInputelement.value = questionJson["title"];
     }
 
     questionDiv.setAttribute("id", questionCount + "div");
@@ -283,21 +295,27 @@ function addNumberQuestion(question?: JSON) {
 * @param {JSON} questionJson : required for prefilled question content
 * @return TEXT question component
 */
-function addTextQuestion(question?: JSON) {
+function addTextQuestion(questionJson?: JSON) {
     //Todo: @parth try to combine Text , Number and SingleOption part
     let questionDiv = UxUtils.getDiv();
 
     let questionHeading = UxUtils.getElement("label");
     let questionTitleInputelement = UxUtils.createInputElement(UxUtils.getString("enterQuestionPlaceholder"), questionCount.toString(), "text"); // Create Input Field for Name
     let questionId = questionCount.toString();
-    let ques = new Question(questionId, "Text", -1, true);
+    let question: actionSDK.ActionDataColumn = {
+        name: questionId,
+        displayName: "",
+        valueType: actionSDK.ActionDataColumnValueType.Text,
+        allowNullValue: false,
+        options: []
+    }
     let disabledResponse = UxUtils.createInputElement(UxUtils.getString("enterTextPlaceholder"), questionCount.toString(), "text");
     disabledResponse.disabled = true
 
-    questionMap.set(questionId, ques);
+    questionMap.set(questionId, question);
 
-    if (question != null) {
-        questionTitleInputelement.value = question["title"];
+    if (questionJson != null) {
+        questionTitleInputelement.value = questionJson["title"];
     }
 
     questionDiv.setAttribute("id", questionCount + "div");
@@ -387,21 +405,15 @@ function getQuestionSet() {
         return { isSuccess: false, columnArray: columnArray };
     }
 
-    questionMap.forEach(ques => {
-        let title = (<HTMLInputElement>document.getElementById(ques.id)).value;
+    questionMap.forEach(question => {
+        let title = (<HTMLInputElement>document.getElementById(question.name)).value;
         if (Utils.isEmptyString(title)) {
             isSuccess = false;
             return;
         }
-        let question: actionSDK.ActionDataColumn = {
-            name: ques.id,
-            displayName: title,
-            valueType: ques.type,
-            allowNullValue: false,
-            options: []
-        }
-        if (singleOptionChoicesMap.get(ques.id)) {
-            singleOptionChoicesMap.get(ques.id).forEach(choiceId => {
+        question.displayName = title;
+        if (singleOptionChoicesMap.get(question.id)) {
+            singleOptionChoicesMap.get(question.id).forEach(choiceId => {
                 let optionDisplayName = (<HTMLInputElement>document.getElementById(choiceId + "ip")).value;
                 if (Utils.isEmptyString(optionDisplayName)) {
                     isSuccess = false;
