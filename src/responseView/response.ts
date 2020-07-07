@@ -5,9 +5,7 @@ import { ActionSdkHelper } from '../common/ActionSdkHelper';
 
 let root = document.getElementById("root");
 let actionInstance: actionSDK.Action = null;
-let columnValues: {
-    [key: string]: string;
-};
+let columnValues = {};
 
 /*
 * Entry Point for Building Up the Response View
@@ -28,20 +26,21 @@ function OnPageLoad() {
 function createBody(action: actionSDK.Action) {
     actionInstance = action;
     let title = UxUtils.getElement('h3');
-    let submitResponseButton = UxUtils.getButton(UxUtils.getString("submit"), function () {
+    let submitButton = UxUtils.getButton(UxUtils.getString("submit"), function () {
         /*
         * Submit Response flow to create response for corresponding Action Instances
         */
         submitForm();
     });
     title.innerHTML = actionInstance.displayName;
-    UxUtils.setClass(submitResponseButton, 'responseSubmitButton');
+    UxUtils.setClass(submitButton, 'submitButton');
     UxUtils.addElement(title, root);
     /*
     * Prepare the Question View Component of the response view
     */
     createQuestionView();
-    UxUtils.addElement(submitResponseButton, root);
+    submitButton.setAttribute("id", "submitForm");
+    UxUtils.addElement(submitButton, root);
     UxUtils.addElement(UxUtils.lineBreak(), root);
     UxUtils.addElement(UxUtils.lineBreak(), root);
 }
