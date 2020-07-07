@@ -180,7 +180,6 @@ function addSingleOptionQuestion(questionJson?: JSON) {
     let questionId = questionCount.toString();
     let questionHeading = UxUtils.getElement("label");
     let questionTitleInputelement = UxUtils.createInputElement(UxUtils.getString("enterQuestionPlaceholder"), questionCount.toString(), "text");
-    //Todo : @parth replace this with actionSdk Question Model
     let question: actionSDK.ActionDataColumn = {
         name: questionId,
         displayName: "",
@@ -256,7 +255,6 @@ function getChoiceId(questionId: string, choiceCount) {
 * @return Number question component
 */
 function addNumberQuestion(questionJson?: JSON) {
-    //Todo: @parth try to combine Text , Number and SingleOption part
     let questionDiv = UxUtils.getDiv();
 
     let questionHeading = UxUtils.getElement("label");
@@ -296,7 +294,6 @@ function addNumberQuestion(questionJson?: JSON) {
 * @return TEXT question component
 */
 function addTextQuestion(questionJson?: JSON) {
-    //Todo: @parth try to combine Text , Number and SingleOption part
     let questionDiv = UxUtils.getDiv();
 
     let questionHeading = UxUtils.getElement("label");
