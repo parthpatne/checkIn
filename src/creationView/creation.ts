@@ -3,7 +3,6 @@ import questionTemplate from './questionSet.json';
 import { Utils } from "../common/Utils";
 import { UxUtils } from '../common/UxUtils';
 import { ActionSdkHelper } from '../common/ActionSdkHelper';
-import { Question } from './Question';
 
 const questionTemplateTitles = Object.keys(questionTemplate);
 const choiceIdPrefix = "choiceId";
