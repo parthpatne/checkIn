@@ -504,6 +504,9 @@ table {
     text-align: center;
     height: 30px;
 }
+.singleValPerRow {
+    padding-bottom: 20px;
+}
 ::-webkit-scrollbar {
     width: 7px;
 }

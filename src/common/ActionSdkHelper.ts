@@ -100,65 +100,96 @@ export class ActionSdkHelper {
             });
     }
     /*
-    *   @desc Service API Request for getting the response details (context, summary, dataRows)
-    *   @param {Function} callBack funtion to set the globalVariables for summaryView
+    *   @desc Service API Request for getting the actionContext
+    *   @return response.context: actionSDK.ActionSdkContext
     */
-    public static async getDataRows(callBack: Function) {
-        let instance = null;
-        let summary = null;
-        let datarows = null;
-        let context = null;
-
+    public static async getContext() {
         let response = await actionSDK.executeApi(new actionSDK.GetContext.Request()) as actionSDK.GetContext.Response;
-        context = response.context;
-        let getActionRequest = new actionSDK.GetAction.Request(response.context.actionId);
-        let getSummaryRequest = new actionSDK.GetActionDataRowsSummary.Request(response.context.actionId, true);
-        let getDataRowsRequest = new actionSDK.GetActionDataRows.Request(response.context.actionId);
-        let batchRequest = new actionSDK.BaseApi.BatchRequest([getActionRequest, getSummaryRequest, getDataRowsRequest]);
-        let batchResponse = await actionSDK.executeBatchApi(batchRequest) as actionSDK.BaseApi.BatchResponse;
-        instance = (<actionSDK.GetAction.Response>batchResponse.responses[0]).action;
-        summary = (<actionSDK.GetActionDataRowsSummary.Response>batchResponse.responses[1]).summary;
-        datarows = (<actionSDK.GetActionDataRows.Response>batchResponse.responses[2]).dataRows;
-        callBack(context, instance, summary, datarows);
+        return response.context;
     }
     /*
-    *   @desc Service API Request for getting the membercount, responder list and nonResponder list
+    *   @desc Service API Request for getting the actionInstance
+    *   @param context - actionInstance context: actionSDK.ActionSdkContext
+    *   @return response.action: actionSDK.Action
+    */
+    public static async getactionInstance(context: actionSDK.ActionSdkContext) {
+        let getActionRequest = new actionSDK.GetAction.Request(context.actionId);
+        let response = await actionSDK.executeApi(getActionRequest) as actionSDK.GetAction.Response;
+        return response.action;
+    }
+    /*
+    *   @desc Service API Request for getting the actionInstance response summary
+    *   @param context - actionInstance context: actionSDK.ActionSdkContext
+    *   @return response.summary: actionSDK.GetActionDataRowsSummary
+    */
+    public static async getactionSummary(context: actionSDK.ActionSdkContext) {
+        let getSummaryRequest = new actionSDK.GetActionDataRowsSummary.Request(context.actionId, true);
+        let response = await actionSDK.executeApi(getSummaryRequest) as actionSDK.GetActionDataRowsSummary.Response;
+        return response.summary;
+    }
+    /*
+    *   @desc Service API Request for getting the actionInstance responses
+    *   @param context - actionInstance context: actionSDK.ActionSdkContext
+    *   @return response.dataRows: actionSDK.GetActionDataRows
+    */
+    public static async getactionDataRows(context: actionSDK.ActionSdkContext) {
+        let getDataRowsRequest = new actionSDK.GetActionDataRows.Request(context.actionId);
+        let response = await actionSDK.executeApi(getDataRowsRequest) as actionSDK.GetActionDataRows.Response;
+        return response.dataRows;
+
+    }
+    /*
+    *   @desc Service API Request for getting the membercount
+    *   @param context - action context: actionSDK.ActionSdkContext
+    *   @return response.memberCount: number
+    */
+    public static async getMemberCount(context: actionSDK.ActionSdkContext) {
+        let getSubscriptionCount = new actionSDK.GetSubscriptionMemberCount.Request(context.subscription);
+        let response = await actionSDK.executeApi(getSubscriptionCount) as actionSDK.GetSubscriptionMemberCount.Response;
+        return response.memberCount;
+    }
+    /*
+    *   @desc Service API Request for getting the responders details
     *   @param context - action context: actionSDK.ActionSdkContext
     *   @param actionDataRowsLength - number of response rows: number
     *   @param actionDataRows - total response rows: actionSDK.ActionDataRow
-    *   @param {Function} callBack funtion to set the globalVariables for summaryView
+    *   @return responderDetails: [label:<>,time:<>,userId:<>]
     */
-    public static async getRespondersNonResponders(context, actionDataRowsLength, actionDataRows, callBack: Function) {
-        let getSubscriptionCount = new actionSDK.GetSubscriptionMemberCount.Request(context.subscription);
-        let response = await actionSDK.executeApi(getSubscriptionCount) as actionSDK.GetSubscriptionMemberCount.Response;
-        let memberCount = response.memberCount;
-
+    public static async getResponderDetails(context: actionSDK.ActionSdkContext, actionDataRowsLength: number, actionDataRows) {
         let responderDetail = [];
         for (let i = 0; i < actionDataRowsLength; i++) {
             let requestResponders = new actionSDK.GetSubscriptionMembers.Request(context.subscription, [actionDataRows[i].creatorId]);
             let responseResponders = await actionSDK.executeApi(requestResponders) as actionSDK.GetSubscriptionMembers.Response;
             let UserProfileMembers = responseResponders.members;
             for (var itr = 0; itr < UserProfileMembers.length; itr++) {
-                responderDetail.push({ label: UserProfileMembers[itr].displayName, value: new Date(actionDataRows[itr].updateTime).toDateString(), value2: UserProfileMembers[itr].id });
+                responderDetail.push({ label: UserProfileMembers[itr].displayName, time: new Date(actionDataRows[itr].updateTime).toDateString(), userId: UserProfileMembers[itr].id });
             }
         }
+        return responderDetail;
+    }
+    /*
+    *   @desc Service API Request for getting the nonResponders details
+    *   @param context - action context: actionSDK.ActionSdkContext
+    *   @return NonResponders: [label:<>,userId:<>]
+    */
+    public static async getNonResponders(context: actionSDK.ActionSdkContext) {
         let NonResponders = [];
         let requestNonResponders = new actionSDK.GetActionSubscriptionNonParticipants.Request(context.actionId, context.subscription.id);
         let responseNonResponders = await actionSDK.executeApi(requestNonResponders) as actionSDK.GetActionSubscriptionNonParticipants.Response;
         let tempresponse = responseNonResponders.nonParticipants;
         if (tempresponse != null) {
             for (let i = 0; i < tempresponse.length; i++) {
-                NonResponders.push({ label: tempresponse[i].displayName, value2: tempresponse[i].id });
+                NonResponders.push({ label: tempresponse[i].displayName, userId: tempresponse[i].id });
             }
         }
-        callBack(memberCount, responderDetail, NonResponders);
+        return NonResponders;
     }
     /*
-   *   @desc Service API Request for getting the membercount, responder list and nonResponder list
-   *   @param subscription - action subscription: actionSDK.ActionSdkContext.subscription
-   *   @param creatorId - id of responder: string
-   */
-    public static async getResponder(subscription, creatorId) {
+    *   @desc Service API Request for getting the membercount, responder list and nonResponder list
+    *   @param subscription - action subscription: actionSDK.ActionSdkContext.subscription
+    *   @param creatorId - id of responder: string
+    */
+    public static async getResponder(subscription: actionSDK.Subscription, creatorId: string) {
         let requestResponders = new actionSDK.GetSubscriptionMembers.Request(subscription, [creatorId]);
         let responseResponders = await actionSDK.executeApi(requestResponders) as actionSDK.GetSubscriptionMembers.Response;
         return responseResponders.members;

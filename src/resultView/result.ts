@@ -10,7 +10,7 @@ let actionSummary = null;
 let actionContext = null;
 let actionDataRows = null;
 let actionDataRowsLength = 0;
-let ResponderDate = [];
+let ResponderDetails = [];
 let actionNonResponders = [];
 let myUserId = "";
 let actionMemberCount = 0;
@@ -299,9 +299,9 @@ function getResponderTabs() {
     let table = UxUtils.getElement('TABLE');
     let tableBody = UxUtils.getElement('TBODY');
     UxUtils.addElement(tableBody, table);
-    for (let itr = 0; itr < ResponderDate.length; itr++) {
+    for (let itr = 0; itr < ResponderDetails.length; itr++) {
         let tableRow = UxUtils.getElement('TR');
-        UxUtils.setId(tableRow, ResponderDate[itr].value2);
+        UxUtils.setId(tableRow, ResponderDetails[itr].userId);
         UxUtils.setClass(tableRow, "textDisplay clickable");
         UxUtils.addElement(tableRow, tableBody);
         let profilePicColumn = UxUtils.getElement('TD');
@@ -311,15 +311,15 @@ function getResponderTabs() {
         UxUtils.addElement(profilePicColumn, tableRow);
 
         let nameColumn = UxUtils.getElement('TD');
-        if (ResponderDate[itr].value2 == myUserId) {
+        if (ResponderDetails[itr].userId == myUserId) {
             UxUtils.setText(nameColumn, UxUtils.getString("You"));
         }
         else {
-            UxUtils.setText(nameColumn, ResponderDate[itr].label);
+            UxUtils.setText(nameColumn, ResponderDetails[itr].label);
         }
         UxUtils.addElement(nameColumn, tableRow);
         let dateColumn = UxUtils.getElement('TD');
-        UxUtils.setText(dateColumn, ResponderDate[itr].value);
+        UxUtils.setText(dateColumn, ResponderDetails[itr].time);
         UxUtils.addElement(dateColumn, tableRow);
     }
     tableBody.onclick = function (event) {
@@ -351,8 +351,8 @@ function getNonRespondersTabs() {
         UxUtils.setClass(perRowuser, "textDisplay");
         let profilePic = UxUtils.getElement('img');
         UxUtils.addAttribute(profilePic, { "class": "profilePic", "src": "images/dummyUser.png", "alt": "Avatar" });
-        UxUtils.setClass(perNonResponder, "textDisplay");
-        if (actionNonResponders[itr].value2 == myUserId) {
+        UxUtils.setClass(perNonResponder, "textDisplay singleValPerRow");
+        if (actionNonResponders[itr].userId == myUserId) {
             UxUtils.setText(perRowuser, UxUtils.getString("You"));
         }
         else {
@@ -392,7 +392,7 @@ function getResponsesperQuestion(column) {
     UxUtils.setText(questionTitle, column.displayName);
     UxUtils.addElement(questionTitle, rowDiv);
     if (pageId) {
-        for (let itr = 0; itr < ResponderDate.length; itr++) {
+        for (let itr = 0; itr < ResponderDetails.length; itr++) {
             let rowData = UxUtils.getDiv();
             UxUtils.setClass(rowData, "responseContainer");
             let userProfile = UxUtils.getElement("span");
@@ -405,7 +405,7 @@ function getResponsesperQuestion(column) {
                 UxUtils.setText(perRowuser, UxUtils.getString("You"));
             }
             else {
-                UxUtils.setText(perRowuser, ResponderDate[itr].label);
+                UxUtils.setText(perRowuser, ResponderDetails[itr].label);
             }
             UxUtils.addElement(profilePic, userProfile);
             UxUtils.addElement(perRowuser, userProfile);
@@ -450,7 +450,7 @@ async function getResponsePerUser(id, index) {
     UxUtils.clearElement(pageId);
     let responderName = UxUtils.getDiv();
     UxUtils.setClass(responderName, "TitleDiv");
-    let userDetail = ActionSdkHelper.getResponder(actionContext.subscription, [id]);
+    let userDetail = await ActionSdkHelper.getResponder(actionContext.subscription, id);
     if (id == myUserId) {
         UxUtils.setText(responderName, UxUtils.getString("YourResponse"));
     }
@@ -498,11 +498,29 @@ async function getResponsePerUser(id, index) {
     UxUtils.addElement(backButton, pageId);
 }
 /*
-*   @desc This function makes api call to get the actionIntsance details like context, responses, summary and calls setActionInstanceVariable
-*   which sets the global variables to be used for SummaryView
+*   @desc This function makes api call to fetch the actionInstance details like context, responses, summary, responder and non-responder details
 */
 async function OnPageLoad() {
-    ActionSdkHelper.getDataRows(setActionInstanceVariable);
+    actionContext = await ActionSdkHelper.getContext();
+    if (actionContext) {
+        myUserId = actionContext.userId;
+        actionInstance = await ActionSdkHelper.getactionInstance(actionContext);
+        actionSummary = await ActionSdkHelper.getactionSummary(actionContext);
+        actionDataRows = await ActionSdkHelper.getactionDataRows(actionContext);
+        actionMemberCount = await ActionSdkHelper.getMemberCount(actionContext);
+        actionNonResponders = await ActionSdkHelper.getNonResponders(actionContext);
+        if (actionDataRows) {
+            actionDataRowsLength = actionDataRows == null ? 0 : actionDataRows.length;
+            ResponderDetails = await ActionSdkHelper.getResponderDetails(actionContext, actionDataRowsLength, actionDataRows);
+        }
+        else {
+            console.log("dataRows fetch failed");
+        }
+    }
+    else {
+        console.log("context fecth API failed");
+    }
+    createBody();
 }
 /*
 *	@desc It switched between display:none and display:block based on the page navigation.
@@ -517,36 +535,4 @@ function setPages(id1, id2) {
         UxUtils.addCSS(elementIdCurrent, { display: "none" });
         UxUtils.addCSS(elementIdNext, { display: "block" });
     }
-}
-/*
-*	@desc This function sets the global variable to be used through out the SummaryView
-*   @param context - action context: actionSDK.ActionSdkContext
-*   @param instance - action insatance: actionSDK.action
-*   @param summary - action instance summary: actionSDK.ActionDataRowsSummary
-*   @param dataRows - total response rows: actionSDK.ActionDataRow
-*/
-async function setActionInstanceVariable(context: string = "", instance: string[] = null, summary: {} = null, dataRows: {} = null) {
-    actionContext = context;
-    actionInstance = instance;
-    actionSummary = summary;
-    actionDataRows = dataRows;
-    actionDataRowsLength = actionDataRows == null ? 0 : actionDataRows.length;
-    await getUserprofile();
-}
-/*
-*   @desc Fetch all the responders, non-responders for the actionInstance using Action SDK apis and store results in global variables. 
-*   actionDataRows contains array of objects with all the responses
-*/
-async function getUserprofile() {
-    myUserId = actionContext.userId;
-    ActionSdkHelper.getRespondersNonResponders(actionContext, actionDataRowsLength, actionDataRows, setRespondersNonResponders);
-}
-/*
-*   @desc sets the Responders and nonResponders List in global variable for summaryView 
-*/
-async function setRespondersNonResponders(memberCount, ResponderDetail, nonResponders) {
-    actionMemberCount = memberCount;
-    ResponderDate = ResponderDetail;
-    actionNonResponders = nonResponders;
-    createBody();
 }
