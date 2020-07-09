@@ -208,7 +208,7 @@ div#fugo{
 }
 
 .meter { 
-    height: 10px;  /* Can be anything */
+    height: 10px;
     position: relative;
     background: #eee;
     -moz-border-radius: 25px;
@@ -216,7 +216,6 @@ div#fugo{
     border-radius: 25px;
     margin-bottom: 10px;
 }
-
 .meter > span {
     display: block;
     height: 100%;
@@ -249,7 +248,7 @@ div#fugo{
     overflow: hidden;
 }
 .progressBar { 
-    height: 10px;  /* Can be anything */
+    height: 10px;
     position: relative;
     background: #eee;
     -moz-border-radius: 25px;
@@ -257,7 +256,6 @@ div#fugo{
     border-radius: 25px;
     margin-bottom: 10px;
 }
-
 .progressBar > span {
     display: block;
     height: 100%;
@@ -296,7 +294,6 @@ div#fugo{
     height: 15px;
     font-size: 15px;
     font-family: sans-serif;
-    font-weight: "bold";
 }
 .buttonAsString:hover {
     cursor: pointer;
@@ -348,7 +345,6 @@ div#fugo{
     overflow-y:scroll;
     border-top: .5px solid rgb(206, 206, 206);
     border-bottom: .5px solid rgb(206, 206, 206);
-    border-top: .5px solid rgb(206, 206, 206);
 }
 .tabs__content--active {
     display: block;
@@ -366,7 +362,6 @@ h4 {
     display: block;
     height: 87vh;
     overflow-y:scroll;
-    display: block;
     border-bottom: .5px solid rgb(206, 206, 206);
     width:90vw;
 }

@@ -19,6 +19,7 @@ OnPageLoad();
 *   @desc Creates the body of SummaryView when you click on ViewResults on actionInstance
 */
 async function createBody() {
+    console.log("createBody function INT server and innerloop");
     UxUtils.addElement(await mainPage(), root);
     getResNonResTabs();
     getResponderListPagePerQuestion();
@@ -504,9 +505,9 @@ async function OnPageLoad() {
     actionContext = await ActionSdkHelper.getContext();
     if (actionContext) {
         myUserId = actionContext.userId;
-        actionInstance = await ActionSdkHelper.getactionInstance(actionContext);
-        actionSummary = await ActionSdkHelper.getactionSummary(actionContext);
-        actionDataRows = await ActionSdkHelper.getactionDataRows(actionContext);
+        actionInstance = await ActionSdkHelper.getActionInstance(actionContext);
+        actionSummary = await ActionSdkHelper.getActionSummary(actionContext);
+        actionDataRows = await ActionSdkHelper.getActionDataRows(actionContext);
         actionMemberCount = await ActionSdkHelper.getMemberCount(actionContext);
         actionNonResponders = await ActionSdkHelper.getNonResponders(actionContext);
         if (actionDataRows) {

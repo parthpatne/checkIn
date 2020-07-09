@@ -112,7 +112,7 @@ export class ActionSdkHelper {
     *   @param context - actionInstance context: actionSDK.ActionSdkContext
     *   @return response.action: actionSDK.Action
     */
-    public static async getactionInstance(context: actionSDK.ActionSdkContext) {
+    public static async getActionInstance(context: actionSDK.ActionSdkContext) {
         let getActionRequest = new actionSDK.GetAction.Request(context.actionId);
         let response = await actionSDK.executeApi(getActionRequest) as actionSDK.GetAction.Response;
         return response.action;
@@ -122,7 +122,7 @@ export class ActionSdkHelper {
     *   @param context - actionInstance context: actionSDK.ActionSdkContext
     *   @return response.summary: actionSDK.GetActionDataRowsSummary
     */
-    public static async getactionSummary(context: actionSDK.ActionSdkContext) {
+    public static async getActionSummary(context: actionSDK.ActionSdkContext) {
         let getSummaryRequest = new actionSDK.GetActionDataRowsSummary.Request(context.actionId, true);
         let response = await actionSDK.executeApi(getSummaryRequest) as actionSDK.GetActionDataRowsSummary.Response;
         return response.summary;
@@ -132,7 +132,7 @@ export class ActionSdkHelper {
     *   @param context - actionInstance context: actionSDK.ActionSdkContext
     *   @return response.dataRows: actionSDK.GetActionDataRows
     */
-    public static async getactionDataRows(context: actionSDK.ActionSdkContext) {
+    public static async getActionDataRows(context: actionSDK.ActionSdkContext) {
         let getDataRowsRequest = new actionSDK.GetActionDataRows.Request(context.actionId);
         let response = await actionSDK.executeApi(getDataRowsRequest) as actionSDK.GetActionDataRows.Response;
         return response.dataRows;
