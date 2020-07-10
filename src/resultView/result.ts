@@ -19,7 +19,6 @@ OnPageLoad();
 *   @desc Creates the body of SummaryView when you click on ViewResults on actionInstance
 */
 async function createBody() {
-    console.log("createBody function INT server and innerloop");
     UxUtils.addElement(await mainPage(), root);
     getResNonResTabs();
     getResponderListPagePerQuestion();
@@ -67,20 +66,21 @@ async function getTopSummaryView() {
     UxUtils.addElement(myProgress, progressBar);
 
     let buttonLink = UxUtils.getDiv();
-    let summaryText = UxUtils.getElement("button");
-    UxUtils.setClass(summaryText, "buttonAsString");
+    UxUtils.setClass(buttonLink, "topSummaryText");
+    let summaryTextButton = UxUtils.getElement("button");
+    UxUtils.setClass(summaryTextButton, "buttonAsString textSmallBold coloredLinkBold");
     if (actionSummary.rowCreatorCount == actionSummary.rowCount) {
-        UxUtils.setText(summaryText, UxUtils.getString("XofYresponded", actionSummary.rowCreatorCount, actionMemberCount));
+        UxUtils.setText(summaryTextButton, UxUtils.getString("XofYresponded", actionSummary.rowCreatorCount, actionMemberCount));
     }
     else {
-        UxUtils.setText(summaryText, UxUtils.getString("NResponseYPeople", actionSummary.rowCount, actionSummary.rowCreatorCount));
+        UxUtils.setText(summaryTextButton, UxUtils.getString("NResponseYPeople", actionSummary.rowCount, actionSummary.rowCreatorCount));
     }
-    summaryText.addEventListener('click', () => {
+    summaryTextButton.addEventListener('click', () => {
         UxUtils.setTabs("tabs__button", "tabs__button--active", "tabs__content", "tabs__content--active", "data-for-tab", "data-tab");
         setPages("aggregateSummaryPage", "tabPage");
     });
 
-    UxUtils.addElement(summaryText, buttonLink);
+    UxUtils.addElement(summaryTextButton, buttonLink);
 
     UxUtils.addElement(percentageBar, barDiv);
     UxUtils.addElement(progressBar, barDiv);
@@ -255,6 +255,17 @@ async function getResNonResTabs() {
     let tabPage = UxUtils.getDiv();
     UxUtils.setClass(tabPage, "tabPage");
     UxUtils.setId(tabPage, "tabPage");
+
+    let summaryText = UxUtils.getElement("div");
+    UxUtils.addAttribute(summaryText, { class: "textSmallBold headerView" });
+    if (actionSummary.rowCreatorCount == actionSummary.rowCount) {
+        UxUtils.setText(summaryText, UxUtils.getString("XofYresponded", actionSummary.rowCreatorCount, actionMemberCount));
+    }
+    else {
+        UxUtils.setText(summaryText, UxUtils.getString("NResponseYPeople", actionSummary.rowCount, actionSummary.rowCreatorCount));
+    }
+
+    UxUtils.addElement(summaryText, tabPage);
     let tabDiv = UxUtils.getDiv();
     UxUtils.setClass(tabDiv, "tabs");
 
@@ -280,7 +291,7 @@ async function getResNonResTabs() {
 
     let backButton = UxUtils.getElement("button");
     UxUtils.setText(backButton, UxUtils.getString("back"));
-    UxUtils.setClass(backButton, "buttonAsString textBold");
+    UxUtils.setClass(backButton, "buttonAsString footer");
     UxUtils.addElement(backButton, tabPage);
 
     backButton.addEventListener('click', () => {
@@ -343,28 +354,30 @@ function getNonRespondersTabs() {
     let nonResponderContent = UxUtils.getDiv();
     UxUtils.addAttribute(nonResponderContent, { "class": "tabs__content", "data-tab": "2" });
     let NonResponderDiv = UxUtils.getDiv();
-    UxUtils.setClass(NonResponderDiv, "responseContainer");
+    let table = UxUtils.getElement('TABLE');
+    let tableBody = UxUtils.getElement('TBODY');
+    UxUtils.addElement(tableBody, table);
     for (let itr = 0; itr < actionNonResponders.length; itr++) {
-        let perNonResponder = UxUtils.getDiv();
-        let userProfile = UxUtils.getElement("span");
-        UxUtils.setClass(userProfile, "userProfile");
-        let perRowuser = UxUtils.getElement("Text");
-        UxUtils.setClass(perRowuser, "textDisplay");
-        let profilePic = UxUtils.getElement('img');
+        let tableRow = UxUtils.getElement('TR');
+        UxUtils.setId(tableRow, actionNonResponders[itr].userId);
+        UxUtils.setClass(tableRow, "textDisplay");
+        UxUtils.addElement(tableRow, tableBody);
+        let profilePicColumn = UxUtils.getElement('TD');
+        let profilePic = UxUtils.getElement("img");
         UxUtils.addAttribute(profilePic, { "class": "profilePic", "src": "images/dummyUser.png", "alt": "Avatar" });
-        UxUtils.setClass(perNonResponder, "textDisplay singleValPerRow");
+        UxUtils.addElement(profilePic, profilePicColumn);
+        UxUtils.addElement(profilePicColumn, tableRow);
+
+        let nameColumn = UxUtils.getElement('TD');
         if (actionNonResponders[itr].userId == myUserId) {
-            UxUtils.setText(perRowuser, UxUtils.getString("You"));
+            UxUtils.setText(nameColumn, UxUtils.getString("You"));
         }
         else {
-            UxUtils.setText(perRowuser, actionNonResponders[itr].label);
+            UxUtils.setText(nameColumn, actionNonResponders[itr].label);
         }
-
-        UxUtils.addElement(profilePic, userProfile);
-        UxUtils.addElement(perRowuser, userProfile);
-        UxUtils.addElement(userProfile, perNonResponder);
-        UxUtils.addElement(perNonResponder, NonResponderDiv);
+        UxUtils.addElement(nameColumn, tableRow);
     }
+    UxUtils.addElement(table, NonResponderDiv);
     UxUtils.addElement(NonResponderDiv, nonResponderContent);
     return nonResponderContent;
 }
@@ -388,11 +401,14 @@ function getResponsesperQuestion(column) {
     UxUtils.setClass(rowDiv, "responseRow");
     let pageId = document.getElementById("responseViewPage");
     UxUtils.clearElement(pageId);
-    let questionTitle = UxUtils.getDiv();
-    UxUtils.setClass(questionTitle, "TitleDiv");
-    UxUtils.setText(questionTitle, column.displayName);
-    UxUtils.addElement(questionTitle, rowDiv);
     if (pageId) {
+        let Identity = UxUtils.getDiv();
+        UxUtils.setClass(Identity, "ResponseHeader");
+        let questionTitle = UxUtils.getDiv();
+        UxUtils.setClass(questionTitle, "TitleDiv");
+        UxUtils.setText(questionTitle, column.displayName);
+        UxUtils.addElement(questionTitle, Identity);
+        UxUtils.addElement(Identity, pageId);
         for (let itr = 0; itr < ResponderDetails.length; itr++) {
             let rowData = UxUtils.getDiv();
             UxUtils.setClass(rowData, "responseContainer");
@@ -421,7 +437,7 @@ function getResponsesperQuestion(column) {
     }
     let backButton = UxUtils.getElement("button");
     UxUtils.setText(backButton, UxUtils.getString("back"));;
-    UxUtils.setClass(backButton, "buttonAsString  textBold");
+    UxUtils.setClass(backButton, "buttonAsString footer");
     backButton.addEventListener('click', () => {
         setPages("responseViewPage", "aggregateSummaryPage");
     });
@@ -449,25 +465,33 @@ async function getResponsePerUser(id, index) {
     UxUtils.setClass(rowDiv, "responseRow");
     let pageId = document.getElementById("responsePerUserViewPage");
     UxUtils.clearElement(pageId);
-    let responderName = UxUtils.getDiv();
-    UxUtils.setClass(responderName, "TitleDiv");
-    let userDetail = await ActionSdkHelper.getResponder(actionContext.subscription, id);
-    if (id == myUserId) {
-        UxUtils.setText(responderName, UxUtils.getString("YourResponse"));
-    }
-    else {
-        UxUtils.setText(responderName, userDetail[0].displayName);
-    }
-    UxUtils.addElement(responderName, rowDiv);
     if (pageId) {
+        let Identity = UxUtils.getDiv();
+        UxUtils.setClass(Identity, "ResponseHeader");
+        let responderPic = UxUtils.getElement("span");
+        let profilePic = UxUtils.getElement("img");
+        UxUtils.addAttribute(profilePic, { "class": "profilePic", "src": "images/dummyUser.png", "alt": "Avatar" });
+        UxUtils.addElement(profilePic, responderPic);
+        UxUtils.addElement(responderPic, Identity);
+        let responderName = UxUtils.getElement("span");
+        UxUtils.setClass(responderName, "TitleDiv");
+        let userDetail = await ActionSdkHelper.getResponder(actionContext.subscription, id);
+        if (id == myUserId) {
+            UxUtils.setText(responderName, UxUtils.getString("YourResponse"));
+        }
+        else {
+            UxUtils.setText(responderName, userDetail[0].displayName);
+        }
+        UxUtils.addElement(responderName, Identity);
         let dataPerUser = actionDataRows[index].columnValues;
+        UxUtils.addElement(Identity, pageId);
         let questionItr = 0;
         for (let idx in dataPerUser) {
             let rowData = UxUtils.getDiv();
             UxUtils.setClass(rowData, "responseContainer");
             let ques = UxUtils.getDiv();
             UxUtils.setClass(ques, "textDisplay");
-            UxUtils.setText(ques, UxUtils.getString("question", actionInstance.dataTables[0].dataColumns[questionItr].displayName));
+            UxUtils.setText(ques, UxUtils.getString("question", questionItr + 1, actionInstance.dataTables[0].dataColumns[questionItr].displayName));
             let ans = UxUtils.getDiv();
             UxUtils.setClass(ans, "responsePerQuestion");
             if (actionInstance.dataTables[0].dataColumns[questionItr].valueType.localeCompare("SingleOption") == 0 || actionInstance.dataTables[0].dataColumns[questionItr].valueType.localeCompare("MultiOption") == 0) {
@@ -491,7 +515,7 @@ async function getResponsePerUser(id, index) {
     }
     let backButton = UxUtils.getElement("button");
     UxUtils.setText(backButton, UxUtils.getString("back"));
-    UxUtils.setClass(backButton, "buttonAsString textBold");
+    UxUtils.setClass(backButton, "buttonAsString footer");
     backButton.addEventListener('click', () => {
         setPages("responsePerUserViewPage", "tabPage");
     });

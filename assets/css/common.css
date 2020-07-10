@@ -293,55 +293,56 @@ div#fugo{
     outline: none;
     height: 15px;
     font-size: 15px;
-    font-family: sans-serif;
+    font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
 }
 .buttonAsString:hover {
     cursor: pointer;
     text-decoration: underline;
 }
+.topSummaryText {
+    margin-top: -8px;
+    margin-left: -2px;
+}
 .textDisplay {
-    font-size: 14px;
-    font-family: sans-serif;
+    font-size: 15px;
+    font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
     overflow: hidden;
 }
 .tabs {
-    margin-top: 30px;
-    top:30px;
+    margin-top: 0px;
+    top:0px;
     display:flex;
     flex-direction: row;
-    width:100%;
+    background:none;
 }
-.tabs__horizonal {
+.tabs__horizontal {
     width: 100%;
-    background: #cccccc;
 }
 .tabs__button {
     display: block;
     padding: 10px;
     border:  none;
-    width: 100%;
     outline: none;
     cursor: pointer;
+    background:none;
     font-family: sans-serif;
-    font-weight: bold;
+    color: #6264a7;
 }
 .tabs__button:active{
     border-bottom: 2px solid #6264a7;
-    width: 100%;
-    font-family: sans-serif;
+    font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
     font-weight: bold;
 }
 .tabs__button--active {
-    width: 100%;
     border-bottom: 2px solid #6264a7;
-    font-family: sans-serif;
+    font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
     font-weight: bold;
 }
 .tabs__content {
     padding: 15px;
     font-size: 15px;
     display: none;
-    height: 66.5vh;
+    height: 66vh;
     overflow-y:scroll;
     border-top: .5px solid rgb(206, 206, 206);
     border-bottom: .5px solid rgb(206, 206, 206);
@@ -360,7 +361,7 @@ h4 {
 }
 .aggregateSummaryPage {
     display: block;
-    height: 87vh;
+    height: 85vh;
     overflow-y:scroll;
     border-bottom: .5px solid rgb(206, 206, 206);
     width:90vw;
@@ -374,11 +375,15 @@ h4 {
     height: 85vh;
 }
 .responsePerQuestion {
-    font-family: sans-serif;
-    font-size: 10px;
+    font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
+    font-size: 15px;
     margin-bottom: 15px;
-    padding-left: 35px;
+    margin-left: 35px;
     margin-right: 10px;
+    margin-top: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f3f2f1;
 }
 .responsePerQuestion:last-of-type {
     margin-bottom:0;
@@ -386,21 +391,26 @@ h4 {
  }
 .TitleDiv {
     font-weight: bold;
-    font-family: sans-serif;
+    font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
     font-size: 15px;
-    border-bottom: .5px solid rgb(206, 206, 206);
-    padding-bottom: 15px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    margin-right: 10px;
 }
-.responseRow {   
-    height: 80vh;
-    overflow: scroll;
-    top: 30px;
-    margin-top: 30px;
+.ResponseHeader {
     border-bottom: .5px solid rgb(206, 206, 206);
     border-top: .5px solid rgb(206, 206, 206);
+    padding-bottom: 15px;
+    padding-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    background-color: #f3f2f1;
+    padding-left: 15px;
+    padding-right: 15px;
+    width: 85vw;
+}
+.responseRow {   
+    height: 73.5vh;
+    overflow: scroll;
+    margin-top: 5px;
+    border-bottom: .5px solid rgb(206, 206, 206);
     width: 90vw;
 }
 .clickable {
@@ -430,6 +440,7 @@ h4 {
     display:table;
     font-weight: bold;
     font-size: 15px;
+    margin-left: 2px;
 }
 .summaryTitle {
     padding-top: 10px;
@@ -441,7 +452,7 @@ h4 {
 .subHeading {
     font-size: 15px;
     padding-top: 5px;
-    font-family: sans-serif;
+    font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
     margin-bottom: 20px;
 }
 .questionContainer {
@@ -463,9 +474,7 @@ h4 {
 }
 .responseContainer {
     padding-top: 10px;
-    padding-bottom: 10px;
     overflow: hidden;
-    border-bottom: .5px solid rgb(206, 206, 206);
     margin-right: 10px;
 }
 .responseContainer:last-of-type {
@@ -473,14 +482,17 @@ h4 {
     padding-bottom: 0px;
 }
 td:not(:first-child) {
-    padding-top:15px;
-    padding-bottom:15px;
+    padding-top:10px;
+    padding-bottom:10px;
     padding-right:15px; 
 }
 td:first-child {
     width: 20px;
 }
-td:last-child {
+tr:nth-child(2){
+    text-align: left;
+}
+td:nth-child(3) {
     text-align: right;
 }
 table {
@@ -493,11 +505,6 @@ table {
     vertical-align: middle;
     padding-right: 5px;
     border-radius: 50%;
-}
-.userProfile {
-    vertical-align: middle;
-    text-align: center;
-    height: 30px;
 }
 .singleValPerRow {
     padding-bottom: 20px;
@@ -518,9 +525,22 @@ table {
 ::-webkit-scrollbar-thumb:window-inactive {
     background:  rgb(206, 206, 206); 
 }
-.textBold{
-    margin-top: 10px;
+.textSmallBold {
+    font-size: 12px;
+    font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
     font-weight: bold;
+}
+.coloredLinkBold {
+    color: #6264a7;
+    font-weight: bold;
+}
+.footer{
+    padding-top: 5px;
+}
+.headerView{
+    padding-top: 10px;
+    border-top: .5px solid rgb(206, 206, 206);
+    margin-left: auto;
 }
 /* -------------------------------------
 Common CSS UxUtils
