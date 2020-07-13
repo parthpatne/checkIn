@@ -363,6 +363,7 @@ h4 {
     display: block;
     height: 85vh;
     overflow-y:scroll;
+    border-top: .5px solid rgb(206, 206, 206);
     border-bottom: .5px solid rgb(206, 206, 206);
     width:90vw;
 }
@@ -441,13 +442,13 @@ h4 {
     font-weight: bold;
     font-size: 15px;
     margin-left: 2px;
+    margin-bottom: 5px;
 }
 .summaryTitle {
     padding-top: 10px;
     font-weight: bold;
     font-size: 20px;
     font-family: sans-serif;
-    border-top: .5px solid rgb(206, 206, 206);
 }
 .subHeading {
     font-size: 15px;
