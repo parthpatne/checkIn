@@ -208,7 +208,7 @@ div#fugo{
 }
 
 .meter { 
-    height: 10px;  /* Can be anything */
+    height: 8px;
     position: relative;
     background: #eee;
     -moz-border-radius: 25px;
@@ -216,7 +216,6 @@ div#fugo{
     border-radius: 25px;
     margin-bottom: 10px;
 }
-
 .meter > span {
     display: block;
     height: 100%;
@@ -249,7 +248,7 @@ div#fugo{
     overflow: hidden;
 }
 .progressBar { 
-    height: 10px;  /* Can be anything */
+    height: 8px;
     position: relative;
     background: #eee;
     -moz-border-radius: 25px;
@@ -257,7 +256,6 @@ div#fugo{
     border-radius: 25px;
     margin-bottom: 10px;
 }
-
 .progressBar > span {
     display: block;
     height: 100%;
@@ -294,65 +292,64 @@ div#fugo{
     background: none;
     outline: none;
     height: 15px;
-    font-size: 15px;
-    font-family: sans-serif;
-    font-weight: "bold";
+    font-size: small;
+    font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
 }
 .buttonAsString:hover {
     cursor: pointer;
     text-decoration: underline;
 }
+.topSummaryText {
+    margin-top: -8px;
+    margin-left: -2px;
+}
 .textDisplay {
-    font-size: 14px;
-    font-family: sans-serif;
+    font-size: small;
+    font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
     overflow: hidden;
 }
 .tabs {
-    margin-top: 30px;
-    top:30px;
+    margin-top: 0px;
+    top:0px;
     display:flex;
     flex-direction: row;
-    width:100%;
+    background:none;
 }
-.tabs__horizonal {
+.tabs__horizontal {
     width: 100%;
-    background: #cccccc;
 }
 .tabs__button {
     display: block;
     padding: 10px;
     border:  none;
-    width: 100%;
     outline: none;
     cursor: pointer;
+    background:none;
     font-family: sans-serif;
-    font-weight: bold;
+    color: #6264a7;
 }
 .tabs__button:active{
     border-bottom: 2px solid #6264a7;
-    width: 100%;
-    font-family: sans-serif;
+    font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
     font-weight: bold;
 }
 .tabs__button--active {
-    width: 100%;
     border-bottom: 2px solid #6264a7;
-    font-family: sans-serif;
+    font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
     font-weight: bold;
 }
 .tabs__content {
     padding: 15px;
-    font-size: 15px;
+    font-size: x-small;
     display: none;
-    height: 330px;
+    height: 66vh;
     overflow-y:scroll;
     border-top: .5px solid rgb(206, 206, 206);
     border-bottom: .5px solid rgb(206, 206, 206);
-    border-top: .5px solid rgb(206, 206, 206);
 }
 .tabs__content--active {
     display: block;
-    height: 330px;
+    height: 66.5vh;
 }
 h4 {
     font-weight: bold;
@@ -360,27 +357,34 @@ h4 {
 }
 .tabPage {
     display: none;
-    height: 80%;
+    height: 80vh;
 }
 .aggregateSummaryPage {
     display: block;
-    height: 100%;
+    height: 85vh;
     overflow-y:scroll;
-    display: block;
+    border-top: .5px solid rgb(206, 206, 206);
+    border-bottom: .5px solid rgb(206, 206, 206);
+    width:90vw;
 }
 .responseViewPage {
     display: none;
-    height: 85%;
+    height: 85vh
 }
 .responsePerUserViewPage {
     display: none;
-    height: 85%;
+    height: 85vh;
 }
 .responsePerQuestion {
-    font-family: sans-serif;
-    font-size: 10px;
+    font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
+    font-size: small;
     margin-bottom: 15px;
-    padding-left: 35px;
+    margin-left: 35px;
+    margin-right: 10px;
+    margin-top: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f3f2f1;
 }
 .responsePerQuestion:last-of-type {
     margin-bottom:0;
@@ -388,37 +392,43 @@ h4 {
  }
 .TitleDiv {
     font-weight: bold;
-    font-family: sans-serif;
-    font-size: 15px;
+    font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
+    font-size: medium;
+}
+.ResponseHeader {
     border-bottom: .5px solid rgb(206, 206, 206);
+    border-top: .5px solid rgb(206, 206, 206);
     padding-bottom: 15px;
-    margin-top: 10px;
+    padding-top: 10px;
     margin-bottom: 10px;
+    margin-right: 10px;
+    background-color: #f3f2f1;
+    padding-left: 15px;
+    padding-right: 15px;
+    width: 85vw;
 }
 .responseRow {   
-    height: 100%;
+    height: 73.5vh;
     overflow: scroll;
-    top: 30px;
-    margin-top: 30px;
+    margin-top: 5px;
     border-bottom: .5px solid rgb(206, 206, 206);
-    border-top: .5px solid rgb(206, 206, 206);
-}
-.responseRowPerUser {
-    height: 80vh;
-    overflow: scroll;
-    top: 30px;
-    margin-top: 30px;
-    border-bottom: .5px solid rgb(206, 206, 206);
-    border-top: .5px solid rgb(206, 206, 206);
+    width: 90vw;
 }
 .clickable {
     cursor: pointer;
 }
 .row {
     display: table;
-    width: 100%; 
+    width: 80vw;
     table-layout: auto; 
     border-spacing: 10px 0px; 
+    padding-bottom: 2px;
+}
+.rowAlign {
+    display: table;
+    width: 85vw;
+    table-layout: auto; 
+    border-spacing: 0px; 
     padding-bottom: 2px;
 }
 .column {
@@ -438,23 +448,28 @@ h4 {
     display:table;
     font-weight: bold;
     font-size: 15px;
+    margin-left: 2px;
+    margin-bottom: 5px;
 }
 .summaryTitle {
     padding-top: 10px;
     font-weight: bold;
     font-size: 20px;
     font-family: sans-serif;
-    border-top: .5px solid rgb(206, 206, 206);
 }
 .subHeading {
-    font-size: 15px;
+    font-size: small;
     padding-top: 5px;
-    font-family: sans-serif;
+    font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
     margin-bottom: 20px;
 }
 .questionContainer {
     border-bottom: .5px solid rgb(206, 206, 206);
     padding-bottom: 20px;
+    width: 85vw;
+}
+.questionContainer:last-of-type{
+    border-bottom: none;
 }
 .modulquestionContainere > *:last-child {
     border-bottom: none;
@@ -463,26 +478,29 @@ h4 {
     padding-bottom: 15px;
     padding-top: 15x;
     border-bottom: .5px solid rgb(206, 206, 206);
+    width: 85vw;
 }
 .responseContainer {
     padding-top: 10px;
-    padding-bottom: 10px;
     overflow: hidden;
-    border-bottom: .5px solid rgb(206, 206, 206);
+    margin-right: 10px;
 }
 .responseContainer:last-of-type {
     border-bottom: none;
     padding-bottom: 0px;
 }
 td:not(:first-child) {
-    padding-top:15px;
-    padding-bottom:15px;
+    padding-top:10px;
+    padding-bottom:10px;
     padding-right:15px; 
 }
 td:first-child {
     width: 20px;
 }
-td:last-child {
+tr:nth-child(2){
+    text-align: left;
+}
+td:nth-child(3) {
     text-align: right;
 }
 table {
@@ -496,30 +514,55 @@ table {
     padding-right: 5px;
     border-radius: 50%;
 }
-.userProfile {
-    vertical-align: middle;
-    text-align: center;
-    height: 30px;
+.singleValPerRow {
+    padding-bottom: 20px;
 }
 ::-webkit-scrollbar {
-    width: 5px;
+    width: 7px;
 }
 ::-webkit-scrollbar-track {
     -webkit-border-radius: 10px;
-    border-radius: 5px;
+    border-radius: 7px;
 }
 ::-webkit-scrollbar-thumb {
     -webkit-border-radius: 10px;
-    border-radius: 5px;
+    border-radius: 7px;
     background:  rgb(206, 206, 206); 
     height: 5px;
 }
 ::-webkit-scrollbar-thumb:window-inactive {
     background:  rgb(206, 206, 206); 
 }
-.textBold {
-    margin-top: 10px;
+.textSmallBold {
+    font-size: 12px;
+    font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
     font-weight: bold;
+}
+.coloredLinkBold {
+    color: #6264a7;
+    font-weight: bold;
+}
+.footer {
+    padding-top: 5px;
+    font-size: medium;
+}
+.headerView {
+    padding-top: 10px;
+    border-top: .5px solid rgb(206, 206, 206);
+    margin-left: auto;
+}
+.circle {
+    background-color: #ccc;
+    border-radius: 50%;
+    height: 30px;
+    text-align: center;
+    width: 30px;
+}
+.initials {
+    font-size: calc(30px / 2); /* 50% of parent */
+    line-height: 1;
+    position: relative;
+    top: calc(30px / 4); /* 25% of parent */
 }
 /* -------------------------------------
 Common CSS UxUtils

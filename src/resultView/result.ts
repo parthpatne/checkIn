@@ -2,6 +2,8 @@
 import * as actionSDK from 'action-sdk-sunny';
 import { Utils } from "../common/Utils";
 import { UxUtils } from "../common/UxUtils";
+import { ActionSdkHelper } from '../common/ActionSdkHelper';
+import { UxCommonComponent } from './UxCommonComponent';
 
 const root = document.getElementById("root");
 let actionInstance = null;
@@ -9,15 +11,15 @@ let actionSummary = null;
 let actionContext = null;
 let actionDataRows = null;
 let actionDataRowsLength = 0;
-let ResponderDate = [];
+let ResponderDetails = [];
 let actionNonResponders = [];
 let myUserId = "";
+let actionMemberCount = 0;
 OnPageLoad();
 /*
 *   @desc Creates the body of SummaryView when you click on ViewResults on actionInstance
 */
 async function createBody() {
-    await getUserprofile();
     UxUtils.addElement(await mainPage(), root);
     getResNonResTabs();
     getResponderListPagePerQuestion();
@@ -35,104 +37,17 @@ function getHeaderContainer() {
     UxUtils.setClass(title, "summaryTitle");
     UxUtils.setText(title, actionInstance.displayName);
 
-    const dueDate = UxUtils.getDiv();
-    UxUtils.setClass(dueDate, "subHeading");
+    let optionDetails = UxUtils.getDiv();
+    UxUtils.setClass(optionDetails, "rowAlign");
+    let dueDate = UxUtils.getElement("text");
+    UxUtils.setClass(dueDate, "subHeading columnleft");
     UxUtils.setText(dueDate, UxUtils.getString("dueBy", new Date(actionInstance.expiryTime).toDateString()));
+    UxUtils.addElement(dueDate, optionDetails);
 
     UxUtils.addElement(title, headerContainer);
-    UxUtils.addElement(dueDate, headerContainer);
+    UxUtils.addElement(optionDetails, headerContainer);
     return headerContainer;
 }
-/*
-*   @desc Creates the aggreagteSummary of summary View. It has three module: getHeader, summarized progress bar and question summary
-*/
-async function mainPage() {
-    const aggregateSummaryPage = UxUtils.getDiv({ display: "block" });
-    UxUtils.setClass(aggregateSummaryPage, "aggregateSummaryPage");
-    UxUtils.setId(aggregateSummaryPage, "aggregateSummaryPage");
-    const headerContainer = getHeaderContainer();
-    UxUtils.addElement(headerContainer, aggregateSummaryPage);
-    const sumamaryContainer = await getTopSummaryView();
-    UxUtils.addElement(sumamaryContainer, aggregateSummaryPage);
-    const questionContainer = createQuestionView();
-    UxUtils.addElement(questionContainer, aggregateSummaryPage);
-    return aggregateSummaryPage;
-}
-/*
-*   @desc Fetch all the responders, non-responders for the actionInstance using Action SDK apis and store results in global variables. 
-*   actionDataRows contains array of objects with all the responses
-*/
-async function getUserprofile() {
-    let memberIds: string[] = [];
-    if (actionDataRowsLength > 0) {
-        for (let i = 0; i < actionDataRowsLength; i++) {
-            memberIds.push(actionDataRows[i].creatorId);
-            let requestResponders = new actionSDK.GetSubscriptionMembers.Request(actionContext.subscription, [actionDataRows[i].creatorId]);
-            let responseResponders = await actionSDK.executeApi(requestResponders) as actionSDK.GetSubscriptionMembers.Response;
-            let perUserProfile = responseResponders.members;
-            ResponderDate.push({ label: perUserProfile[0].displayName, value: new Date(actionDataRows[i].updateTime).toDateString(), value2: perUserProfile[0].id });
-        }
-    }
-
-    myUserId = actionContext.userId;
-    let requestNonResponders = new actionSDK.GetActionSubscriptionNonParticipants.Request(actionContext.actionId, actionContext.subscription.id);
-    let responseNonResponders = await actionSDK.executeApi(requestNonResponders) as actionSDK.GetActionSubscriptionNonParticipants.Response;
-    let tempresponse = responseNonResponders.nonParticipants;
-    if (tempresponse != null) {
-        for (let i = 0; i < tempresponse.length; i++) {
-            actionNonResponders.push({ label: tempresponse[i].displayName, value2: tempresponse[i].id });
-        }
-    }
-}
-/*
-*	 @desc Container to display the progress bar with people who and responded to total memeber of the group
-*/
-async function getTopSummaryView() {
-    let participationPercentage = 0;
-    const barDiv = UxUtils.getDiv();
-    UxUtils.setClass(barDiv, "TopSummaryContainer")
-    let getSubscriptionCount = new actionSDK.GetSubscriptionMemberCount.Request(actionContext.subscription);
-    let response = await actionSDK.executeApi(getSubscriptionCount) as actionSDK.GetSubscriptionMemberCount.Response;
-    let memberCount = response.memberCount;
-    participationPercentage = Math.round((actionSummary.rowCreatorCount / memberCount) * 100);
-    let percentageBar = UxUtils.getDiv();
-    let headingpercentage = UxUtils.getElement("text");
-    UxUtils.setClass(headingpercentage, "headings")
-    UxUtils.setText(headingpercentage, UxUtils.getString("participationPercentage", participationPercentage));
-    UxUtils.addElement(headingpercentage, percentageBar);
-    let progressBar = UxUtils.getDiv();
-    UxUtils.setClass(progressBar, "progressBar");
-    let myProgress = UxUtils.getElement('span');
-
-    UxUtils.addCSS(myProgress, { width: participationPercentage + "%" });
-
-    UxUtils.addElement(myProgress, progressBar);
-
-    let buttonLink = UxUtils.getDiv();
-    let summaryText = UxUtils.getElement("button");
-    UxUtils.setClass(summaryText, "buttonAsString");
-    if (actionSummary.rowCreatorCount == actionSummary.rowCount) {
-        UxUtils.setText(summaryText, UxUtils.getString("XofYresponded", actionSummary.rowCreatorCount, memberCount));
-    }
-    else {
-        UxUtils.setText(summaryText, UxUtils.getString("NResponseYPeople", actionSummary.rowCount, actionSummary.rowCreatorCount));
-    }
-    summaryText.addEventListener('click', () => {
-        UxUtils.setTabs("tabs__button", "tabs__button--active", "tabs__content", "tabs__content--active", "data-for-tab", "data-tab");
-        setPages("aggregateSummaryPage", "tabPage");
-    });
-
-    UxUtils.addElement(summaryText, buttonLink);
-
-    UxUtils.addElement(percentageBar, barDiv);
-    UxUtils.addElement(progressBar, barDiv);
-    UxUtils.addElement(buttonLink, barDiv);
-    return barDiv;
-}
-/*
-*	@desc Gets aggregated and summarized view for all the question in the actionInstance. 
-*   Here column is synonym of question. dataTables  - list of data-tables of the action., datacolumns  - list of question's data
-*/
 function createQuestionView() {
     const totalQuestion = UxUtils.getDiv();
     actionInstance.dataTables[0].dataColumns.forEach((column) => {
@@ -149,7 +64,7 @@ function createQuestionView() {
             case actionSDK.ActionDataColumnValueType.SingleOption:
             case actionSDK.ActionDataColumnValueType.MultiOption:
                 column.options.forEach((option: actionSDK.ActionDataColumnOption) => {
-                    optionView = getAggregateOptionView(option.displayName, option.name, column);
+                    optionView = UxCommonComponent.getAggregateOptionView(actionSummary, option.displayName, option.name, column);
                     UxUtils.addElement(optionView, questionDiv);
                 });
                 break;
@@ -164,49 +79,6 @@ function createQuestionView() {
         UxUtils.addElement(questionDiv, totalQuestion);
     });
     return totalQuestion;
-}
-/*
-*	 @desc Gets aggregated response for MCQ and their options
-*    @param title: title of the option from column for MCQ: actionSDK.ActionDataColumnOption.displayName
-*    @param id - id of option from column for MCQ : actionSDK.ActionDataColumnOption.name
-*    @param column - per question from dataTables[i].dataColumns: actionSDK.ActionDataColumnValueType
-*    @return progressbar for each option
-*/
-function getAggregateOptionView(title, optionId, column) {
-
-    let optionDiv = UxUtils.getDiv();
-    let responseRowSpan = UxUtils.getDiv();
-
-    let percentage = (actionSummary.defaultAggregates).hasOwnProperty(column.name) ? JSON.parse(actionSummary.defaultAggregates[column.name])[optionId] : 0;
-    let wid = percentage / actionSummary.rowCount * 100;
-    let optionpercentage = isNaN(wid) ? 0 : wid.toFixed(2);
-    let optionCount = isNaN(percentage) ? 0 : percentage;
-    UxUtils.setClass(responseRowSpan, "row");
-
-    let optionDetails = UxUtils.getDiv();
-    UxUtils.setClass(optionDetails, "row");
-    let optionTitle = UxUtils.getElement("text");
-    UxUtils.setClass(optionTitle, "textDisplay columnleft");
-    UxUtils.setText(optionTitle, title);
-    UxUtils.addElement(optionTitle, optionDetails);
-
-    let optionParticipation = UxUtils.getElement("text");
-    UxUtils.setClass(optionParticipation, "textDisplay columnright");
-    UxUtils.setText(optionParticipation, UxUtils.getString("optionParticipation", optionCount, optionpercentage));
-    UxUtils.addElement(optionParticipation, optionDetails);
-
-    UxUtils.addElement(optionDetails, responseRowSpan);
-
-    let meterDiv = UxUtils.getDiv();
-    UxUtils.setClass(meterDiv, "meter");
-    let spanTag1 = UxUtils.getElement('span');
-
-    UxUtils.addCSS(spanTag1, { width: optionpercentage + "%" });
-    UxUtils.addElement(spanTag1, meterDiv);
-    UxUtils.addElement(meterDiv, responseRowSpan);
-    UxUtils.addElement(responseRowSpan, optionDiv);
-
-    return optionDiv;
 }
 /*
 *	 @desc Gets aggregated response for numeric questions, numeric questions summary has json field for sum and average
@@ -239,7 +111,7 @@ function getAggregateNumericView(column) {
     UxUtils.setClass(responseText, "buttonAsString columncenter");
     responseText.addEventListener('click', () => {
         getResponsesperQuestion(column);
-        setPages("aggregateSummaryPage", "responseViewPage");
+        UxCommonComponent.setPages("aggregateSummaryPage", "responseViewPage");
     });
     UxUtils.addElement(responseText, responseRowSpan);
     UxUtils.addElement(sumText, responseRowSpan);
@@ -268,11 +140,26 @@ function getAggregateTextView(column) {
     UxUtils.setClass(responseText, "buttonAsString columncenter");
     responseText.addEventListener('click', () => {
         getResponsesperQuestion(column);
-        setPages("aggregateSummaryPage", "responseViewPage");
+        UxCommonComponent.setPages("aggregateSummaryPage", "responseViewPage");
     });
     UxUtils.addElement(responseText, responseRowSpan);
     UxUtils.addElement(responseRowSpan, textQuestion);
     return textQuestion;
+}
+/*
+*   @desc Creates the aggreagteSummary of summary View. It has three module: getHeader, summarized progress bar and question summary
+*/
+async function mainPage() {
+    const aggregateSummaryPage = UxUtils.getDiv({ display: "block" });
+    UxUtils.setClass(aggregateSummaryPage, "aggregateSummaryPage");
+    UxUtils.setId(aggregateSummaryPage, "aggregateSummaryPage");
+    const headerContainer = getHeaderContainer();
+    UxUtils.addElement(headerContainer, aggregateSummaryPage);
+    const sumamaryContainer = await UxCommonComponent.getTopSummaryView(actionSummary, actionMemberCount, "aggregateSummaryPage", "tabPage", UxCommonComponent.setPages);
+    UxUtils.addElement(sumamaryContainer, aggregateSummaryPage);
+    const questionContainer = createQuestionView();
+    UxUtils.addElement(questionContainer, aggregateSummaryPage);
+    return aggregateSummaryPage;
 }
 /*
 *	@desc Create a tab interface with two tabs, per responders and non-responders and append it to HTML body.
@@ -282,6 +169,17 @@ async function getResNonResTabs() {
     let tabPage = UxUtils.getDiv();
     UxUtils.setClass(tabPage, "tabPage");
     UxUtils.setId(tabPage, "tabPage");
+
+    let summaryText = UxUtils.getElement("div");
+    UxUtils.addAttribute(summaryText, { class: "textSmallBold headerView" });
+    if (actionSummary.rowCreatorCount == actionSummary.rowCount) {
+        UxUtils.setText(summaryText, UxUtils.getString("XofYresponded", actionSummary.rowCreatorCount, actionMemberCount));
+    }
+    else {
+        UxUtils.setText(summaryText, UxUtils.getString("NResponseYPeople", actionSummary.rowCount, actionSummary.rowCreatorCount));
+    }
+
+    UxUtils.addElement(summaryText, tabPage);
     let tabDiv = UxUtils.getDiv();
     UxUtils.setClass(tabDiv, "tabs");
 
@@ -307,14 +205,15 @@ async function getResNonResTabs() {
 
     let backButton = UxUtils.getElement("button");
     UxUtils.setText(backButton, UxUtils.getString("back"));
-    UxUtils.setClass(backButton, "buttonAsString textBold");
+    UxUtils.setClass(backButton, "buttonAsString footer");
     UxUtils.addElement(backButton, tabPage);
 
     backButton.addEventListener('click', () => {
-        setPages("tabPage", "aggregateSummaryPage");
+        UxCommonComponent.setPages("tabPage", "aggregateSummaryPage");
     });
     UxUtils.addCSS(tabPage, { display: "none" });
     UxUtils.addElement(tabPage, root);
+    setTabs("tabs__button", "tabs__button--active", "tabs__content", "tabs__content--active", "data-for-tab", "data-tab");
 }
 /*
 *	@desc Create the content box for responders of the actionInstance in tabular format
@@ -327,9 +226,9 @@ function getResponderTabs() {
     let table = UxUtils.getElement('TABLE');
     let tableBody = UxUtils.getElement('TBODY');
     UxUtils.addElement(tableBody, table);
-    for (let itr = 0; itr < ResponderDate.length; itr++) {
+    for (let itr = 0; itr < ResponderDetails.length; itr++) {
         let tableRow = UxUtils.getElement('TR');
-        UxUtils.setId(tableRow, ResponderDate[itr].value2);
+        UxUtils.setId(tableRow, ResponderDetails[itr].userId);
         UxUtils.setClass(tableRow, "textDisplay clickable");
         UxUtils.addElement(tableRow, tableBody);
         let profilePicColumn = UxUtils.getElement('TD');
@@ -339,15 +238,15 @@ function getResponderTabs() {
         UxUtils.addElement(profilePicColumn, tableRow);
 
         let nameColumn = UxUtils.getElement('TD');
-        if (ResponderDate[itr].value2 == myUserId) {
+        if (ResponderDetails[itr].userId == myUserId) {
             UxUtils.setText(nameColumn, UxUtils.getString("You"));
         }
         else {
-            UxUtils.setText(nameColumn, ResponderDate[itr].label);
+            UxUtils.setText(nameColumn, ResponderDetails[itr].label);
         }
         UxUtils.addElement(nameColumn, tableRow);
         let dateColumn = UxUtils.getElement('TD');
-        UxUtils.setText(dateColumn, ResponderDate[itr].value);
+        UxUtils.setText(dateColumn, ResponderDetails[itr].time);
         UxUtils.addElement(dateColumn, tableRow);
     }
     tableBody.onclick = function (event) {
@@ -356,7 +255,7 @@ function getResponderTabs() {
             let index = (<HTMLTableRowElement>target.parentElement).rowIndex;
             let id = (<HTMLTableRowElement>target.parentElement).id;
             getResponsePerUser(id, index);
-            setPages("tabPage", "responsePerUserViewPage");
+            UxCommonComponent.setPages("tabPage", "responsePerUserViewPage");
         }
     };
     UxUtils.addElement(table, ResponderDiv);
@@ -370,28 +269,30 @@ function getNonRespondersTabs() {
     let nonResponderContent = UxUtils.getDiv();
     UxUtils.addAttribute(nonResponderContent, { "class": "tabs__content", "data-tab": "2" });
     let NonResponderDiv = UxUtils.getDiv();
-    UxUtils.setClass(NonResponderDiv, "responseContainer");
+    let table = UxUtils.getElement('TABLE');
+    let tableBody = UxUtils.getElement('TBODY');
+    UxUtils.addElement(tableBody, table);
     for (let itr = 0; itr < actionNonResponders.length; itr++) {
-        let perNonResponder = UxUtils.getDiv();
-        let userProfile = UxUtils.getElement("span");
-        UxUtils.setClass(userProfile, "userProfile");
-        let perRowuser = UxUtils.getElement("Text");
-        UxUtils.setClass(perRowuser, "textDisplay");
-        let profilePic = UxUtils.getElement('img');
+        let tableRow = UxUtils.getElement('TR');
+        UxUtils.setId(tableRow, actionNonResponders[itr].userId);
+        UxUtils.setClass(tableRow, "textDisplay");
+        UxUtils.addElement(tableRow, tableBody);
+        let profilePicColumn = UxUtils.getElement('TD');
+        let profilePic = UxUtils.getElement("img");
         UxUtils.addAttribute(profilePic, { "class": "profilePic", "src": "images/dummyUser.png", "alt": "Avatar" });
-        UxUtils.setClass(perNonResponder, "textDisplay");
-        if (actionNonResponders[itr].value2 == myUserId) {
-            UxUtils.setText(perRowuser, UxUtils.getString("You"));
+        UxUtils.addElement(profilePic, profilePicColumn);
+        UxUtils.addElement(profilePicColumn, tableRow);
+
+        let nameColumn = UxUtils.getElement('TD');
+        if (actionNonResponders[itr].userId == myUserId) {
+            UxUtils.setText(nameColumn, UxUtils.getString("You"));
         }
         else {
-            UxUtils.setText(perRowuser, actionNonResponders[itr].label);
+            UxUtils.setText(nameColumn, actionNonResponders[itr].label);
         }
-
-        UxUtils.addElement(profilePic, userProfile);
-        UxUtils.addElement(perRowuser, userProfile);
-        UxUtils.addElement(userProfile, perNonResponder);
-        UxUtils.addElement(perNonResponder, NonResponderDiv);
+        UxUtils.addElement(nameColumn, tableRow);
     }
+    UxUtils.addElement(table, NonResponderDiv);
     UxUtils.addElement(NonResponderDiv, nonResponderContent);
     return nonResponderContent;
 }
@@ -415,12 +316,15 @@ function getResponsesperQuestion(column) {
     UxUtils.setClass(rowDiv, "responseRow");
     let pageId = document.getElementById("responseViewPage");
     UxUtils.clearElement(pageId);
-    let questionTitle = UxUtils.getDiv();
-    UxUtils.setClass(questionTitle, "TitleDiv");
-    UxUtils.setText(questionTitle, column.displayName);
-    UxUtils.addElement(questionTitle, rowDiv);
     if (pageId) {
-        for (let itr = 0; itr < ResponderDate.length; itr++) {
+        let Identity = UxUtils.getDiv();
+        UxUtils.setClass(Identity, "ResponseHeader");
+        let questionTitle = UxUtils.getDiv();
+        UxUtils.setClass(questionTitle, "TitleDiv");
+        UxUtils.setText(questionTitle, column.displayName);
+        UxUtils.addElement(questionTitle, Identity);
+        UxUtils.addElement(Identity, pageId);
+        for (let itr = 0; itr < ResponderDetails.length; itr++) {
             let rowData = UxUtils.getDiv();
             UxUtils.setClass(rowData, "responseContainer");
             let userProfile = UxUtils.getElement("span");
@@ -433,7 +337,7 @@ function getResponsesperQuestion(column) {
                 UxUtils.setText(perRowuser, UxUtils.getString("You"));
             }
             else {
-                UxUtils.setText(perRowuser, ResponderDate[itr].label);
+                UxUtils.setText(perRowuser, ResponderDetails[itr].label);
             }
             UxUtils.addElement(profilePic, userProfile);
             UxUtils.addElement(perRowuser, userProfile);
@@ -448,9 +352,9 @@ function getResponsesperQuestion(column) {
     }
     let backButton = UxUtils.getElement("button");
     UxUtils.setText(backButton, UxUtils.getString("back"));;
-    UxUtils.setClass(backButton, "buttonAsString  textBold");
+    UxUtils.setClass(backButton, "buttonAsString footer");
     backButton.addEventListener('click', () => {
-        setPages("responseViewPage", "aggregateSummaryPage");
+        UxCommonComponent.setPages("responseViewPage", "aggregateSummaryPage");
     });
     UxUtils.addElement(rowDiv, pageId);
     UxUtils.addElement(backButton, pageId);
@@ -468,35 +372,41 @@ function getPageResponsePerUser() {
 }
 /*
 *	@desc Populate the response page per user. 
-*	@param id - id of user received from subscriptionMmber: string (id of the user)
+*	@param id - creatorId of user received from subscriptionMmber: string
 *   @param index - index of user response stored in dataRows which is same as the index of rows in table: number (row index)
 */
 async function getResponsePerUser(id, index) {
     let rowDiv = UxUtils.getDiv();
-    UxUtils.setClass(rowDiv, "responseRowPerUser");
+    UxUtils.setClass(rowDiv, "responseRow");
     let pageId = document.getElementById("responsePerUserViewPage");
     UxUtils.clearElement(pageId);
-    let responderName = UxUtils.getDiv();
-    UxUtils.setClass(responderName, "TitleDiv");
-    let requestResponders = new actionSDK.GetSubscriptionMembers.Request(actionContext.subscription, [id]);
-    let responseResponders = await actionSDK.executeApi(requestResponders) as actionSDK.GetSubscriptionMembers.Response;
-    let userDetail = responseResponders.members;
-    if (id == myUserId) {
-        UxUtils.setText(responderName, UxUtils.getString("YourResponse"));
-    }
-    else {
-        UxUtils.setText(responderName, userDetail[0].displayName);
-    }
-    UxUtils.addElement(responderName, rowDiv);
     if (pageId) {
+        let Identity = UxUtils.getDiv();
+        UxUtils.setClass(Identity, "ResponseHeader");
+        let responderPic = UxUtils.getElement("span");
+        let profilePic = UxUtils.getElement("img");
+        UxUtils.addAttribute(profilePic, { "class": "profilePic", "src": "images/dummyUser.png", "alt": "Avatar" });
+        UxUtils.addElement(profilePic, responderPic);
+        UxUtils.addElement(responderPic, Identity);
+        let responderName = UxUtils.getElement("span");
+        UxUtils.setClass(responderName, "TitleDiv");
+        let userDetail = await ActionSdkHelper.getResponder(actionContext.subscription, id);
+        if (id == myUserId) {
+            UxUtils.setText(responderName, UxUtils.getString("YourResponse"));
+        }
+        else {
+            UxUtils.setText(responderName, userDetail[0].displayName);
+        }
+        UxUtils.addElement(responderName, Identity);
         let dataPerUser = actionDataRows[index].columnValues;
+        UxUtils.addElement(Identity, pageId);
         let questionItr = 0;
         for (let idx in dataPerUser) {
             let rowData = UxUtils.getDiv();
             UxUtils.setClass(rowData, "responseContainer");
             let ques = UxUtils.getDiv();
             UxUtils.setClass(ques, "textDisplay");
-            UxUtils.setText(ques, UxUtils.getString("question", actionInstance.dataTables[0].dataColumns[questionItr].displayName));
+            UxUtils.setText(ques, UxUtils.getString("question", questionItr + 1, actionInstance.dataTables[0].dataColumns[questionItr].displayName));
             let ans = UxUtils.getDiv();
             UxUtils.setClass(ans, "responsePerQuestion");
             if (actionInstance.dataTables[0].dataColumns[questionItr].valueType.localeCompare("SingleOption") == 0 || actionInstance.dataTables[0].dataColumns[questionItr].valueType.localeCompare("MultiOption") == 0) {
@@ -520,66 +430,64 @@ async function getResponsePerUser(id, index) {
     }
     let backButton = UxUtils.getElement("button");
     UxUtils.setText(backButton, UxUtils.getString("back"));
-    UxUtils.setClass(backButton, "buttonAsString textBold");
+    UxUtils.setClass(backButton, "buttonAsString footer");
     backButton.addEventListener('click', () => {
-        setPages("responsePerUserViewPage", "tabPage");
+        UxCommonComponent.setPages("responsePerUserViewPage", "tabPage");
     });
     UxUtils.addElement(rowDiv, pageId);
     UxUtils.addElement(backButton, pageId);
 }
-/*
-*   @desc Gets the context of actionInstance, which will be used to fetch the responders, their responses and non-responders. 
-*   It makes an API call to service and gets the context as response which is saved in a global variable 
-*/
-function OnPageLoad() {
-    actionSDK.executeApi(new actionSDK.GetContext.Request())
-        .then(function (response: actionSDK.GetContext.Response) {
-            console.info("GetContext - Response: " + JSON.stringify(response));
-            actionContext = response.context;
-            getDataRows(response.context.actionId);
-        })
-        .catch(function (error) {
-            console.error("GetContext - Error: " + JSON.stringify(error));
+/* 
+    *   @desc It sets tabs functionality using buttons, div, classes and data-* attributes
+    *       e.g. - setTabs("buttonClass", "buttonClass--active", "contentClass", "contentClass--active", "data-for-tab", "data-tab");
+    *   @param buttonClass: common classname of button: string
+    *   @param buttonClassActive: classname for button for which content will be shown(active): string
+    *   @param contentClass: common classname for the contents: string
+    *   @param contentClassActive: classname for the content to be displayed(active): string
+    *   @param OnButtonAttribute: Attribute for the button to fetch data active content class: string
+    *   @param onContentAttribute: Attribute for the content to display the data: string
+    */
+function setTabs(buttonClass: string, buttonClassActive: string, contentClass: string, contentClassActive: string, OnButtonAttribute: string, onContentAttribute: string) {
+    document.querySelectorAll("." + buttonClass).forEach(button => {
+        button.addEventListener("click", () => {
+            const barParent = button.parentElement;
+            const contentContainer = barParent.parentElement;
+            const tabNum = button.getAttribute(OnButtonAttribute);
+            const tabActive = contentContainer.querySelector(`.${contentClass}[${onContentAttribute}="${tabNum}"]`);
+            barParent.querySelectorAll("." + buttonClass).forEach(button => {
+                button.classList.remove(buttonClassActive);
+            });
+            contentContainer.querySelectorAll("." + contentClass).forEach(tab => {
+                tab.classList.remove(contentClassActive);
+            });
+
+            button.classList.add(buttonClassActive);
+            tabActive.classList.add(contentClassActive);
         });
+    });
 }
 /*
-*	@desc It switched between display:none and display:block based on the page navigation.
-*       e.g.- setPages("pageId1","pageId2")
-*   @param divId1 - current displayed id and: elementId
-*   @param divId2 - next div to be displayed: elementId
+*   @desc This function makes api call to fetch the actionInstance details like context, responses, summary, responder and non-responder details
 */
-function setPages(id1, id2) {
-    let elementIdCurrent = document.getElementById(id1);
-    let elementIdNext = document.getElementById(id2);
-    if (elementIdCurrent && elementIdCurrent.style.display == 'block') {
-        UxUtils.addCSS(elementIdCurrent, { display: "none" });
-        UxUtils.addCSS(elementIdNext, { display: "block" });
-    }
-}
-/*
-*   @desc It uses actionId of actionInstance to fetch summary and dataRows.
-*   Datarows are the array of objects of all the responses
-*   It makes an API call to service and gets the context as response which is saved in a global variable 
-*   actionDataRows: stores all the responses, the format of response will be array of actionDataRow objects which are the rows generated in each response 
-*   actionSummary: It is summary of the data-rows like number of responders
-*   actionInstance: It is the detail of actionInstance like creatorid, expirt time etc
-*   @param actionId - (actionSDK.GetContext.Response).context.actionId
-*/
-function getDataRows(actionId) {
-    let getActionRequest = new actionSDK.GetAction.Request(actionId);
-    let getSummaryRequest = new actionSDK.GetActionDataRowsSummary.Request(actionId, true);
-    let getDataRowsRequest = new actionSDK.GetActionDataRows.Request(actionId);
-    let batchRequest = new actionSDK.BaseApi.BatchRequest([getActionRequest, getSummaryRequest, getDataRowsRequest]);
-    actionSDK.executeBatchApi(batchRequest)
-        .then(function (batchResponse: actionSDK.BaseApi.BatchResponse) {
-            console.info("BatchResponse: " + JSON.stringify(batchResponse));
-            actionInstance = (<actionSDK.GetAction.Response>batchResponse.responses[0]).action;
-            actionSummary = (<actionSDK.GetActionDataRowsSummary.Response>batchResponse.responses[1]).summary;
-            actionDataRows = (<actionSDK.GetActionDataRows.Response>batchResponse.responses[2]).dataRows;
+async function OnPageLoad() {
+    actionContext = await ActionSdkHelper.getContext();
+    if (actionContext) {
+        myUserId = actionContext.userId;
+        actionInstance = await ActionSdkHelper.getActionInstance(actionContext);
+        actionSummary = await ActionSdkHelper.getActionSummary(actionContext);
+        actionDataRows = await ActionSdkHelper.getActionDataRows(actionContext);
+        actionMemberCount = await ActionSdkHelper.getMemberCount(actionContext);
+        actionNonResponders = await ActionSdkHelper.getNonResponders(actionContext);
+        if (actionDataRows) {
             actionDataRowsLength = actionDataRows == null ? 0 : actionDataRows.length;
-            createBody();
-        })
-        .catch(function (error) {
-            console.log("Console log: Error: " + JSON.stringify(error));
-        });
+            ResponderDetails = await ActionSdkHelper.getResponderDetails(actionContext, actionDataRowsLength, actionDataRows);
+        }
+        else {
+            console.log("dataRows fetch failed");
+        }
+    }
+    else {
+        console.log("context fecth API failed");
+    }
+    createBody();
 }

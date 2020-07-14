@@ -1,5 +1,6 @@
 import { Utils } from "./Utils";
 import strings from '../../assets/strings/en-us/strings.json';
+import { GetActionSubscriptionNonParticipants } from "action-sdk-sunny";
 
 export class UxUtils {
     private static readonly DEFAULT_SPACE_LENGTH = "10pt";
@@ -378,36 +379,6 @@ export class UxUtils {
             }
             element.style.cssText = cssText;
         }
-    }
-
-    /* 
-    *   @desc It sets tabs functionality using buttons, div, classes and data-* attributes
-    *       e.g. - setTabs("buttonClass", "buttonClass--active", "contentClass", "contentClass--active", "data-for-tab", "data-tab");
-    *   @param buttonClass: common classname of button: string
-    *   @param buttonClassActive: classname for button for which content will be shown(active): string
-    *   @param contentClass: common classname for the contents: string
-    *   @param contentClassActive: classname for the content to be displayed(active): string
-    *   @param OnButtonAttribute: Attribute for the button to fetch data active content class: string
-    *   @param onContentAttribute: Attribute for the content to display the data: string
-    */
-    public static setTabs(buttonClass: string, buttonClassActive: string, contentClass: string, contentClassActive: string, OnButtonAttribute: string, onContentAttribute: string) {
-        document.querySelectorAll("." + buttonClass).forEach(button => {
-            button.addEventListener("click", () => {
-                const barParent = button.parentElement;
-                const contentContainer = barParent.parentElement;
-                const tabNum = button.getAttribute(OnButtonAttribute);
-                const tabActive = contentContainer.querySelector(`.${contentClass}[${onContentAttribute}="${tabNum}"]`);
-                barParent.querySelectorAll("." + buttonClass).forEach(button => {
-                    button.classList.remove(buttonClassActive);
-                });
-                contentContainer.querySelectorAll("." + contentClass).forEach(tab => {
-                    tab.classList.remove(contentClassActive);
-                });
-
-                button.classList.add(buttonClassActive);
-                tabActive.classList.add(contentClassActive);
-            });
-        });
     }
     private static getPixelRatio() {
         var ctx: any = document.createElement("canvas").getContext("2d"),
