@@ -232,11 +232,8 @@ function getResponderTabs() {
         UxUtils.setClass(tableRow, "textDisplay clickable");
         UxUtils.addElement(tableRow, tableBody);
         let profilePicColumn = UxUtils.getElement('TD');
-        let profilePic = UxUtils.getElement("img");
-        UxUtils.addAttribute(profilePic, { "class": "profilePic", "src": "images/dummyUser.png", "alt": "Avatar" });
-        UxUtils.addElement(profilePic, profilePicColumn);
         UxUtils.addElement(profilePicColumn, tableRow);
-
+        UxUtils.addElement(UxCommonComponent.getAvatar(ResponderDetails[itr].label), profilePicColumn);
         let nameColumn = UxUtils.getElement('TD');
         if (ResponderDetails[itr].userId == myUserId) {
             UxUtils.setText(nameColumn, UxUtils.getString("You"));
@@ -278,11 +275,8 @@ function getNonRespondersTabs() {
         UxUtils.setClass(tableRow, "textDisplay");
         UxUtils.addElement(tableRow, tableBody);
         let profilePicColumn = UxUtils.getElement('TD');
-        let profilePic = UxUtils.getElement("img");
-        UxUtils.addAttribute(profilePic, { "class": "profilePic", "src": "images/dummyUser.png", "alt": "Avatar" });
-        UxUtils.addElement(profilePic, profilePicColumn);
         UxUtils.addElement(profilePicColumn, tableRow);
-
+        UxUtils.addElement(UxCommonComponent.getAvatar(actionNonResponders[itr].label), profilePicColumn);
         let nameColumn = UxUtils.getElement('TD');
         if (actionNonResponders[itr].userId == myUserId) {
             UxUtils.setText(nameColumn, UxUtils.getString("You"));
@@ -331,15 +325,16 @@ function getResponsesperQuestion(column) {
             UxUtils.setClass(userProfile, "userProfile");
             let perRowuser = UxUtils.getElement("Text");
             UxUtils.setClass(perRowuser, "textDisplay");
-            let profilePic = UxUtils.getElement('img');
-            UxUtils.addAttribute(profilePic, { "class": "profilePic", "src": "images/dummyUser.png", "alt": "Avatar" });
+            let responderPic = UxUtils.getElement("span");
+            UxUtils.setClass(responderPic, "marginRight");
+            UxUtils.addElement(UxCommonComponent.getAvatar(ResponderDetails[itr].label), responderPic);
+            UxUtils.addElement(responderPic, userProfile);
             if (myUserId == actionDataRows[itr].creatorId) {
                 UxUtils.setText(perRowuser, UxUtils.getString("You"));
             }
             else {
                 UxUtils.setText(perRowuser, ResponderDetails[itr].label);
             }
-            UxUtils.addElement(profilePic, userProfile);
             UxUtils.addElement(perRowuser, userProfile);
             UxUtils.addElement(userProfile, rowData);
             let perRowResponse = UxUtils.getDiv();
@@ -384,13 +379,12 @@ async function getResponsePerUser(id, index) {
         let Identity = UxUtils.getDiv();
         UxUtils.setClass(Identity, "ResponseHeader");
         let responderPic = UxUtils.getElement("span");
-        let profilePic = UxUtils.getElement("img");
-        UxUtils.addAttribute(profilePic, { "class": "profilePic", "src": "images/dummyUser.png", "alt": "Avatar" });
-        UxUtils.addElement(profilePic, responderPic);
+        UxUtils.setClass(responderPic, "marginRight");
         UxUtils.addElement(responderPic, Identity);
         let responderName = UxUtils.getElement("span");
         UxUtils.setClass(responderName, "TitleDiv");
         let userDetail = await ActionSdkHelper.getResponder(actionContext.subscription, id);
+        UxUtils.addElement(UxCommonComponent.getAvatar(userDetail[0].displayName), responderPic);
         if (id == myUserId) {
             UxUtils.setText(responderName, UxUtils.getString("YourResponse"));
         }
@@ -470,24 +464,33 @@ function setTabs(buttonClass: string, buttonClassActive: string, contentClass: s
 *   @desc This function makes api call to fetch the actionInstance details like context, responses, summary, responder and non-responder details
 */
 async function OnPageLoad() {
-    actionContext = await ActionSdkHelper.getContext();
-    if (actionContext) {
-        myUserId = actionContext.userId;
-        actionInstance = await ActionSdkHelper.getActionInstance(actionContext);
-        actionSummary = await ActionSdkHelper.getActionSummary(actionContext);
-        actionDataRows = await ActionSdkHelper.getActionDataRows(actionContext);
-        actionMemberCount = await ActionSdkHelper.getMemberCount(actionContext);
-        actionNonResponders = await ActionSdkHelper.getNonResponders(actionContext);
-        if (actionDataRows) {
-            actionDataRowsLength = actionDataRows == null ? 0 : actionDataRows.length;
-            ResponderDetails = await ActionSdkHelper.getResponderDetails(actionContext, actionDataRowsLength, actionDataRows);
+    let loader = UxUtils.getDiv();
+    UxUtils.setClass(loader, "loader");
+    UxUtils.addCSS(loader, { "display": "block" });
+    UxUtils.addElement(loader, root);
+    try {
+        actionContext = await ActionSdkHelper.getContext();
+        if (actionContext) {
+            myUserId = actionContext.userId;
+            actionInstance = await ActionSdkHelper.getActionInstance(actionContext);
+            actionSummary = await ActionSdkHelper.getActionSummary(actionContext);
+            actionDataRows = await ActionSdkHelper.getActionDataRows(actionContext);
+            actionMemberCount = await ActionSdkHelper.getMemberCount(actionContext);
+            actionNonResponders = await ActionSdkHelper.getNonResponders(actionContext);
+            if (actionDataRows) {
+                actionDataRowsLength = actionDataRows == null ? 0 : actionDataRows.length;
+                ResponderDetails = await ActionSdkHelper.getResponderDetails(actionContext, actionDataRowsLength, actionDataRows);
+            }
+            else {
+                console.log("dataRows fetch failed");
+            }
         }
         else {
-            console.log("dataRows fetch failed");
+            console.log("context fecth API failed");
         }
     }
-    else {
-        console.log("context fecth API failed");
+    finally {
+        UxUtils.addCSS(loader, { "display": "none" });
     }
     createBody();
 }
