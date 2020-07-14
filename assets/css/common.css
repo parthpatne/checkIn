@@ -208,7 +208,7 @@ div#fugo{
 }
 
 .meter { 
-    height: 10px;
+    height: 8px;
     position: relative;
     background: #eee;
     -moz-border-radius: 25px;
@@ -248,7 +248,7 @@ div#fugo{
     overflow: hidden;
 }
 .progressBar { 
-    height: 10px;
+    height: 8px;
     position: relative;
     background: #eee;
     -moz-border-radius: 25px;
@@ -292,7 +292,7 @@ div#fugo{
     background: none;
     outline: none;
     height: 15px;
-    font-size: 15px;
+    font-size: small;
     font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
 }
 .buttonAsString:hover {
@@ -304,7 +304,7 @@ div#fugo{
     margin-left: -2px;
 }
 .textDisplay {
-    font-size: 15px;
+    font-size: small;
     font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
     overflow: hidden;
 }
@@ -340,7 +340,7 @@ div#fugo{
 }
 .tabs__content {
     padding: 15px;
-    font-size: 15px;
+    font-size: x-small;
     display: none;
     height: 66vh;
     overflow-y:scroll;
@@ -377,7 +377,7 @@ h4 {
 }
 .responsePerQuestion {
     font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
-    font-size: 15px;
+    font-size: small;
     margin-bottom: 15px;
     margin-left: 35px;
     margin-right: 10px;
@@ -393,7 +393,7 @@ h4 {
 .TitleDiv {
     font-weight: bold;
     font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
-    font-size: 15px;
+    font-size: medium;
 }
 .ResponseHeader {
     border-bottom: .5px solid rgb(206, 206, 206);
@@ -424,6 +424,13 @@ h4 {
     border-spacing: 10px 0px; 
     padding-bottom: 2px;
 }
+.rowAlign {
+    display: table;
+    width: 85vw;
+    table-layout: auto; 
+    border-spacing: 0px; 
+    padding-bottom: 2px;
+}
 .column {
     display: table-cell;
 }
@@ -451,7 +458,7 @@ h4 {
     font-family: sans-serif;
 }
 .subHeading {
-    font-size: 15px;
+    font-size: small;
     padding-top: 5px;
     font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
     margin-bottom: 20px;
@@ -535,13 +542,27 @@ table {
     color: #6264a7;
     font-weight: bold;
 }
-.footer{
+.footer {
     padding-top: 5px;
+    font-size: medium;
 }
-.headerView{
+.headerView {
     padding-top: 10px;
     border-top: .5px solid rgb(206, 206, 206);
     margin-left: auto;
+}
+.circle {
+    background-color: #ccc;
+    border-radius: 50%;
+    height: 30px;
+    text-align: center;
+    width: 30px;
+}
+.initials {
+    font-size: calc(30px / 2); /* 50% of parent */
+    line-height: 1;
+    position: relative;
+    top: calc(30px / 4); /* 25% of parent */
 }
 /* -------------------------------------
 Common CSS UxUtils

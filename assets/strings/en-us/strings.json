@@ -17,7 +17,7 @@
     "_responders.comment": "People who responded to the survey",
     "nonResponders": "Yet to respond",
     "_nonResponders.comment": "People who are yet to respond",
-    "back": "< Back",
+    "back": "<  Back",
     "_back.comment": "Go to the previous page",
     "optionParticipation": "{0}({1}%)",
     "_optionParticipation.comment": "People response per options for MCQ",
@@ -60,5 +60,7 @@
     "choiceDeleteErrorTitle": "Choice Delete Error",
     "_choiceDeleteErrorTitle.comment": "Title for delete choice dialogue incase choices are less than 2",
     "choiceDeleteErrorText": "At least two choices is mandatory",
-    "_choiceDeleteErrorText.comment": "Text for delete choice dialogue incase choices are less than 2"
+    "_choiceDeleteErrorText.comment": "Text for delete choice dialogue incase choices are less than 2",
+    "optionIndicator": ". . .",
+    "_optionIndicator.comment": "Dots to represent the options available"
 }

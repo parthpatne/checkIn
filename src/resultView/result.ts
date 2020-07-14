@@ -3,6 +3,7 @@ import * as actionSDK from 'action-sdk-sunny';
 import { Utils } from "../common/Utils";
 import { UxUtils } from "../common/UxUtils";
 import { ActionSdkHelper } from '../common/ActionSdkHelper';
+import { UxCommonComponent } from './UxCommonComponent';
 
 const root = document.getElementById("root");
 let actionInstance = null;
@@ -36,61 +37,17 @@ function getHeaderContainer() {
     UxUtils.setClass(title, "summaryTitle");
     UxUtils.setText(title, actionInstance.displayName);
 
-    const dueDate = UxUtils.getDiv();
-    UxUtils.setClass(dueDate, "subHeading");
+    let optionDetails = UxUtils.getDiv();
+    UxUtils.setClass(optionDetails, "rowAlign");
+    let dueDate = UxUtils.getElement("text");
+    UxUtils.setClass(dueDate, "subHeading columnleft");
     UxUtils.setText(dueDate, UxUtils.getString("dueBy", new Date(actionInstance.expiryTime).toDateString()));
+    UxUtils.addElement(dueDate, optionDetails);
 
     UxUtils.addElement(title, headerContainer);
-    UxUtils.addElement(dueDate, headerContainer);
+    UxUtils.addElement(optionDetails, headerContainer);
     return headerContainer;
 }
-/*
-*	 @desc Container to display the progress bar with people who and responded to total memeber of the group
-*/
-async function getTopSummaryView() {
-    let participationPercentage = 0;
-    const barDiv = UxUtils.getDiv();
-    UxUtils.setClass(barDiv, "TopSummaryContainer");
-    participationPercentage = Math.round((actionSummary.rowCreatorCount / actionMemberCount) * 100);
-    let percentageBar = UxUtils.getDiv();
-    let headingpercentage = UxUtils.getElement("text");
-    UxUtils.setClass(headingpercentage, "headings")
-    UxUtils.setText(headingpercentage, UxUtils.getString("participationPercentage", participationPercentage));
-    UxUtils.addElement(headingpercentage, percentageBar);
-    let progressBar = UxUtils.getDiv();
-    UxUtils.setClass(progressBar, "progressBar");
-    let myProgress = UxUtils.getElement('span');
-
-    UxUtils.addCSS(myProgress, { width: participationPercentage + "%" });
-
-    UxUtils.addElement(myProgress, progressBar);
-
-    let buttonLink = UxUtils.getDiv();
-    UxUtils.setClass(buttonLink, "topSummaryText");
-    let summaryTextButton = UxUtils.getElement("button");
-    UxUtils.setClass(summaryTextButton, "buttonAsString textSmallBold coloredLinkBold");
-    if (actionSummary.rowCreatorCount == actionSummary.rowCount) {
-        UxUtils.setText(summaryTextButton, UxUtils.getString("XofYresponded", actionSummary.rowCreatorCount, actionMemberCount));
-    }
-    else {
-        UxUtils.setText(summaryTextButton, UxUtils.getString("NResponseYPeople", actionSummary.rowCount, actionSummary.rowCreatorCount));
-    }
-    summaryTextButton.addEventListener('click', () => {
-        UxUtils.setTabs("tabs__button", "tabs__button--active", "tabs__content", "tabs__content--active", "data-for-tab", "data-tab");
-        setPages("aggregateSummaryPage", "tabPage");
-    });
-
-    UxUtils.addElement(summaryTextButton, buttonLink);
-
-    UxUtils.addElement(percentageBar, barDiv);
-    UxUtils.addElement(progressBar, barDiv);
-    UxUtils.addElement(buttonLink, barDiv);
-    return barDiv;
-}
-/*
-*	@desc Gets aggregated and summarized view for all the question in the actionInstance. 
-*   Here column is synonym of question. dataTables  - list of data-tables of the action., datacolumns  - list of question's data
-*/
 function createQuestionView() {
     const totalQuestion = UxUtils.getDiv();
     actionInstance.dataTables[0].dataColumns.forEach((column) => {
@@ -107,7 +64,7 @@ function createQuestionView() {
             case actionSDK.ActionDataColumnValueType.SingleOption:
             case actionSDK.ActionDataColumnValueType.MultiOption:
                 column.options.forEach((option: actionSDK.ActionDataColumnOption) => {
-                    optionView = getAggregateOptionView(option.displayName, option.name, column);
+                    optionView = UxCommonComponent.getAggregateOptionView(actionSummary, option.displayName, option.name, column);
                     UxUtils.addElement(optionView, questionDiv);
                 });
                 break;
@@ -122,49 +79,6 @@ function createQuestionView() {
         UxUtils.addElement(questionDiv, totalQuestion);
     });
     return totalQuestion;
-}
-/*
-*	 @desc Gets aggregated response for MCQ and their options
-*    @param title: title of the option from column for MCQ: actionSDK.ActionDataColumnOption.displayName
-*    @param id - id of option from column for MCQ : actionSDK.ActionDataColumnOption.name
-*    @param column - per question from dataTables[i].dataColumns: actionSDK.ActionDataColumnValueType
-*    @return progressbar for each option
-*/
-function getAggregateOptionView(title, optionId, column) {
-
-    let optionDiv = UxUtils.getDiv();
-    let responseRowSpan = UxUtils.getDiv();
-
-    let percentage = (actionSummary.defaultAggregates).hasOwnProperty(column.name) ? JSON.parse(actionSummary.defaultAggregates[column.name])[optionId] : 0;
-    let wid = percentage / actionSummary.rowCount * 100;
-    let optionpercentage = isNaN(wid) ? 0 : wid.toFixed(2);
-    let optionCount = isNaN(percentage) ? 0 : percentage;
-    UxUtils.setClass(responseRowSpan, "row");
-
-    let optionDetails = UxUtils.getDiv();
-    UxUtils.setClass(optionDetails, "row");
-    let optionTitle = UxUtils.getElement("text");
-    UxUtils.setClass(optionTitle, "textDisplay columnleft");
-    UxUtils.setText(optionTitle, title);
-    UxUtils.addElement(optionTitle, optionDetails);
-
-    let optionParticipation = UxUtils.getElement("text");
-    UxUtils.setClass(optionParticipation, "textDisplay columnright");
-    UxUtils.setText(optionParticipation, UxUtils.getString("optionParticipation", optionCount, optionpercentage));
-    UxUtils.addElement(optionParticipation, optionDetails);
-
-    UxUtils.addElement(optionDetails, responseRowSpan);
-
-    let meterDiv = UxUtils.getDiv();
-    UxUtils.setClass(meterDiv, "meter");
-    let spanTag1 = UxUtils.getElement('span');
-
-    UxUtils.addCSS(spanTag1, { width: optionpercentage + "%" });
-    UxUtils.addElement(spanTag1, meterDiv);
-    UxUtils.addElement(meterDiv, responseRowSpan);
-    UxUtils.addElement(responseRowSpan, optionDiv);
-
-    return optionDiv;
 }
 /*
 *	 @desc Gets aggregated response for numeric questions, numeric questions summary has json field for sum and average
@@ -197,7 +111,7 @@ function getAggregateNumericView(column) {
     UxUtils.setClass(responseText, "buttonAsString columncenter");
     responseText.addEventListener('click', () => {
         getResponsesperQuestion(column);
-        setPages("aggregateSummaryPage", "responseViewPage");
+        UxCommonComponent.setPages("aggregateSummaryPage", "responseViewPage");
     });
     UxUtils.addElement(responseText, responseRowSpan);
     UxUtils.addElement(sumText, responseRowSpan);
@@ -226,7 +140,7 @@ function getAggregateTextView(column) {
     UxUtils.setClass(responseText, "buttonAsString columncenter");
     responseText.addEventListener('click', () => {
         getResponsesperQuestion(column);
-        setPages("aggregateSummaryPage", "responseViewPage");
+        UxCommonComponent.setPages("aggregateSummaryPage", "responseViewPage");
     });
     UxUtils.addElement(responseText, responseRowSpan);
     UxUtils.addElement(responseRowSpan, textQuestion);
@@ -241,7 +155,7 @@ async function mainPage() {
     UxUtils.setId(aggregateSummaryPage, "aggregateSummaryPage");
     const headerContainer = getHeaderContainer();
     UxUtils.addElement(headerContainer, aggregateSummaryPage);
-    const sumamaryContainer = await getTopSummaryView();
+    const sumamaryContainer = await UxCommonComponent.getTopSummaryView(actionSummary, actionMemberCount, "aggregateSummaryPage", "tabPage", UxCommonComponent.setPages);
     UxUtils.addElement(sumamaryContainer, aggregateSummaryPage);
     const questionContainer = createQuestionView();
     UxUtils.addElement(questionContainer, aggregateSummaryPage);
@@ -295,10 +209,11 @@ async function getResNonResTabs() {
     UxUtils.addElement(backButton, tabPage);
 
     backButton.addEventListener('click', () => {
-        setPages("tabPage", "aggregateSummaryPage");
+        UxCommonComponent.setPages("tabPage", "aggregateSummaryPage");
     });
     UxUtils.addCSS(tabPage, { display: "none" });
     UxUtils.addElement(tabPage, root);
+    setTabs("tabs__button", "tabs__button--active", "tabs__content", "tabs__content--active", "data-for-tab", "data-tab");
 }
 /*
 *	@desc Create the content box for responders of the actionInstance in tabular format
@@ -340,7 +255,7 @@ function getResponderTabs() {
             let index = (<HTMLTableRowElement>target.parentElement).rowIndex;
             let id = (<HTMLTableRowElement>target.parentElement).id;
             getResponsePerUser(id, index);
-            setPages("tabPage", "responsePerUserViewPage");
+            UxCommonComponent.setPages("tabPage", "responsePerUserViewPage");
         }
     };
     UxUtils.addElement(table, ResponderDiv);
@@ -439,7 +354,7 @@ function getResponsesperQuestion(column) {
     UxUtils.setText(backButton, UxUtils.getString("back"));;
     UxUtils.setClass(backButton, "buttonAsString footer");
     backButton.addEventListener('click', () => {
-        setPages("responseViewPage", "aggregateSummaryPage");
+        UxCommonComponent.setPages("responseViewPage", "aggregateSummaryPage");
     });
     UxUtils.addElement(rowDiv, pageId);
     UxUtils.addElement(backButton, pageId);
@@ -517,10 +432,39 @@ async function getResponsePerUser(id, index) {
     UxUtils.setText(backButton, UxUtils.getString("back"));
     UxUtils.setClass(backButton, "buttonAsString footer");
     backButton.addEventListener('click', () => {
-        setPages("responsePerUserViewPage", "tabPage");
+        UxCommonComponent.setPages("responsePerUserViewPage", "tabPage");
     });
     UxUtils.addElement(rowDiv, pageId);
     UxUtils.addElement(backButton, pageId);
+}
+/* 
+    *   @desc It sets tabs functionality using buttons, div, classes and data-* attributes
+    *       e.g. - setTabs("buttonClass", "buttonClass--active", "contentClass", "contentClass--active", "data-for-tab", "data-tab");
+    *   @param buttonClass: common classname of button: string
+    *   @param buttonClassActive: classname for button for which content will be shown(active): string
+    *   @param contentClass: common classname for the contents: string
+    *   @param contentClassActive: classname for the content to be displayed(active): string
+    *   @param OnButtonAttribute: Attribute for the button to fetch data active content class: string
+    *   @param onContentAttribute: Attribute for the content to display the data: string
+    */
+function setTabs(buttonClass: string, buttonClassActive: string, contentClass: string, contentClassActive: string, OnButtonAttribute: string, onContentAttribute: string) {
+    document.querySelectorAll("." + buttonClass).forEach(button => {
+        button.addEventListener("click", () => {
+            const barParent = button.parentElement;
+            const contentContainer = barParent.parentElement;
+            const tabNum = button.getAttribute(OnButtonAttribute);
+            const tabActive = contentContainer.querySelector(`.${contentClass}[${onContentAttribute}="${tabNum}"]`);
+            barParent.querySelectorAll("." + buttonClass).forEach(button => {
+                button.classList.remove(buttonClassActive);
+            });
+            contentContainer.querySelectorAll("." + contentClass).forEach(tab => {
+                tab.classList.remove(contentClassActive);
+            });
+
+            button.classList.add(buttonClassActive);
+            tabActive.classList.add(contentClassActive);
+        });
+    });
 }
 /*
 *   @desc This function makes api call to fetch the actionInstance details like context, responses, summary, responder and non-responder details
@@ -546,18 +490,4 @@ async function OnPageLoad() {
         console.log("context fecth API failed");
     }
     createBody();
-}
-/*
-*	@desc It switched between display:none and display:block based on the page navigation.
-*       e.g.- setPages("pageId1","pageId2")
-*   @param divId1 - current displayed id and: elementId
-*   @param divId2 - next div to be displayed: elementId
-*/
-function setPages(id1, id2) {
-    let elementIdCurrent = document.getElementById(id1);
-    let elementIdNext = document.getElementById(id2);
-    if (elementIdCurrent && elementIdCurrent.style.display == 'block') {
-        UxUtils.addCSS(elementIdCurrent, { display: "none" });
-        UxUtils.addCSS(elementIdNext, { display: "block" });
-    }
 }
