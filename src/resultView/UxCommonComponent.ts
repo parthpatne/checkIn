@@ -99,4 +99,27 @@ export class UxCommonComponent {
 
         return optionDiv;
     }
+    /*
+    * Get avatar of initials
+    * @param initials initials with which we want to create avatar
+    */
+
+    public static getAvatar(userName: string) {
+        let names = userName.split(' ');
+        let initials = names[0].substring(0, 1).toUpperCase();
+        if (names.length == 1) {
+            initials += names[0].substring(names[0].length - 1, names[0].length).toUpperCase();
+        }
+        else if (names.length > 1) {
+            initials += names[names.length - 1].substring(0, 1).toUpperCase();
+        }
+
+        let profilePic = UxUtils.getElement("span");
+        UxUtils.setClass(profilePic, "circle");
+        let initialsSpan = UxUtils.getElement("span");
+        UxUtils.setClass(initialsSpan, "initials");
+        UxUtils.setText(initialsSpan, initials);
+        UxUtils.addElement(initialsSpan, profilePic);
+        return profilePic;
+    }
 }
