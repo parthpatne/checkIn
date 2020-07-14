@@ -4,6 +4,7 @@ import { UxUtils } from '../common/UxUtils';
 import { ActionSdkHelper } from '../common/ActionSdkHelper';
 
 let root = document.getElementById("root");
+let actionContext: actionSDK.ActionSdkContext = null;
 let actionInstance: actionSDK.Action = null;
 let columnValues = {};
 
@@ -16,15 +17,16 @@ OnPageLoad();
 * @desc Entry Point for Building Up Response View and Loads requires attributes from Action SDK,
 *       Fetch Action Instance using Service API and on Success create Response body
 */
-function OnPageLoad() {
-    ActionSdkHelper.getAction(createBody);
+async function OnPageLoad() {
+    actionContext = await ActionSdkHelper.getContext();
+    actionInstance = await ActionSdkHelper.getAction(actionContext);
+    createBody();
 }
 
 /*
 * @desc Create Response View Body for corresponding Action Instances
 */
-function createBody(action: actionSDK.Action) {
-    actionInstance = action;
+function createBody() {
     let title = UxUtils.getElement('h3');
     let submitButton = UxUtils.getButton(UxUtils.getString("submit"), function () {
         /*
@@ -82,14 +84,14 @@ function createQuestionView() {
 }
 
 /*
-* @desc Function to trigger the flow for Submit Survey Response,
-*       Get action package context from Service which is required to create response
+* @desc Function to trigger the flow for Submit Survey Response
 */
 function submitForm() {
+    let dataRow = getDataRow(actionContext.actionId);
     /*
     * Create Submit Response Request
     */
-    ActionSdkHelper.addDataRows(getDataRow);
+    ActionSdkHelper.addDataRows(dataRow);
 }
 
 /*

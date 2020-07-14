@@ -13,6 +13,7 @@ let bodyDiv = UxUtils.getDiv();
 let footerDiv = UxUtils.getDiv();
 let questionCount = 0;
 let currentSelectedTemplate = 0;
+let actionContext: actionSDK.ActionSdkContext = null;
 let strings;
 
 /*
@@ -23,19 +24,19 @@ OnPageLoad();
 /*
 * @desc Entry Point for Building Up Creation View and Loads requires attributes from Action SDK
 */
-function OnPageLoad() {
-
+async function OnPageLoad() {
+    actionContext = await ActionSdkHelper.getContext();
     let surveytitle = UxUtils.getContentEditableSpan("", UxUtils.getString("surveyTitlePlaceholder"), {}, null);
     let selectTemplate = <HTMLSelectElement>UxUtils.getElement("select");
     let questionTypeList = <HTMLSelectElement>UxUtils.getElement("select");
     let submitButton = UxUtils.getButton(UxUtils.getString("submitForm"), function () {
-        submitForm();
+        submitForm(actionContext.actionPackageId);
     });
     let addQuestionButton = UxUtils.getButton(UxUtils.getString("addQuestion"), function () {
         addQuestion(actionSDK.ActionDataColumnValueType.SingleOption);
     });
 
-    strings = ActionSdkHelper.getLocalizedStrings();
+    strings = await ActionSdkHelper.getLocalizedStrings();
     surveytitle.setAttribute("id", "surveyTitle");
     submitButton.setAttribute("id", "submitForm");
     UxUtils.setClass(selectTemplate, 'selectTemplateDropDown');
@@ -328,22 +329,12 @@ function addTextQuestion(questionJson?: JSON) {
 }
 
 /*
-* @desc Function to trigger the flow for Creating new survey instance,
-*       fetch the action package context from Service which is required to create the new action instance
-*/
-function submitForm() {
-    ActionSdkHelper.getActionPackageId(createAction);
-}
-
-/*
 * @desc Function to create new action instance after validation,
 *       in case of validation failure it will prompt Dialog specific to error
 * @param {string} actionPackageId required for prefilled question content
 */
-function createAction(actionPackageId: string) {
+function submitForm(actionPackageId: string) {
     let surveyTitle = (<HTMLInputElement>document.getElementById("surveyTitle")).innerText;
-
-
     /*
     * Validate for Non Empty Survey title
     */
