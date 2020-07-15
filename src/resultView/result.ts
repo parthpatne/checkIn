@@ -458,8 +458,7 @@ function setTabs(buttonClass: string, buttonClassActive: string, contentClass: s
 *   @desc This function makes api call to fetch the actionInstance details like context, responses, summary, responder and non-responder details
 */
 async function OnPageLoad() {
-    let loader = UxUtils.getLoadingSpinner();
-    UxUtils.addCSS(loader, { "position": "absolute", "left": "60%", "top": "60%", "margin": "-75px 0 0 -75px" });
+    let loader = UxUtils.getLoadingSpinner({ "position": "absolute", "left": "60%", "top": "60%", "margin": "-75px 0 0 -75px" });
     UxUtils.addElement(loader, root);
     try {
         actionContext = await ActionSdkHelper.getContext();

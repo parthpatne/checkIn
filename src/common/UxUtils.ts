@@ -66,7 +66,7 @@ export class UxUtils {
     public static getLoadingSpinner(attributes: {} = null): HTMLDivElement {
         var loadSpinner = this.getDiv();
         loadSpinner.classList.add("loadingSpinnerAttributes");
-        Object.assign(loadSpinner, attributes);
+        this.addCSS(loadSpinner, attributes);
         return loadSpinner;
     }
     /*
@@ -88,7 +88,7 @@ export class UxUtils {
     public static getHorizontalDiv(childrenElements: any[], attributes: {} = null): HTMLDivElement {
         var div: HTMLDivElement = this.getDiv();
         div.classList.add("horizontalDivAttributes");
-        Object.assign(div, attributes);
+        this.addCSS(div, attributes);
         for (var i = 0; i < childrenElements.length; i++) {
             var childElement = childrenElements[i];
             if (childElement) {
@@ -107,7 +107,7 @@ export class UxUtils {
     public static getVerticalDiv(childrenElements: any[], attributes: {} = null): HTMLDivElement {
         var div: HTMLDivElement = this.getDiv();
         div.classList.add("verticalDivAttributes");
-        Object.assign(div, attributes);
+        this.addCSS(div, attributes);
         for (var i = 0; i < childrenElements.length; i++) {
             var childElement = childrenElements[i];
             if (childElement) {
@@ -143,7 +143,7 @@ export class UxUtils {
     public static getLabel(text: string = null, attributes: {} = null): HTMLDivElement {
         var labelDiv: HTMLDivElement = this.getDiv();
         labelDiv.classList.add("labelAttributes");
-        Object.assign(labelDiv, attributes);
+        this.addCSS(labelDiv, attributes);
         this.setText(labelDiv, text, true);
         return labelDiv;
     }
@@ -187,7 +187,7 @@ export class UxUtils {
     public static getBase64CircularImage(data: string = null, dimen: string = this.DEFAULT_IMAGE_DIMEN, attributes: {} = null): HTMLImageElement {
         var circularImage = this.getBase64Image(data);
         circularImage.classList.add("circularImageAttributes");
-        Object.assign(circularImage, attributes);
+        this.addCSS(circularImage, attributes);
         return circularImage;
     }
     /*
@@ -200,7 +200,7 @@ export class UxUtils {
     public static getCircularImage(path: string = null, dimen: string = this.DEFAULT_IMAGE_DIMEN, attributes: {} = null): HTMLImageElement {
         var circularImage = this.getImage(path);
         circularImage.classList.add("circularImageAttributes");
-        Object.assign(circularImage, attributes);
+        this.addCSS(circularImage, attributes);
         return circularImage;
 
     }
@@ -232,7 +232,7 @@ export class UxUtils {
         var image: HTMLImageElement = <HTMLImageElement>this.getElement("img");
         image.src = path;
         image.classList.add("imageAttributes");
-        Object.assign(image, attributes);
+        this.addCSS(image, attributes);
         return image;
     }
     /*
@@ -426,9 +426,9 @@ export class UxUtils {
     }
 
     public static getContentEditableSpan(text: string = "", placeholder: string = "", attributes: {} = null, onInputEvent: () => void) {
-        var element = this.getElement("span", attributes, { "placeholder": placeholder, 'contenteditable': true });
+        var element = this.getElement("span", null, { "placeholder": placeholder, 'contenteditable': true });
         element.classList.add("getContentEditableSpanAttributes");
-        Object.assign(element, attributes);
+        this.addCSS(element, attributes);
         UxUtils.setText(element, text);
 
         var maxLength = attributes["max-length"];
@@ -489,7 +489,7 @@ export class UxUtils {
     */
     public static createInputElement(ph: string, id: string, type: string) {
         var inputelement = document.createElement('input');
-        this.addAttribute(inputelement, { "type": type, "value": "", "id": id, placeholder: ph });
+        this.addAttribute(inputelement, { "type": type, "value": "", "id": id, "placeholder": ph });
         return inputelement;
     }
     private static spinnerCSSAdded = false;
