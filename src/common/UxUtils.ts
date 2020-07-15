@@ -427,7 +427,7 @@ export class UxUtils {
 
     public static getContentEditableSpan(text: string = "", placeholder: string = "", attributes: {} = null, onInputEvent: () => void) {
         var element = this.getElement("span", null, { "placeholder": placeholder, 'contenteditable': true });
-        element.classList.add("getContentEditableSpanAttributes");
+        element.classList.add("contentEditableSpanAttributes");
         this.addCSS(element, attributes);
         UxUtils.setText(element, text);
 

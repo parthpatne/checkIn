@@ -22,10 +22,9 @@ export class UxCommonComponent {
 
         UxUtils.addElement(myProgress, progressBar);
 
-        let buttonLink = UxUtils.getDiv();
-        UxUtils.setClass(buttonLink, "topSummaryTextMargin");
+        let buttonLink = UxUtils.getDiv({ "margin-top": "-8px" });
         let summaryTextButton = UxUtils.getElement("button");
-        UxUtils.setClass(summaryTextButton, "linkColored");
+        UxUtils.setClass(summaryTextButton, "linkColored sizeSmall");
         if (actionSummary.rowCreatorCount == actionSummary.rowCount) {
             UxUtils.setText(summaryTextButton, UxUtils.getString("XofYresponded", actionSummary.rowCreatorCount, actionMemberCount));
         }
@@ -76,13 +75,13 @@ export class UxCommonComponent {
 
         let optionDetails = UxUtils.getDiv();
         UxUtils.setClass(optionDetails, "rowWise");
-        let optionTitle = UxUtils.getElement("text");
-        UxUtils.setClass(optionTitle, "textDisplayLeft");
+        let optionTitle = UxUtils.getElement("text", { "float": "left" });
+        UxUtils.setClass(optionTitle, "textDisplayCommon");
         UxUtils.setText(optionTitle, title);
         UxUtils.addElement(optionTitle, optionDetails);
 
-        let optionParticipation = UxUtils.getElement("text");
-        UxUtils.setClass(optionParticipation, "textDisplayRight");
+        let optionParticipation = UxUtils.getElement("text", { "float": "right" });
+        UxUtils.setClass(optionParticipation, "textDisplayCommon");
         UxUtils.setText(optionParticipation, UxUtils.getString("optionParticipation", optionCount, optionpercentage));
         UxUtils.addElement(optionParticipation, optionDetails);
 
@@ -104,7 +103,7 @@ export class UxCommonComponent {
     * @param initials initials with which we want to create avatar
     */
 
-    public static getAvatar(userName: string) {
+    public static getAvatar(userName: string, attributesCircle: {} = null, attributesInitial: {} = null) {
         let names = userName.split(' ');
         let initials = names[0].substring(0, 1).toUpperCase();
         if (names.length == 1) {
@@ -116,8 +115,10 @@ export class UxCommonComponent {
 
         let profilePic = UxUtils.getElement("span");
         UxUtils.setClass(profilePic, "circle");
+        UxUtils.addCSS(profilePic, attributesCircle);
         let initialsSpan = UxUtils.getElement("span");
         UxUtils.setClass(initialsSpan, "initials");
+        UxUtils.addCSS(initialsSpan, attributesInitial);
         UxUtils.setText(initialsSpan, initials);
         UxUtils.addElement(initialsSpan, profilePic);
         return profilePic;

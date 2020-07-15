@@ -339,23 +339,19 @@ h4 {
     border-spacing: 10px 0px; 
     padding-bottom: 2px;
 }
+.columncenter {
+    display: table-cell;
+    text-align: center;
+}
+.column {
+    display: table-cell;
+}
 .rowAlign {
     display: table;
     width: 85vw;
     table-layout: auto; 
     border-spacing: 0px; 
     padding-bottom: 2px;
-}
-.column {
-    display: table-cell;
-}
-.columncenter {
-    display: table-cell;
-    text-align: center;
-}
-.columnright {
-    display: table-cell;
-    float: right;
 }
 .summaryTitle {
     padding-top: 10px;
@@ -512,10 +508,9 @@ Common components CSS
     overflow: hidden;
 }
 .heading {
-    display:table;
     font-weight: bold;
     font-size: 15px;
-    margin-left: 2px;
+    margin-left: 5px;
     margin-top: 5px;
     margin-bottom: 5px;
 }
@@ -531,7 +526,6 @@ Common components CSS
     outline: none;
     height: 15px;
     font-size: small;
-    font-size: 12px;
     font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
     font-weight: bold;
     color: #6264a7;
@@ -539,10 +533,6 @@ Common components CSS
 .linkColored:hover {
     cursor: pointer;
     text-decoration: underline;
-}
-.topSummaryTextMargin {
-    margin-top: -8px;
-    margin-left: -2px;
 }
 .circle {
     background-color: #ccc;
@@ -566,17 +556,10 @@ Common components CSS
 .columnWise {
     display: table-cell;
 }
-.textDisplayLeft {
+.textDisplayCommon {
     font-size: small;
     font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
     overflow: hidden;
-    float: left;
-}
-.textDisplayRight {
-    font-size: small;
-    font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
-    overflow: hidden;
-    float: right;
 }
 ::-webkit-scrollbar {
     width: 7px;
