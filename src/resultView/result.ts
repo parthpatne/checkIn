@@ -33,19 +33,22 @@ function getHeaderContainer() {
     const headerContainer = UxUtils.getDiv();
     UxUtils.setClass(headerContainer, "headerContainer");
 
-    const title = UxUtils.getDiv();
-    UxUtils.setClass(title, "summaryTitle");
-    UxUtils.setText(title, actionInstance.displayName);
-
     let optionDetails = UxUtils.getDiv();
     UxUtils.setClass(optionDetails, "rowAlign");
-    let dueDate = UxUtils.getElement("text");
-    UxUtils.setClass(dueDate, "subHeading column");
-    UxUtils.setText(dueDate, UxUtils.getString("dueBy", new Date(actionInstance.expiryTime).toDateString()));
-    UxUtils.addElement(dueDate, optionDetails);
+    const title = UxUtils.getElement("Text");
+    UxUtils.setClass(title, "summaryTitle column");
+    UxUtils.setText(title, actionInstance.displayName);
+    let dropDown = UxUtils.getElement("text", { "margin-right": "-15px" });
+    UxUtils.setText(dropDown, UxUtils.getString("optionIndicator"));
 
-    UxUtils.addElement(title, headerContainer);
+    UxUtils.addElement(title, optionDetails);
+    UxUtils.addElement(dropDown, optionDetails);
     UxUtils.addElement(optionDetails, headerContainer);
+
+    let dueDate = UxUtils.getElement("text");
+    UxUtils.setClass(dueDate, "subHeading");
+    UxUtils.setText(dueDate, UxUtils.getString("dueBy", new Date(actionInstance.expiryTime).toDateString()));
+    UxUtils.addElement(dueDate, headerContainer);
     return headerContainer;
 }
 function createQuestionView() {
@@ -306,8 +309,8 @@ function getResponsesperQuestion(column) {
     let rowDiv = UxUtils.getDiv();
     UxUtils.setClass(rowDiv, "responseRow");
     let pageId = document.getElementById("responseViewPage");
-    UxUtils.clearElement(pageId);
     if (pageId) {
+        UxUtils.clearElement(pageId);
         let Identity = UxUtils.getDiv();
         UxUtils.setClass(Identity, "ResponseHeader");
         let questionTitle = UxUtils.getDiv();
@@ -368,62 +371,69 @@ async function getResponsePerUser(id, index) {
     let rowDiv = UxUtils.getDiv();
     UxUtils.setClass(rowDiv, "responseRow");
     let pageId = document.getElementById("responsePerUserViewPage");
-    UxUtils.clearElement(pageId);
-    if (pageId) {
-        let Identity = UxUtils.getDiv();
-        UxUtils.setClass(Identity, "ResponseHeader");
-        let responderPic = UxUtils.getElement("span");
-        UxUtils.setClass(responderPic, "marginRight");
-        UxUtils.addElement(responderPic, Identity);
-        let responderName = UxUtils.getElement("span");
-        UxUtils.setClass(responderName, "TitleDiv");
-        let userDetail = await ActionSdkHelper.getResponder(actionContext.subscription, id);
-        UxUtils.addElement(UxCommonComponent.getAvatar(userDetail[0].displayName), responderPic);
-        if (id == myUserId) {
-            UxUtils.setText(responderName, UxUtils.getString("YourResponse"));
-        }
-        else {
-            UxUtils.setText(responderName, userDetail[0].displayName);
-        }
-        UxUtils.addElement(responderName, Identity);
-        let dataPerUser = actionDataRows[index].columnValues;
-        UxUtils.addElement(Identity, pageId);
-        let questionItr = 0;
-        for (let idx in dataPerUser) {
-            let rowData = UxUtils.getDiv();
-            UxUtils.setClass(rowData, "responseContainer");
-            let ques = UxUtils.getDiv();
-            UxUtils.setClass(ques, "textDisplay");
-            UxUtils.setText(ques, UxUtils.getString("question", questionItr + 1, actionInstance.dataTables[0].dataColumns[questionItr].displayName));
-            let ans = UxUtils.getDiv();
-            UxUtils.setClass(ans, "responsePerQuestion");
-            if (actionInstance.dataTables[0].dataColumns[questionItr].valueType.localeCompare("SingleOption") == 0 || actionInstance.dataTables[0].dataColumns[questionItr].valueType.localeCompare("MultiOption") == 0) {
-                let optionques = actionInstance.dataTables[0].dataColumns[questionItr].options
-                for (let opt = 0; opt < optionques.length; opt++) {
-                    if ((optionques[opt].name).localeCompare(actionDataRows[index].columnValues[idx]) == 0) {
-                        UxUtils.setText(ans, optionques[opt].displayName);
-                        break;
-                    }
-                }
+    let loader = UxUtils.getLoadingSpinner({ "position": "absolute", "left": "60%", "top": "60%", "margin": "-75px 0 0 -75px" });
+    UxUtils.addElement(loader, root);
+    try {
+        if (pageId) {
+            UxUtils.clearElement(pageId);
+            let Identity = UxUtils.getDiv();
+            UxUtils.setClass(Identity, "ResponseHeader");
+            let responderPic = UxUtils.getElement("span");
+            UxUtils.setClass(responderPic, "marginRight");
+            UxUtils.addElement(responderPic, Identity);
+            let responderName = UxUtils.getElement("span");
+            UxUtils.setClass(responderName, "TitleDiv");
+            let userDetail = await ActionSdkHelper.getResponder(actionContext.subscription, id);
+            UxUtils.addElement(UxCommonComponent.getAvatar(userDetail[0].displayName), responderPic);
+            if (id == myUserId) {
+                UxUtils.setText(responderName, UxUtils.getString("YourResponse"));
             }
             else {
-                UxUtils.setText(ans, actionDataRows[index].columnValues[idx]);
+                UxUtils.setText(responderName, userDetail[0].displayName);
             }
-            UxUtils.addElement(ques, rowData);
-            UxUtils.addElement(ans, rowData);
-            questionItr++;
-            UxUtils.addElement(rowData, rowDiv);
-            UxUtils.addElement(UxUtils.lineBreak(), rowDiv);
+            UxUtils.addElement(responderName, Identity);
+            let dataPerUser = actionDataRows[index].columnValues;
+            UxUtils.addElement(Identity, pageId);
+            let questionItr = 0;
+            for (let idx in dataPerUser) {
+                let rowData = UxUtils.getDiv();
+                UxUtils.setClass(rowData, "responseContainer");
+                let ques = UxUtils.getDiv();
+                UxUtils.setClass(ques, "textDisplay");
+                UxUtils.setText(ques, UxUtils.getString("question", questionItr + 1, actionInstance.dataTables[0].dataColumns[questionItr].displayName));
+                let ans = UxUtils.getDiv();
+                UxUtils.setClass(ans, "responsePerQuestion");
+                if (actionInstance.dataTables[0].dataColumns[questionItr].valueType.localeCompare("SingleOption") == 0 || actionInstance.dataTables[0].dataColumns[questionItr].valueType.localeCompare("MultiOption") == 0) {
+                    let optionques = actionInstance.dataTables[0].dataColumns[questionItr].options
+                    for (let opt = 0; opt < optionques.length; opt++) {
+                        if ((optionques[opt].name).localeCompare(actionDataRows[index].columnValues[idx]) == 0) {
+                            UxUtils.setText(ans, optionques[opt].displayName);
+                            break;
+                        }
+                    }
+                }
+                else {
+                    UxUtils.setText(ans, actionDataRows[index].columnValues[idx]);
+                }
+                UxUtils.addElement(ques, rowData);
+                UxUtils.addElement(ans, rowData);
+                questionItr++;
+                UxUtils.addElement(rowData, rowDiv);
+                UxUtils.addElement(UxUtils.lineBreak(), rowDiv);
+            }
         }
+        let backButton = UxUtils.getElement("button");
+        UxUtils.setText(backButton, UxUtils.getString("back"));
+        UxUtils.setClass(backButton, "buttonAsString footer");
+        backButton.addEventListener('click', () => {
+            UxCommonComponent.setPages("responsePerUserViewPage", "tabPage");
+        });
+        UxUtils.addElement(rowDiv, pageId);
+        UxUtils.addElement(backButton, pageId);
     }
-    let backButton = UxUtils.getElement("button");
-    UxUtils.setText(backButton, UxUtils.getString("back"));
-    UxUtils.setClass(backButton, "buttonAsString footer");
-    backButton.addEventListener('click', () => {
-        UxCommonComponent.setPages("responsePerUserViewPage", "tabPage");
-    });
-    UxUtils.addElement(rowDiv, pageId);
-    UxUtils.addElement(backButton, pageId);
+    finally {
+        UxUtils.addCSS(loader, { "display": "none" });
+    }
 }
 /* 
     *   @desc It sets tabs functionality using buttons, div, classes and data-* attributes
