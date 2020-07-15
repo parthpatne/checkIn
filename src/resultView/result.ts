@@ -40,7 +40,7 @@ function getHeaderContainer() {
     let optionDetails = UxUtils.getDiv();
     UxUtils.setClass(optionDetails, "rowAlign");
     let dueDate = UxUtils.getElement("text");
-    UxUtils.setClass(dueDate, "subHeading columnleft");
+    UxUtils.setClass(dueDate, "subHeading column");
     UxUtils.setText(dueDate, UxUtils.getString("dueBy", new Date(actionInstance.expiryTime).toDateString()));
     UxUtils.addElement(dueDate, optionDetails);
 
@@ -295,10 +295,7 @@ function getNonRespondersTabs() {
 *   All the components of this page gets flushed and re-populated on each click of question's response count in aggregateSummaryPage
 */
 function getResponderListPagePerQuestion() {
-    let responseView = UxUtils.getDiv();
-    UxUtils.setClass(responseView, "responseViewPage");
-    UxUtils.setId(responseView, "responseViewPage");
-    UxUtils.addCSS(responseView, { display: "none" });
+    let responseView = UxUtils.getDiv({ display: "none" }, { "class": "responseViewPage", "id": "responseViewPage" });
     UxUtils.addElement(responseView, root);
 }
 /*
@@ -359,10 +356,7 @@ function getResponsesperQuestion(column) {
 *   All the components of this page gets flushed and re-populated on each click of responder's name of getRespondersTab()
 */
 function getPageResponsePerUser() {
-    let ResponsePerUserView = UxUtils.getDiv();
-    UxUtils.setClass(ResponsePerUserView, "ResponsePerUserViewPage");
-    UxUtils.setId(ResponsePerUserView, "responsePerUserViewPage");
-    UxUtils.addCSS(ResponsePerUserView, { display: "none" });
+    let ResponsePerUserView = UxUtils.getDiv({ display: "none" }, { "class": "ResponsePerUserViewPage", "id": "responsePerUserViewPage" });
     UxUtils.addElement(ResponsePerUserView, root);
 }
 /*
@@ -464,9 +458,8 @@ function setTabs(buttonClass: string, buttonClassActive: string, contentClass: s
 *   @desc This function makes api call to fetch the actionInstance details like context, responses, summary, responder and non-responder details
 */
 async function OnPageLoad() {
-    let loader = UxUtils.getDiv();
-    UxUtils.setClass(loader, "loader");
-    UxUtils.addCSS(loader, { "display": "block" });
+    let loader = UxUtils.getLoadingSpinner();
+    UxUtils.addCSS(loader, { "position": "absolute", "left": "60%", "top": "60%", "margin": "-75px 0 0 -75px" });
     UxUtils.addElement(loader, root);
     try {
         actionContext = await ActionSdkHelper.getContext();

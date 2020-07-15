@@ -206,87 +206,6 @@ CSS for Summary View
 div#fugo{
     float:right
 }
-
-.meter { 
-    height: 8px;
-    position: relative;
-    background: #eee;
-    -moz-border-radius: 25px;
-    -webkit-border-radius: 25px;
-    border-radius: 25px;
-    margin-bottom: 10px;
-}
-.meter > span {
-    display: block;
-    height: 100%;
-    -webkit-border-top-right-radius: 20px;
-    -webkit-border-bottom-right-radius: 20px;
-    -moz-border-radius-topright: 20px;
-    -moz-border-radius-bottomright: 20px;
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
-    -webkit-border-top-left-radius: 20px;
-    -webkit-border-bottom-left-radius: 20px;
-    -moz-border-radius-topleft: 20px;
-    -moz-border-radius-bottomleft: 20px;
-    border-top-left-radius: 20px;
-    border-bottom-left-radius: 20px;
-    background-color: rgb(244, 196, 52);
-    background-image: -webkit-gradient(
-    linear,
-    left bottom,
-    left top,
-    color-stop(0,rgb(244, 196, 52)),
-    color-stop(1, rgb(244, 196, 52))
-    );
-    background-image: -moz-linear-gradient(
-    center bottom,
-    rgb(244, 196, 52) 37%,
-    rgb(245, 208, 98) 69%
-    );
-    position: relative;
-    overflow: hidden;
-}
-.progressBar { 
-    height: 8px;
-    position: relative;
-    background: #eee;
-    -moz-border-radius: 25px;
-    -webkit-border-radius: 25px;
-    border-radius: 25px;
-    margin-bottom: 10px;
-}
-.progressBar > span {
-    display: block;
-    height: 100%;
-    -webkit-border-top-right-radius: 20px;
-    -webkit-border-bottom-right-radius: 20px;
-    -moz-border-radius-topright: 20px;
-    -moz-border-radius-bottomright: 20px;
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
-    -webkit-border-top-left-radius: 20px;
-    -webkit-border-bottom-left-radius: 20px;
-    -moz-border-radius-topleft: 20px;
-    -moz-border-radius-bottomleft: 20px;
-    border-top-left-radius: 20px;
-    border-bottom-left-radius: 20px;
-    background-color:#6264a7;
-    background-image: -webkit-gradient(
-    linear,
-    left bottom,
-    left top,
-    color-stop(0,#6264a7),
-    color-stop(1, #6264a7)
-    );
-    background-image: -moz-linear-gradient(
-    center bottom,
-    #6264a7 37%,
-    #6264a7 69%
-    );
-    position: relative;
-    overflow: hidden;
-}
 .buttonAsString {
     border: none;
     background: none;
@@ -298,10 +217,6 @@ div#fugo{
 .buttonAsString:hover {
     cursor: pointer;
     text-decoration: underline;
-}
-.topSummaryText {
-    margin-top: -8px;
-    margin-left: -2px;
 }
 .textDisplay {
     font-size: small;
@@ -438,18 +353,9 @@ h4 {
     display: table-cell;
     text-align: center;
 }
-.columnleft {
-    float: left;
-}
 .columnright {
+    display: table-cell;
     float: right;
-}
-.headings {
-    display:table;
-    font-weight: bold;
-    font-size: 15px;
-    margin-left: 2px;
-    margin-bottom: 5px;
 }
 .summaryTitle {
     padding-top: 10px;
@@ -459,9 +365,9 @@ h4 {
 }
 .subHeading {
     font-size: small;
-    padding-top: 5px;
     font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
 }
 .questionContainer {
     border-bottom: .5px solid rgb(206, 206, 206);
@@ -473,12 +379,6 @@ h4 {
 }
 .modulquestionContainere > *:last-child {
     border-bottom: none;
-}
-.TopSummaryContainer {
-    padding-bottom: 15px;
-    padding-top: 15x;
-    border-bottom: .5px solid rgb(206, 206, 206);
-    width: 85vw;
 }
 .responseContainer {
     padding-top: 10px;
@@ -507,25 +407,6 @@ table {
     width: 100%;
     text-align: left;
 }
-.singleValPerRow {
-    padding-bottom: 20px;
-}
-::-webkit-scrollbar {
-    width: 7px;
-}
-::-webkit-scrollbar-track {
-    -webkit-border-radius: 10px;
-    border-radius: 7px;
-}
-::-webkit-scrollbar-thumb {
-    -webkit-border-radius: 10px;
-    border-radius: 7px;
-    background:  rgb(206, 206, 206); 
-    height: 5px;
-}
-::-webkit-scrollbar-thumb:window-inactive {
-    background:  rgb(206, 206, 206); 
-}
 .textSmallBold {
     font-size: 12px;
     font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
@@ -544,6 +425,125 @@ table {
     border-top: .5px solid rgb(206, 206, 206);
     margin-left: auto;
 }
+.marginRight {
+    margin-right: 5px;
+}
+/* -------------------------------------
+Common components CSS
+---------------------------------------- */
+.meter {
+    height: 8px;
+    position: relative;
+    background: #eee;
+    -moz-border-radius: 25px;
+    -webkit-border-radius: 25px;
+    border-radius: 25px;
+    margin-bottom: 10px;
+}
+.meter > span {
+    display: block;
+    height: 100%;
+    -webkit-border-top-right-radius: 20px;
+    -webkit-border-bottom-right-radius: 20px;
+    -moz-border-radius-topright: 20px;
+    -moz-border-radius-bottomright: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    -webkit-border-top-left-radius: 20px;
+    -webkit-border-bottom-left-radius: 20px;
+    -moz-border-radius-topleft: 20px;
+    -moz-border-radius-bottomleft: 20px;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    background-color: rgb(244, 196, 52);
+    background-image: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0,rgb(244, 196, 52)),
+    color-stop(1, rgb(244, 196, 52))
+    );
+    background-image: -moz-linear-gradient(
+    center bottom,
+    rgb(244, 196, 52) 37%,
+    rgb(245, 208, 98) 69%
+    );
+    position: relative;
+    overflow: hidden;
+}
+.progressBar {
+    height: 8px;
+    position: relative;
+    background: #eee;
+    -moz-border-radius: 25px;
+    -webkit-border-radius: 25px;
+    border-radius: 25px;
+    margin-bottom: 10px;
+}
+.progressBar > span {
+    display: block;
+    height: 100%;
+    -webkit-border-top-right-radius: 20px;
+    -webkit-border-bottom-right-radius: 20px;
+    -moz-border-radius-topright: 20px;
+    -moz-border-radius-bottomright: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    -webkit-border-top-left-radius: 20px;
+    -webkit-border-bottom-left-radius: 20px;
+    -moz-border-radius-topleft: 20px;
+    -moz-border-radius-bottomleft: 20px;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    background-color:#6264a7;
+    background-image: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0,#6264a7),
+    color-stop(1, #6264a7)
+    );
+    background-image: -moz-linear-gradient(
+    center bottom,
+    #6264a7 37%,
+    #6264a7 69%
+    );
+    position: relative;
+    overflow: hidden;
+}
+.heading {
+    display:table;
+    font-weight: bold;
+    font-size: 15px;
+    margin-left: 2px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.topSummaryContainer {
+    padding-bottom: 15px;
+    padding-top: 15x;
+    border-bottom: .5px solid rgb(206, 206, 206);
+    width: 85vw;
+}
+.linkColored {
+    border: none;
+    background: none;
+    outline: none;
+    height: 15px;
+    font-size: small;
+    font-size: 12px;
+    font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    color: #6264a7;
+}
+.linkColored:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+.topSummaryTextMargin {
+    margin-top: -8px;
+    margin-left: -2px;
+}
 .circle {
     background-color: #ccc;
     border-radius: 50%;
@@ -556,46 +556,44 @@ table {
     font-size: calc(25px/ 2);
     line-height: 1;
 }
-.loader {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    z-index: 1;
-    width: 150px;
-    height: 150px;
-    margin: -75px 0 0 -75px;
-    border: 16px solid #f3f3f3;
-    border-radius: 50%;
-    border-top: 16px solid rgb(206, 206, 206);
-    -webkit-animation: spin 2s linear infinite;
-    animation: spin 2s linear infinite;
-  }
- @-webkit-keyframes spin {
-    0% { -webkit-transform: rotate(0deg); }
-    100% { -webkit-transform: rotate(360deg); }
-  }  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  .animate-bottom {
-    position: relative;
-    -webkit-animation-name: animatebottom;
-    -webkit-animation-duration: 1s;
-    animation-name: animatebottom;
-    animation-duration: 1s
-  }
-  @-webkit-keyframes animatebottom {
-    from { bottom:-100px; opacity:0 } 
-    to { bottom:0px; opacity:1 }
-  }
-  @keyframes animatebottom { 
-    from{ bottom:-100px; opacity:0 } 
-    to{ bottom:0; opacity:1 }
-  }
-  .marginRight {
-      margin-right: 5px;
-  }
+.rowWise {
+    display: table;
+    width: 80vw;
+    table-layout: auto;
+    border-spacing: 10px 0px;
+    padding-bottom: 2px;
+}
+.columnWise {
+    display: table-cell;
+}
+.textDisplayLeft {
+    font-size: small;
+    font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
+    overflow: hidden;
+    float: left;
+}
+.textDisplayRight {
+    font-size: small;
+    font-family: "Segoe UI", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji", Helvetica, Arial, sans-serif;
+    overflow: hidden;
+    float: right;
+}
+::-webkit-scrollbar {
+    width: 7px;
+}
+::-webkit-scrollbar-track {
+    -webkit-border-radius: 10px;
+    border-radius: 7px;
+}
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 7px;
+    background:  rgb(206, 206, 206);
+    height: 5px;
+}
+::-webkit-scrollbar-thumb:window-inactive {
+    background:  rgb(206, 206, 206);
+}
 /* -------------------------------------
 Common CSS UxUtils
 ---------------------------------------- */
@@ -680,6 +678,29 @@ Common CSS UxUtils
     width: 16pt;
     height: 16pt;
     animation: spin 1.5s ease-in-out infinite;
+}
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.animate-bottom {
+    position: relative;
+    -webkit-animation-name: animatebottom;
+    -webkit-animation-duration: 1s;
+    animation-name: animatebottom;
+    animation-duration: 1s
+}
+@-webkit-keyframes animatebottom {
+    from { bottom:-100px; opacity:0 }
+    to { bottom:0px; opacity:1 }
+}
+@keyframes animatebottom {
+    from{ bottom:-100px; opacity:0 }
+    to{ bottom:0; opacity:1 }
 }
 .contentEditableSpanAttributes {
     word-break: break-word;

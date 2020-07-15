@@ -130,8 +130,7 @@ export class UxUtils {
     *   @result div HTML element
     */
     public static getSpace(length: string = this.DEFAULT_SPACE_LENGTH): HTMLDivElement {
-        var spaceDiv = this.getDiv();
-        this.addCSS(spaceDiv, { width: length, height: length, flex: "none" });
+        var spaceDiv = this.getDiv({ width: length, height: length, flex: "none" });
         return spaceDiv;
     }
     /*
@@ -242,8 +241,8 @@ export class UxUtils {
     *   @param attributes - css attribute for the given div element (Optional): Object{}
     *   @return div element
     */
-    public static getDiv(attributes: {} = null): HTMLDivElement {
-        return <HTMLDivElement>this.getElement("div", attributes);
+    public static getDiv(attributes: {} = null, nonCssAttributes: {} = null): HTMLDivElement {
+        return <HTMLDivElement>this.getElement("div", attributes, nonCssAttributes);
     }
     /*
     *   @desc Creates a pre(preformatted text) element which preserves both spaces and line breaks.
@@ -324,9 +323,10 @@ export class UxUtils {
     *   @params attributes - css attributes to add in the element (Optional): Object{}
     *   @return HTML element of provided elementTag type
    */
-    public static getElement(elementTag: string, attributes: {} = null): HTMLElement {
+    public static getElement(elementTag: string, attributes: {} = null, nonCssAttributes: {} = null): HTMLElement {
         var element: HTMLElement = document.createElement(elementTag);
         this.addCSS(element, attributes);
+        this.addAttribute(element, nonCssAttributes);
         return element;
     }
     /*
@@ -426,8 +426,7 @@ export class UxUtils {
     }
 
     public static getContentEditableSpan(text: string = "", placeholder: string = "", attributes: {} = null, onInputEvent: () => void) {
-        var element = this.getElement("span");
-        this.addAttribute(element, { "placeholder": placeholder, 'contenteditable': true });
+        var element = this.getElement("span", attributes, { "placeholder": placeholder, 'contenteditable': true });
         element.classList.add("getContentEditableSpanAttributes");
         Object.assign(element, attributes);
         UxUtils.setText(element, text);

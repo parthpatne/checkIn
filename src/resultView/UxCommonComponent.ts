@@ -7,11 +7,11 @@ export class UxCommonComponent {
     public static async getTopSummaryView(actionSummary: actionSDK.ActionDataRowsSummary, actionMemberCount: number, currentView, nextView, onClickFunction: Function) {
         let participationPercentage = 0;
         const barDiv = UxUtils.getDiv();
-        UxUtils.setClass(barDiv, "TopSummaryContainer");
+        UxUtils.setClass(barDiv, "topSummaryContainer");
         participationPercentage = Math.round((actionSummary.rowCreatorCount / actionMemberCount) * 100);
         let percentageBar = UxUtils.getDiv();
         let headingpercentage = UxUtils.getElement("text");
-        UxUtils.setClass(headingpercentage, "headings")
+        UxUtils.setClass(headingpercentage, "heading")
         UxUtils.setText(headingpercentage, UxUtils.getString("participationPercentage", participationPercentage));
         UxUtils.addElement(headingpercentage, percentageBar);
         let progressBar = UxUtils.getDiv();
@@ -23,9 +23,9 @@ export class UxCommonComponent {
         UxUtils.addElement(myProgress, progressBar);
 
         let buttonLink = UxUtils.getDiv();
-        UxUtils.setClass(buttonLink, "topSummaryText");
+        UxUtils.setClass(buttonLink, "topSummaryTextMargin");
         let summaryTextButton = UxUtils.getElement("button");
-        UxUtils.setClass(summaryTextButton, "buttonAsString textSmallBold coloredLinkBold");
+        UxUtils.setClass(summaryTextButton, "linkColored");
         if (actionSummary.rowCreatorCount == actionSummary.rowCount) {
             UxUtils.setText(summaryTextButton, UxUtils.getString("XofYresponded", actionSummary.rowCreatorCount, actionMemberCount));
         }
@@ -72,17 +72,17 @@ export class UxCommonComponent {
         let wid = percentage / actionSummary.rowCount * 100;
         let optionpercentage = isNaN(wid) ? 0 : wid.toFixed(2);
         let optionCount = isNaN(percentage) ? 0 : percentage;
-        UxUtils.setClass(responseRowSpan, "row");
+        UxUtils.setClass(responseRowSpan, "rowWise");
 
         let optionDetails = UxUtils.getDiv();
-        UxUtils.setClass(optionDetails, "row");
+        UxUtils.setClass(optionDetails, "rowWise");
         let optionTitle = UxUtils.getElement("text");
-        UxUtils.setClass(optionTitle, "textDisplay columnleft");
+        UxUtils.setClass(optionTitle, "textDisplayLeft");
         UxUtils.setText(optionTitle, title);
         UxUtils.addElement(optionTitle, optionDetails);
 
         let optionParticipation = UxUtils.getElement("text");
-        UxUtils.setClass(optionParticipation, "textDisplay columnright");
+        UxUtils.setClass(optionParticipation, "textDisplayRight");
         UxUtils.setText(optionParticipation, UxUtils.getString("optionParticipation", optionCount, optionpercentage));
         UxUtils.addElement(optionParticipation, optionDetails);
 
