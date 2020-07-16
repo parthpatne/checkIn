@@ -241,8 +241,8 @@ export class UxUtils {
     *   @param attributes - css attribute for the given div element (Optional): Object{}
     *   @return div element
     */
-    public static getDiv(attributes: {} = null, nonCssAttributes: {} = null): HTMLDivElement {
-        return <HTMLDivElement>this.getElement("div", attributes, nonCssAttributes);
+    public static getDiv(attributes: {} = null): HTMLDivElement {
+        return <HTMLDivElement>this.getElement("div", attributes);
     }
     /*
     *   @desc Creates a pre(preformatted text) element which preserves both spaces and line breaks.
@@ -323,10 +323,9 @@ export class UxUtils {
     *   @params attributes - css attributes to add in the element (Optional): Object{}
     *   @return HTML element of provided elementTag type
    */
-    public static getElement(elementTag: string, attributes: {} = null, nonCssAttributes: {} = null): HTMLElement {
+    public static getElement(elementTag: string, attributes: {} = null): HTMLElement {
         var element: HTMLElement = document.createElement(elementTag);
         this.addCSS(element, attributes);
-        this.addAttribute(element, nonCssAttributes);
         return element;
     }
     /*
@@ -426,9 +425,10 @@ export class UxUtils {
     }
 
     public static getContentEditableSpan(text: string = "", placeholder: string = "", attributes: {} = null, onInputEvent: () => void) {
-        var element = this.getElement("span", null, { "placeholder": placeholder, 'contenteditable': true });
+        var element = this.getElement("span");
         element.classList.add("contentEditableSpanAttributes");
         this.addCSS(element, attributes);
+        this.addAttribute(element, { "placeholder": placeholder, 'contenteditable': true });
         UxUtils.setText(element, text);
 
         var maxLength = attributes["max-length"];
@@ -502,5 +502,50 @@ export class UxUtils {
         style.innerHTML = "@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }";
         document.getElementsByTagName('head')[0].appendChild(style);
         this.spinnerCSSAdded = true;
+    }
+    /*
+     * Method to create dropdown 
+     * @param options options we want to show in dropdown contains (text and click event )
+     */
+    public static getDropDown(options) {
+        let div = UxUtils.getDiv();
+        UxUtils.addAttribute(div, { class: "dropdown-content textDisplay", id: "myDropdown" });
+        options.forEach(option => {
+            let a = UxUtils.getElement("a");
+            UxUtils.setText(a, option.text);
+            UxUtils.addClickEvent(a, option.callback);
+            UxUtils.addElement(a, div);
+        });
+        return div;
+    }
+    /*
+     * Method that will toggle class of a element 
+     * @param id id of element for which we want to toggle class 
+     * @param className class Name
+     */
+    public static toggleClass(id, className) {
+        document.getElementById(id).classList.toggle(className);
+    }
+    /*
+     * Method that will set the display of element of a element 
+     * @param id id of element for which we want to set display style for
+     * @param disType display style: none/block etc
+     */
+    public static setDisplay(id, disType) {
+        document.getElementById(id).style.display = disType;
+    }
+    /*
+     * Method to get date time input 
+     * @param id id of element
+     * @param className class for element
+     * @param value default value
+     */
+    public static getDateTimeElement(id: string, className: string, value: string) {
+        let input = UxUtils.getElement("input");
+        input.setAttribute("type", "datetime-local");
+        input.setAttribute("id", id);
+        input.setAttribute("class", className);
+        input.setAttribute("value", value);
+        return input;
     }
 }

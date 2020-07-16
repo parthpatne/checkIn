@@ -1,4 +1,6 @@
 import { UxUtils } from "../common/UxUtils";
+import { Utils } from "../common/Utils";
+import { ActionSdkHelper } from '../common/ActionSdkHelper';
 
 export class UxCommonComponent {
     /*
@@ -122,5 +124,171 @@ export class UxCommonComponent {
         UxUtils.setText(initialsSpan, initials);
         UxUtils.addElement(initialsSpan, profilePic);
         return profilePic;
+    }
+    public static getChangeSettingOption(actionInstance, data, expiryElementID) {
+        let userMainDiv = UxUtils.getDiv();
+        UxUtils.setClass(userMainDiv, "right size");
+
+        // Adding dropdown on button for settings on result view
+        let button = UxUtils.getElement("button");
+        UxUtils.addAttribute(button, { "class": "nonebg-button settingButton", "id": "dropDownButton" });
+        UxUtils.setText(button, UxUtils.getString("optionIndicator"));
+
+        // dropdown for due date settings
+        let options = [{
+            text: data.dueDate.text,
+            callback: dueDateChangeEvent
+        }, {
+            text: data.close.text,
+            callback: closeEvent
+        }, {
+            text: data.delete.text,
+            callback: deleteEvent
+        }]
+
+        let dropdown = UxUtils.getDropDown(options);
+
+        let dueDateModalDiv = this.getDueDateModal(actionInstance, data.dueDate.text, expiryElementID);
+        let closeDiv = this.getCloseModal(actionInstance, UxUtils.getString("areyousure") + data.close.text, expiryElementID);
+        let deleteDiv = this.getDeleteModal(actionInstance, UxUtils.getString("areyousure") + data.delete.text);
+
+        // listener to open change due date modal and close dropdown 
+        function dueDateChangeEvent() {
+            UxUtils.addCSS(dueDateModalDiv, { display: "block" });
+        }
+
+        function closeEvent() {
+            UxUtils.addCSS(closeDiv, { display: "block" });
+        }
+
+        function deleteEvent() {
+            UxUtils.addCSS(deleteDiv, { display: "block" });
+        }
+        // listener to close and open dropdown when someone click on button 
+        UxUtils.addClickEvent(button, () => {
+            UxUtils.setDisplay("myDropdown", "block");
+        });
+        UxUtils.addElement(button, userMainDiv);
+        UxUtils.addElement(dueDateModalDiv, userMainDiv);
+        UxUtils.addElement(closeDiv, userMainDiv);
+        UxUtils.addElement(deleteDiv, userMainDiv);
+        UxUtils.addElement(dropdown, userMainDiv);
+        window.onclick = (event) => {
+            if (event.target.id != "dropDownButton") {
+                UxUtils.setDisplay("myDropdown", "none");
+            }
+        }
+        return userMainDiv;
+
+    }
+    public static getModal(id, topView, submitListener) {
+        // modal for due date change option
+        let modalDiv = UxUtils.getDiv({ display: "none" });
+        UxUtils.addAttribute(modalDiv, { class: "modal", id: id });
+
+        let modalContentDiv = UxUtils.getDiv();
+        UxUtils.addAttribute(modalContentDiv, { class: "modal-content" });
+
+        // submit button to update due date of action
+        let submitButton = UxUtils.getElement("button");
+        UxUtils.setClass(submitButton, "right");
+        UxUtils.setText(submitButton, UxUtils.getString("Submit"));
+        UxUtils.addClickEvent(submitButton, () => {
+            submitListener();
+            UxUtils.addCSS(document.getElementById(id), { display: "none" });
+        });
+
+        // cancel button to cancel any change
+        let cancelButton = UxUtils.getElement("button");
+        UxUtils.setClass(cancelButton, "right rightMargin");
+        UxUtils.setText(cancelButton, UxUtils.getString("cancel"));
+        UxUtils.addClickEvent(cancelButton, () => {
+            UxUtils.addCSS(document.getElementById(id), { display: "none" });
+        });
+
+
+        UxUtils.addElement(topView, modalContentDiv);
+        UxUtils.addElement(UxUtils.lineBreak(), modalContentDiv);
+        UxUtils.addElement(UxUtils.lineBreak(), modalContentDiv);
+        UxUtils.addElement(submitButton, modalContentDiv);
+        UxUtils.addElement(cancelButton, modalContentDiv);
+        UxUtils.addElement(UxUtils.lineBreak(), modalContentDiv);
+
+        UxUtils.addElement(modalContentDiv, modalDiv);
+        return modalDiv;
+    }
+
+    public static getDueDateModal(actionInstance, text, expiryElementID) {
+
+        let div = UxUtils.getDiv();
+
+        // modal for due date change option
+        let id = "dueDateModal";
+        let b = UxUtils.getElement("b");
+        UxUtils.setText(b, text);
+
+        let modalContentDiv = UxUtils.getDiv();
+
+        let expiryTime = Utils.getHTMLFormatDateTime(actionInstance.expiryTime);
+
+        let input = UxUtils.getDateTimeElement("modalDueDate", null, expiryTime);
+        UxUtils.setClass(input, "leftMargin");
+
+        UxUtils.addElement(b, modalContentDiv);
+        UxUtils.addElement(UxUtils.lineBreak(), modalContentDiv);
+        UxUtils.addElement(UxUtils.lineBreak(), modalContentDiv);
+        UxUtils.addElement(input, modalContentDiv);
+
+        async function submitListener() {
+            let newExpiry = new Date((<HTMLInputElement>document.getElementById("modalDueDate")).value).getTime();
+            actionInstance = await ActionSdkHelper.updateActionInstance(actionInstance, { expiryTime: newExpiry });
+            let dueDate = document.getElementById(expiryElementID);
+            let dateTime = Utils.getDateTimeFormat(actionInstance.expiryTime);
+            UxUtils.setText(dueDate, UxUtils.getString("expiredOn", dateTime));
+            UxUtils.addCSS(document.getElementById(id), { display: "none" });
+        }
+
+        return this.getModal(id, modalContentDiv, submitListener);
+    }
+
+    public static getCloseModal(actionInstance, text, expiryElementID) {
+        let id = "closeModal";
+
+        let modalContentDiv = UxUtils.getDiv();
+
+        let textToShow = UxUtils.getElement("text");
+        UxUtils.setClass(textToShow, "bold textDisplay");
+        UxUtils.setText(textToShow, text);
+
+        async function submitListener() {
+            actionInstance = await ActionSdkHelper.updateActionInstance(actionInstance, { status: "Closed", expiryTime: new Date().getTime() });
+            let dueDate = document.getElementById(expiryElementID);
+            let dateTime = Utils.getDateTimeFormat(actionInstance.expiryTime);
+            UxUtils.setText(dueDate, UxUtils.getString("expiredOn", dateTime));
+            UxUtils.addCSS(document.getElementById(id), { display: "none" });
+        }
+
+        UxUtils.addElement(textToShow, modalContentDiv);
+
+        return this.getModal(id, modalContentDiv, submitListener);
+    }
+
+    public static getDeleteModal(actionInstance, text) {
+        let id = "deleteModal";
+
+        let modalContentDiv = UxUtils.getDiv();
+
+        let textToShow = UxUtils.getElement("text");
+        UxUtils.setClass(textToShow, "bold textDisplay");
+        UxUtils.setText(textToShow, text);
+
+        async function submitListener() {
+            await ActionSdkHelper.deleteActionInstance(actionInstance.id);
+            UxUtils.addCSS(document.getElementById(id), { display: "none" });
+        }
+
+        UxUtils.addElement(textToShow, modalContentDiv);
+
+        return this.getModal(id, modalContentDiv, submitListener);
     }
 }

@@ -150,4 +150,37 @@ export class ActionSdkHelper {
         let responseResponders = await actionSDK.executeApi(requestResponders) as actionSDK.GetSubscriptionMembers.Response;
         return responseResponders.members;
     }
+    /*
+     * Method to update action instance data 
+     * @param data object of data we want modify
+    */
+    public static async updateActionInstance(actionInstance, data) {
+        let action: actionSDK.ActionUpdateInfo = {
+            id: actionInstance.id,
+            version: actionInstance.version,
+            displayName: actionInstance.displayName,
+            dataTables: actionInstance.dataTables
+        }
+        for (let key in data) {
+            action[key] = data[key];
+        }
+        let getUpdateActionRequest = new actionSDK.UpdateAction.Request(action);
+        try {
+            let response = await actionSDK.executeApi(getUpdateActionRequest) as actionSDK.UpdateAction.Response;
+            console.info("UpdateAction - Response: " + JSON.stringify(response));
+            actionInstance = await ActionSdkHelper.getAction(actionInstance.id);
+            return actionInstance;
+        } catch (error) {
+            console.error("UpdateAction - Error: " + JSON.stringify(error));
+        }
+    }
+    public static async deleteActionInstance(actionId) {
+        try {
+            let request = new actionSDK.DeleteAction.Request(actionId);
+            let response = await actionSDK.executeApi(request) as actionSDK.DeleteAction.Response;
+            let success = response.success;
+        } catch (error) {
+            console.log("Failed to delete action instance ", error);
+        }
+    }
 }

@@ -38,4 +38,26 @@ export class Utils {
             return false;
         }
     }
+    public static getDateTimeFormat(dateTime) {
+        let date = new Date(dateTime);
+        let hours = date.getHours();
+        let ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        let min = this.convertToTwoDigitString(date.getMinutes());
+        return date.toDateString() + ", " + Utils.convertToTwoDigitString(hours) + ":" + min + " " + ampm;
+    }
+    public static getHTMLFormatDateTime(dateTime) {
+        let dueBy = new Date(dateTime);
+        let month = this.convertToTwoDigitString(dueBy.getMonth() + 1);
+        let date = this.convertToTwoDigitString(dueBy.getDate());
+        let hour = this.convertToTwoDigitString(dueBy.getHours());
+        let min = this.convertToTwoDigitString(dueBy.getMinutes());
+        let formattedDateTime = dueBy.getFullYear() + "-" + month + "-" + date + "T" + hour + ":" + min;
+        return formattedDateTime;
+    }
+    public static convertToTwoDigitString(num) {
+        let numberString = (num < 10 ? "0" : "") + num;
+        return numberString;
+    }
 }

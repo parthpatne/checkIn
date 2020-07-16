@@ -34,22 +34,38 @@ function getHeaderContainer() {
     UxUtils.setClass(headerContainer, "headerContainer");
 
     let optionDetails = UxUtils.getDiv();
-    UxUtils.setClass(optionDetails, "rowAlign");
-    const title = UxUtils.getElement("Text");
-    UxUtils.setClass(title, "summaryTitle column");
+    const title = UxUtils.getElement("div");
+    UxUtils.setClass(title, "summaryTitle");
     UxUtils.setText(title, actionInstance.displayName);
-    let dropDown = UxUtils.getElement("text", { "margin-right": "-15px" });
-    UxUtils.setText(dropDown, UxUtils.getString("optionIndicator"));
-
     UxUtils.addElement(title, optionDetails);
-    UxUtils.addElement(dropDown, optionDetails);
+    if (actionContext.userId == actionInstance.creatorId) {
+        let changeSettings = getChangeSettingView();
+        UxUtils.addCSS(changeSettings, { "margin-top": "-20px", "margin-right": "10px" });
+        UxUtils.addElement(changeSettings, optionDetails);
+    }
     UxUtils.addElement(optionDetails, headerContainer);
 
-    let dueDate = UxUtils.getElement("text");
+    let dueDate = UxUtils.getElement("div");
     UxUtils.setClass(dueDate, "subHeading");
     UxUtils.setText(dueDate, UxUtils.getString("dueBy", new Date(actionInstance.expiryTime).toDateString()));
     UxUtils.addElement(dueDate, headerContainer);
     return headerContainer;
+}
+function getChangeSettingView() {
+
+    let data = {
+        dueDate: {
+            text: UxUtils.getString("changeDueDate")
+        },
+        close: {
+            text: UxUtils.getString("closeCheckIn")
+        },
+        delete: {
+            text: UxUtils.getString("deleteCheckIn")
+        }
+    }
+
+    return UxCommonComponent.getChangeSettingOption(actionInstance, data, "dueDate");
 }
 function createQuestionView() {
     const totalQuestion = UxUtils.getDiv();
@@ -298,7 +314,8 @@ function getNonRespondersTabs() {
 *   All the components of this page gets flushed and re-populated on each click of question's response count in aggregateSummaryPage
 */
 function getResponderListPagePerQuestion() {
-    let responseView = UxUtils.getDiv({ display: "none" }, { "class": "responseViewPage", "id": "responseViewPage" });
+    let responseView = UxUtils.getDiv({ display: "none" });
+    UxUtils.addAttribute(responseView, { "class": "responseViewPage", "id": "responseViewPage" });
     UxUtils.addElement(responseView, root);
 }
 /*
@@ -359,7 +376,8 @@ function getResponsesperQuestion(column) {
 *   All the components of this page gets flushed and re-populated on each click of responder's name of getRespondersTab()
 */
 function getPageResponsePerUser() {
-    let ResponsePerUserView = UxUtils.getDiv({ display: "none" }, { "class": "ResponsePerUserViewPage", "id": "responsePerUserViewPage" });
+    let ResponsePerUserView = UxUtils.getDiv({ display: "none" });
+    UxUtils.addAttribute(ResponsePerUserView, { "class": "ResponsePerUserViewPage", "id": "responsePerUserViewPage" });
     UxUtils.addElement(ResponsePerUserView, root);
 }
 /*

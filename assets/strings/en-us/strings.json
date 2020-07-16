@@ -62,5 +62,17 @@
     "choiceDeleteErrorText": "At least two choices is mandatory",
     "_choiceDeleteErrorText.comment": "Text for delete choice dialogue incase choices are less than 2",
     "optionIndicator": ". . .",
-    "_optionIndicator.comment": "Dots to represent the options available"
+    "_optionIndicator.comment": "Dots to represent the options available",
+    "closePoll": "Close Poll",
+    "_closePoll.comment": "close poll",
+    "deletePoll": "Delete Poll",
+    "_deletePoll.comment": "delete poll",
+    "areyousure": "Are you sure you want to ",
+    "_areyousure.comment": "text to confirm action",
+    "closeCheckIn": "Close CheckIn",
+    "_closeCheckIn.comment": "Option to close this checkIn instance",
+    "deleteCheckIn": "Delete CheckIn",
+    "_deleteCheckIn.comment": "Option to delete this checkIn instance",
+    "changeDueDate": "Change Due Date",
+    "_changeDueDate.comment": "Change the Due date of instance submission"
 }
